@@ -1,0 +1,40 @@
+{
+  "name": "microcastle",
+  "version": "0.0.1",
+  "description": "Frontend only CMS",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://LiquidHelium@bitbucket.org/LiquidHelium/microcastle.git"
+  },
+  "keywords": [
+    "cms",
+    "react",
+    "microcastle",
+    "content",
+    "editor"
+  ],
+  "author": "Andrew Jackson",
+  "license": "GPL-3.0",
+  "homepage": "https://bitbucket.org/LiquidHelium/microcastle#readme",
+  "dependencies": {
+    "immutable": "^3.7.6",
+    "lodash": "^4.0.0",
+    "material-ui": "^0.14.2",
+    "react": "^0.14.6",
+    "react-dom": "^0.14.6",
+    "react-redux": "^4.0.6",
+    "redux": "^3.0.5"
+  },
+  "devDependencies": {
+    "babel-core": "^6.4.5",
+    "babel-loader": "^6.2.1",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.1"
+  }
+}
