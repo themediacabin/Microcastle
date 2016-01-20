@@ -28,11 +28,11 @@ class ArrayEditor extends React.Component {
     const SubType = DataTypes.stringToComponent(this.props.options.subtype)
 
     const components = this.props.value.map((individualValue, index) => {
-      return <div>
-        <SubType key={index}
-                      onChange={this.individualChange.bind(this, index)}
-                      value={individualValue}
-                      options={this.props.options.subvalue} />
+      return <div key={index}>
+        <SubType
+              onChange={this.individualChange.bind(this, index)}
+              value={individualValue}
+              options={this.props.options.suboptions} />
       </div>
     })
 
