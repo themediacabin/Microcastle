@@ -1,8 +1,5 @@
 import React from 'react';
 
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-
 class SelectEditor extends React.Component {
   static defaultValue() {
     return '';

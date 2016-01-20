@@ -1,7 +1,4 @@
 import React from 'react';
-import Immutable from 'immutable';
-
-import FlatButton from 'material-ui/lib/flat-button';
 
 class ImageEditor extends React.Component {
   static defaultValue() {

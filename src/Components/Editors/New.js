@@ -38,16 +38,10 @@ class Editor extends React.Component {
   }
 
   onComponentChange(attributeName, value) {
-    const editorTempState = this.props.microcastleEditor.get('tempState') || new Immutable.Map({});
+    const editorTempState = this.props.microcastleEditor.get('tempState') || Immutable.Map({});
     const newEditorTempState = editorTempState.set(attributeName, value);
     const action = EditorStore.actions.setTempState(newEditorTempState);
     return this.props.dispatch(action);
-  }
-
-  getOr(it, def, arr) {
-    if (!it) return def;
-    if (arr.length === 1) return it.get(arr[0]);
-    return this.getOr(it.get(arr[0]), def, arr.shift());
   }
 
   getCurrentValue(attributeName, defaultValue) {
