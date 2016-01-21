@@ -9,6 +9,7 @@ import EditorStore from '../Store/Editor';
 import EditorFrame from './EditorFrame';
 import NewEditor from './Editors/New';
 import SingleEditor from './Editors/Single';
+import EntryEditor from './Editors/Entry';
 
 class Editor extends React.Component {
 
@@ -22,23 +23,59 @@ class Editor extends React.Component {
   }
 
   getEditor() {
-    if (this.props.microcastleEditor.get('action') == 'EDIT_SINGLE') {
-      return SingleEditor;
+    switch (this.props.microcastleEditor.get('action')) {
+      case 'EDIT_SINGLE':
+        return SingleEditor;
+      case 'EDIT_ENTRY':
+        return EntryEditor;
+      case 'CREATE_NEW':
+        return NewEditor;
     }
     return NewEditor;
   }
 
+  onSubmit() {
+    this._editor.onSubmit();
+    const action = EditorStore.actions.close();
+    return this.props.dispatch(action);
+  }
+
+  onCancel() {
+    const action = EditorStore.actions.close();
+    return this.props.dispatch(action);
+  }
+
+  onChangeTempState(newState) {
+    const action = EditorStore.actions.setTempState(newState);
+    return this.props.dispatch(action);
+  }
+
   render() {
     if (!this.isOpen()) return false;
+    const self = this;
 
     const CurrentEditor = this.getEditor();
-    return <CurrentEditor schema={this.getCurrentSchema()} />
+
+    return <EditorFrame
+              onSubmit={self.onSubmit.bind(self)}
+              onCancel={self.onCancel.bind(self)}
+              title="Microcatle Editor"
+              open={true}>
+              <CurrentEditor schema={this.getCurrentSchema()}
+                             microcastleSchema={this.props.schemas}
+                             microcastleStore={this.props.microcastle}
+                             microcastleEditor={this.props.microcastleEditor}
+                             changeTempState={this.onChangeTempState.bind(this)}
+                             dispatch={this.props.dispatch}
+                             ref={c => this._editor = c}/>
+    </EditorFrame>
   }
 }
 
 const connectReducers = connect((state) => {
   return {
     microcastleEditor: state.microcastleEditor,
+    microcastle: state.microcastle,
   };
 });
 

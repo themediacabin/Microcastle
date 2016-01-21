@@ -2,6 +2,7 @@ import Select from './Select';
 import Text from './Text';
 import Array from './Array';
 import Image from './Image';
+import Relation from './Relation';
 
 function stringToComponent(string) {
   switch(string) {
@@ -13,6 +14,8 @@ function stringToComponent(string) {
       return Array;
     case 'image':
       return Image;
+    case 'relation':
+      return Relation;
   };
   return false;
 }

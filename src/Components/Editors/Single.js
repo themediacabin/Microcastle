@@ -28,19 +28,10 @@ class Editor extends React.Component {
             return self.props.dispatch(action);
         });
     }
-
-    const action = EditorStore.actions.close();
-    return this.props.dispatch(action);
-  }
-
-  onCancel() {
-    const action = EditorStore.actions.close();
-    return this.props.dispatch(action);
   }
 
   onChange(value) {
-    const action = EditorStore.actions.setTempState(value);
-    return this.props.dispatch(action);
+    this.props.changeTempState(value);
   }
 
   getCurrentValue() {
@@ -59,25 +50,18 @@ class Editor extends React.Component {
     const EditorComponent = DataTypes.stringToComponent(schema.type);
 
     return (
-      <EditorFrame
-      onSubmit={this.onSubmit.bind(this)}
-      onCancel={this.onCancel.bind(this)}
-      title="Editing Single"
-      open={true}>
+      <div>
         <h2>{attributeName}</h2>
         <EditorComponent onChange={this.onChange.bind(this)}
                          value={this.getCurrentValue()}
-                         options={schema.options} />
-     </EditorFrame>
+                         options={schema.options}
+                         microcastleStore={this.props.microcastleStore}
+                         microcastleSchema={this.props.microcastleSchema}
+                         dispatch={this.props.dispatch} />
+     </div>
     );
   }
-
 }
 
-const connectReducers = connect((state) => {
-  return {
-    microcastleEditor: state.microcastleEditor,
-  };
-});
 
-export default connectReducers(Editor);
+export default Editor

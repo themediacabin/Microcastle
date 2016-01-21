@@ -5,6 +5,11 @@ import DataTypes from '../DataTypes';
 
 import FlatButton from 'material-ui/lib/flat-button';
 
+const style = {
+  base: {
+  }
+};
+
 class ArrayEditor extends React.Component {
   static defaultValue() {
     return new Immutable.List([]);
@@ -32,12 +37,16 @@ class ArrayEditor extends React.Component {
         <SubType
               onChange={this.individualChange.bind(this, index)}
               value={individualValue}
-              options={this.props.options.suboptions} />
+              options={this.props.options.suboptions}
+              microcastleStore={this.props.microcastleStore}
+              microcastleSchema={this.props.microcastleSchema}
+              dispatch={this.props.dispatch}
+               />
       </div>
     })
 
     return (
-      <div>
+      <div style={style.base}>
         <div>
           {components}
         </div>
