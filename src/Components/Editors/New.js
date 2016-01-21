@@ -15,17 +15,19 @@ class Editor extends React.Component {
     let self = this;
     const schema = this.props.schema;
     if (!!schema.onNew){
-      schema.onNew(this.getTempState().toJS())
-        .then((edited) => {
-          _.forIn(edited, (value, entryID) => {
-            const action = DataStore.actions.insertData(
-              self.props.microcastleEditor.get('schema'),
-              entryID,
-              value
-            );
-            return self.props.dispatch(action);
-          });
+      return new Promise((resolve, reject) => {
+        schema.onNew(this.getTempState().toJS()).then((edited) => {
+            _.forIn(edited, (value, entryID) => {
+              const action = DataStore.actions.insertData(
+                self.props.microcastleEditor.get('schema'),
+                entryID,
+                value
+              );
+              return self.props.dispatch(action);
+              resolve(edited);
+            });
         });
+      });
     }
   }
 
