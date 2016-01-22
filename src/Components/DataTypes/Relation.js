@@ -14,6 +14,7 @@ import NavigationClose from 'material-ui/lib/svg-icons/navigation/close';
 import IconButton from 'material-ui/lib/icon-button';
 import GridList from 'material-ui/lib/grid-list/grid-list';
 import GridTile from 'material-ui/lib/grid-list/grid-tile';
+import NavigationExpandMoreIcon from 'material-ui/lib/svg-icons/navigation/expand-more';
 
 
 const style = {
@@ -43,6 +44,11 @@ function getFirstImageAttributeName(schema) {
   return _.findKey(schema.attributes, attr => attr.type == 'image');
 }
 
+const EDITING = 'EDITING';
+const CHOSEN = 'CHOSEN';
+const CREATING = 'CREATING';
+const CHOOSING = 'CHOOSING';
+
 class RelationEditor extends React.Component {
   static defaultValue() {
     return false;
@@ -51,19 +57,18 @@ class RelationEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      editorWrap: new Immutable.Map()
+      editorWrap: new Immutable.Map(),
     };
-    if (!!props.value) {
-      onChoose(props.value);
-    }
   }
 
-  isChosen() {
-    return !!this.props.value;
-  }
-
-  isCreating() {
-    return !this.props.value && this.state.editorWrap.get('open', false);
+  getDisplayState() {
+    if (!!this.props.value && this.state.editorWrap.get('open', false))
+      return EDITING;
+    if (!this.props.value && this.state.editorWrap.get('open', false))
+      return CREATING;
+    if (!!this.props.value && !this.state.editorWrap.get('open', false))
+      return CHOSEN;
+    return CHOOSING;
   }
 
   getCurrentSchema() {
@@ -76,13 +81,15 @@ class RelationEditor extends React.Component {
   }
 
   onChoose(chosen) {
+    this.props.onChange(chosen);
+  }
+
+  setEditing() {
     this.setState({editorWrap: this.state.editorWrap
       .set('open', true).set('schema', this.props.options.relative)
-      .set('entry', chosen).set('action', 'EDIT_ENTRY')
-      .set('tempState', this.props.microcastleStore.getIn([this.props.options.relative, chosen]))
+      .set('entry', this.props.value).set('action', 'EDIT_ENTRY')
+      .set('tempState', this.props.microcastleStore.getIn([this.props.options.relative, this.props.value]))
     });
-
-    this.props.onChange(chosen);
   }
 
   onCreate() {
@@ -95,29 +102,31 @@ class RelationEditor extends React.Component {
     this.props.onChange(false);
   }
 
-  onToggleSelect() {
+  onReselect() {
     this.setState({editorWrap: new Immutable.Map()});
     this.props.onChange(false);
   }
 
   onSaveEdit() {
     this._editor.onSubmit();
+    this.setState({editorWrap: new Immutable.Map()});
   }
 
   onSaveNew() {
     this._editor.onSubmit().then((created) => {
       _.forEach(created, (val, key) => this.onChoose(key));
+      this.setState({editorWrap: new Immutable.Map()});
     });
   }
 
-  getNewEditor() {
+  getCreatingView() {
     const relationName = this.props.options.relative;
 
     return (
       <div>
         <AppBar title={"Creating New " + relationName}
            iconElementLeft={
-             <IconButton onClick={this.onToggleSelect.bind(this)}>
+             <IconButton onClick={this.onReselect.bind(this)}>
                <NavigationClose />
              </IconButton>
            }
@@ -138,12 +147,12 @@ class RelationEditor extends React.Component {
     );
   }
 
-  getEntryEditor() {
+  getEditingView() {
     return (
       <div>
         <AppBar title={this.props.value}
             iconElementLeft={
-              <IconButton onClick={this.onToggleSelect.bind(this)}>
+              <IconButton onClick={this.onReselect.bind(this)}>
                 <NavigationClose />
               </IconButton>
             }
@@ -164,7 +173,25 @@ class RelationEditor extends React.Component {
     );
   }
 
-  getSelect() {
+  getChosenView() {
+    return (
+      <div>
+        <AppBar title={this.props.value}
+            iconElementLeft={
+              <IconButton onClick={this.onReselect.bind(this)}>
+                <NavigationClose />
+              </IconButton>
+            }
+           iconElementRight={
+             <IconButton onClick={this.setEditing.bind(this)}>
+               <NavigationExpandMoreIcon />
+             </IconButton>
+           } />
+      </div>
+    );
+  }
+
+  getChoosingView() {
     const relationName = this.props.options.relative;
     const relation = this.props.microcastleStore.get(relationName);
 
@@ -198,11 +225,15 @@ class RelationEditor extends React.Component {
   }
 
   getView() {
-    if (this.isChosen())
-      return this.getEntryEditor();
-    if (this.isCreating())
-      return this.getNewEditor();
-    return this.getSelect();
+    switch (this.getDisplayState()) {
+      case EDITING:
+        return this.getEditingView();
+      case CREATING:
+        return this.getCreatingView();
+      case CHOSEN:
+        return this.getChosenView();
+    }
+    return this.getChoosingView();
   }
 
   render() {
