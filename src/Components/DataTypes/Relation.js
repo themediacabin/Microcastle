@@ -1,5 +1,6 @@
 import React from 'react';
 import Immutable from 'immutable';
+import _ from 'lodash'
 
 import DataTypes from '../DataTypes';
 
@@ -7,20 +8,39 @@ import EntryEditor from '../Editors/Entry';
 import NewEditor from '../Editors/New';
 
 import FlatButton from 'material-ui/lib/flat-button';
+import Paper from 'material-ui/lib/paper';
+import AppBar from 'material-ui/lib/app-bar';
+import NavigationClose from 'material-ui/lib/svg-icons/navigation/close';
+import IconButton from 'material-ui/lib/icon-button';
+import GridList from 'material-ui/lib/grid-list/grid-list';
+import GridTile from 'material-ui/lib/grid-list/grid-tile';
+
 
 const style = {
   base: {
+    marginTop: '10px',
+    marginBottom: '10px',
+  },
+  gridItem: {
+    cursor: 'pointer',
   },
   selector: {
     height: '300px',
     overflowY: 'scroll',
+    overflowX: 'hidden',
     width: '100%',
   },
   editor: {
     height: '300px',
     overflowY: 'scroll',
     width: '100%',
+    padding: '5px',
   },
+}
+
+
+function getFirstImageAttributeName(schema) {
+  return _.findKey(schema.attributes, attr => attr.type == 'image');
 }
 
 class RelationEditor extends React.Component {
@@ -44,29 +64,6 @@ class RelationEditor extends React.Component {
 
   isCreating() {
     return !this.props.value && this.state.editorWrap.get('open', false);
-  }
-
-  getEditor() {
-    if (this.state.editorWrap.get('action') == 'EDIT_ENTRY'){
-      return <EntryEditor
-           schema={this.getCurrentSchema()}
-           microcastleStore={this.props.microcastleStore}
-           microcastleSchema={this.props.microcatleSchema}
-           microcastleEditor={this.state.editorWrap}
-           changeTempState={this.onEditorChange.bind(this)}
-           dispatch={this.props.dispatch}
-           ref={c => this._editor = c}
-        />
-    }
-    return <NewEditor
-         schema={this.getCurrentSchema()}
-         microcastleStore={this.props.microcastleStore}
-         microcastleSchema={this.props.microcatleSchema}
-         microcastleEditor={this.state.editorWrap}
-         changeTempState={this.onEditorChange.bind(this)}
-         dispatch={this.props.dispatch}
-         ref={c => this._editor = c}
-      />
   }
 
   getCurrentSchema() {
@@ -99,7 +96,7 @@ class RelationEditor extends React.Component {
   }
 
   onToggleSelect() {
-    this.setState(new Immutable.Map());
+    this.setState({editorWrap: new Immutable.Map()});
     this.props.onChange(false);
   }
 
@@ -109,58 +106,109 @@ class RelationEditor extends React.Component {
 
   onSaveNew() {
     this._editor.onSubmit().then((created) => {
-      _.forEach(created, (val, key) => onChoose(created));
+      _.forEach(created, (val, key) => this.onChoose(key));
     });
   }
 
-  getView() {
+  getNewEditor() {
+    const relationName = this.props.options.relative;
+
+    return (
+      <div>
+        <AppBar title={"Creating New " + relationName}
+           iconElementLeft={
+             <IconButton onClick={this.onToggleSelect.bind(this)}>
+               <NavigationClose />
+             </IconButton>
+           }
+           iconElementRight={
+             <FlatButton label="Save And Use"
+                         onClick={this.onSaveNew.bind(this)} />
+           } />
+        <div style={style.editor}>
+          <NewEditor schema={this.getCurrentSchema()}
+                     microcastleStore={this.props.microcastleStore}
+                     microcastleSchema={this.props.microcatleSchema}
+                     microcastleEditor={this.state.editorWrap}
+                     changeTempState={this.onEditorChange.bind(this)}
+                     dispatch={this.props.dispatch}
+                     ref={c => this._editor = c} />
+        </div>
+      </div>
+    );
+  }
+
+  getEntryEditor() {
+    return (
+      <div>
+        <AppBar title={this.props.value}
+            iconElementLeft={
+              <IconButton onClick={this.onToggleSelect.bind(this)}>
+                <NavigationClose />
+              </IconButton>
+            }
+           iconElementRight={
+             <FlatButton label="Save Changes"
+                         onClick={this.onSaveEdit.bind(this)} />
+           } />
+        <div style={style.editor}>
+          <EntryEditor schema={this.getCurrentSchema()}
+                       microcastleStore={this.props.microcastleStore}
+                       microcastleSchema={this.props.microcatleSchema}
+                       microcastleEditor={this.state.editorWrap}
+                       changeTempState={this.onEditorChange.bind(this)}
+                       dispatch={this.props.dispatch}
+                       ref={c => this._editor = c} />
+        </div>
+      </div>
+    );
+  }
+
+  getSelect() {
     const relationName = this.props.options.relative;
     const relation = this.props.microcastleStore.get(relationName);
 
-    if (this.isChosen()) {
-      return <div>
-        <div>
-          <FlatButton
-            label="Choose Other"
-            secondary={true}
-            onClick={this.onToggleSelect.bind(this)} />
-          <FlatButton
-            label="Save Changes to Selected"
-            secondary={true}
-            onClick={this.onSaveEdit.bind(this)} />
-        </div>
-        <div style={style.editor}>{this.getEditor()}</div>
-      </div>
-    } else if (this.isCreating()) {
-      return <div>
-        <div>
-          <FlatButton
-            label="Choose Other"
-            secondary={true}
-            onClick={this.onToggleSelect.bind(this)} />
-          <FlatButton
-            label="Save And Use"
-            secondary={true}
-            onClick={this.onSaveNew.bind(this)} />
-        </div>
-        <div style={style.editor}>{this.getEditor()}</div>
-      </div>
-    }
-
     const selection = relation.map((value, name) => {
-      return <li key={name}><a onClick={this.onChoose.bind(this, name)}>{name}</a></li>;
+      const image = getFirstImageAttributeName(this.getCurrentSchema());
+      return (
+        <GridTile key={name}
+                  style={style.gridItem}
+                  title={name}
+                  onClick={this.onChoose.bind(this, name)}>
+          {image ? <img src={value.get(image)} /> : <span />}
+        </GridTile>
+      );
     }).toArray();
 
-    return <div style={style.selector}>
-      <a onClick={this.onCreate.bind(this)}>Create New</a>
-      <ul>{selection}</ul>
-    </div>
+    return (
+      <div>
+        <AppBar title={"Choose One " + relationName}
+                showMenuIconButton={false} zDepth={0}
+                iconElementRight={
+                  <FlatButton label="Create New"
+                              onClick={this.onCreate.bind(this)} />
+                } />
+        <div style={style.selector}>
+          <GridList cols={3} cellHeight={200} padding={1}>
+            {selection}
+          </GridList>
+        </div>
+      </div>
+    );
+  }
+
+  getView() {
+    if (this.isChosen())
+      return this.getEntryEditor();
+    if (this.isCreating())
+      return this.getNewEditor();
+    return this.getSelect();
   }
 
   render() {
-    return <div style={style.base}>
+    return <Paper zDepth={3} style={style.base}>
         {this.getView()}
-    </div>;
+    </Paper>;
   }
 }
 

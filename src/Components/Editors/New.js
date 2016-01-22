@@ -23,7 +23,7 @@ class Editor extends React.Component {
                 entryID,
                 value
               );
-              return self.props.dispatch(action);
+              self.props.dispatch(action);
               resolve(edited);
             });
         });
