@@ -28,7 +28,8 @@ function reducer(state = new Immutable.Map({}), action) {
     case MICROCASTLE_UPDATE_DATA: {
       let {schemaName, entryID, attributeName, value} = action;
       const newValue = {[schemaName]: {[entryID]: {[attributeName]: value}}};
-      return state.mergeDeep(newValue);
+      return state.mergeDeep(newValue)
+                  .setIn([schemaName, entryID, attributeName], value);
     }
     case MICROCASTLE_INSERT_DATA: {
       let {schemaName, entryID, entryValue} = action;

@@ -3,6 +3,14 @@ import React from 'react';
 import Dialog from 'material-ui/lib/dialog';
 import FlatButton from 'material-ui/lib/flat-button';
 
+
+const style = {
+  content: {
+    minWidth: '80%',
+    minHeight: '80vh',
+  }
+}
+
 class EditorFrame extends React.Component {
   render() {
     const actions = [
@@ -21,6 +29,7 @@ class EditorFrame extends React.Component {
           title={this.props.title}
           actions={actions}
           modal={true}
+          contentStyle={style.content}
           autoScrollBodyContent={true}
           open={this.props.open || false} >
         {this.props.children}
