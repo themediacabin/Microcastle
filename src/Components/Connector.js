@@ -15,7 +15,7 @@ function connectMicrocastle(Original, schemaNames) {
       microcastle: {
         schemas: {},
         get: function(schemaName, entryID, attributeName) {
-          return this.schemas[schemaName].get(row).get(column);
+          return this.schemas[schemaName].get(entryID).get(attributeName);
         },
         getEntries: function(schemaName) {
           return this.schemas[schemaName];
