@@ -19,7 +19,7 @@ class Editor extends React.Component {
         schema.onNew(this.getTempState().toJS()).then((edited) => {
             _.forIn(edited, (value, entryID) => {
               const action = DataStore.actions.insertData(
-                self.props.microcastleEditor.get('schema'),
+                self.props.microcastleStore.get('editor').get('schema'),
                 entryID,
                 value
               );
@@ -32,7 +32,7 @@ class Editor extends React.Component {
   }
 
   getTempState() {
-    return this.props.microcastleEditor.get('tempState') || Immutable.Map({});
+    return this.props.microcastleStore.get('editor').get('tempState') || Immutable.Map({});
   }
 
   onComponentChange(attributeName, value) {
@@ -42,7 +42,7 @@ class Editor extends React.Component {
   }
 
   getCurrentValue(attributeName, defaultValue) {
-    return this.props.microcastleEditor.getIn(['tempState', attributeName], defaultValue);
+    return this.props.microcastleStore.get('editor').getIn(['tempState', attributeName], defaultValue);
   }
 
   render() {

@@ -13,14 +13,14 @@ import DataTypes from '../DataTypes';
 class Editor extends React.Component {
   onSubmit() {
     let self = this;
-    const entryID = self.props.microcastleEditor.get('entry');
+    const entryID = self.props.microcastleStore.get('editor').get('entry');
     const schema = this.props.schema;
     if (!!schema.onEdit){
       schema.onEdit(this.getTempState().toJS(), {id: entryID})
         .then((edited) => {
           _.forIn(edited, (value, attributeName) => {
             const action = DataStore.actions.updateData(
-              self.props.microcastleEditor.get('schema'),
+              self.props.microcastleStore.get('editor').get('schema'),
               entryID,
               attributeName,
               value
@@ -32,7 +32,7 @@ class Editor extends React.Component {
   }
 
   getTempState() {
-    return this.props.microcastleEditor.get('tempState') || Immutable.Map({});
+    return this.props.microcastleStore.get('editor').get('tempState') || Immutable.Map({});
   }
 
   onComponentChange(attributeName, value) {
@@ -42,7 +42,7 @@ class Editor extends React.Component {
   }
 
   getCurrentValue(attributeName, defaultValue) {
-    return this.props.microcastleEditor.getIn(['tempState', attributeName], defaultValue);
+    return this.props.microcastleStore.get('editor').getIn(['tempState', attributeName], defaultValue);
   }
 
   render() {

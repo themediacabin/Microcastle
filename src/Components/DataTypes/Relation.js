@@ -88,7 +88,7 @@ class RelationEditor extends React.Component {
     this.setState({editorWrap: this.state.editorWrap
       .set('open', true).set('schema', this.props.options.relative)
       .set('entry', this.props.value).set('action', 'EDIT_ENTRY')
-      .set('tempState', this.props.microcastleStore.getIn([this.props.options.relative, this.props.value]))
+      .set('tempState', this.props.microcastleStore.get('data').getIn([this.props.options.relative, this.props.value]))
     });
   }
 
@@ -193,7 +193,7 @@ class RelationEditor extends React.Component {
 
   getChoosingView() {
     const relationName = this.props.options.relative;
-    const relation = this.props.microcastleStore.get(relationName);
+    const relation = this.props.microcastleStore.get('data').get(relationName);
 
     const selection = relation.map((value, name) => {
       const image = getFirstImageAttributeName(this.getCurrentSchema());

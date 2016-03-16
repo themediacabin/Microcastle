@@ -13,16 +13,16 @@ import DataTypes from '../DataTypes';
 class Editor extends React.Component {
   onSubmit() {
     let self = this;
-    const entryID = self.props.microcastleEditor.get('entry');
+    const entryID = self.props.microcastleStore.get('editor').get('entry');
     const attributeSchema = this.getAttributeSchema();
     if (!!attributeSchema.onChange){
       attributeSchema.onChange(
-            this.props.microcastleEditor.get('tempState'), {id: entryID})
+            this.props.microcastleStore.get('editor').get('tempState'), {id: entryID})
         .then((edited) => {
             const action = DataStore.actions.updateData(
-              self.props.microcastleEditor.get('schema'),
+              self.props.microcastleStore.get('editor').get('schema'),
               entryID,
-              self.props.microcastleEditor.get('attribute'),
+              self.props.microcastleStore.get('editor').get('attribute'),
               edited
             );
             return self.props.dispatch(action);
@@ -35,18 +35,18 @@ class Editor extends React.Component {
   }
 
   getCurrentValue() {
-    return this.props.microcastleEditor.get('tempState', '');
+    return this.props.microcastleStore.get('editor').get('tempState', '');
   }
 
   getAttributeSchema() {
-    const attributeName = this.props.microcastleEditor.get('attribute');
+    const attributeName = this.props.microcastleStore.get('editor').get('attribute');
     return this.props.schema.attributes[attributeName];
   }
 
   render() {
-    const attributeName = this.props.microcastleEditor.get('attribute');
+    const attributeName = this.props.microcastleStore.get('editor').get('attribute');
     const schema = this.getAttributeSchema();
-    const entryID = this.props.microcastleEditor.get('entry');
+    const entryID = this.props.microcastleStore.get('editor').get('entry');
     const EditorComponent = DataTypes.stringToComponent(schema.type);
 
     return (

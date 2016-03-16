@@ -24,7 +24,7 @@ function connectMicrocastle(Original, schemaNames) {
     };
 
     for (let schemaName of schemaNames) {
-      ret.microcastle.schemas[schemaName] = state.microcastle.get(schemaName);
+      ret.microcastle.schemas[schemaName] = state.microcastle.get('data').get(schemaName);
     }
 
     return ret;

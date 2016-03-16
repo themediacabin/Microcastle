@@ -14,16 +14,16 @@ import EntryEditor from './Editors/Entry';
 class Editor extends React.Component {
 
   isOpen() {
-    return this.props.microcastleEditor.get('open');
+    return this.props.microcastle.get('editor').get('open');
   }
 
   getCurrentSchema() {
-    const schema = this.props.microcastleEditor.get('schema');
+    const schema = this.props.microcastle.get('editor').get('schema');
     return this.props.schemas[schema];
   }
 
   getEditor() {
-    switch (this.props.microcastleEditor.get('action')) {
+    switch (this.props.microcastle.get('editor').get('action')) {
       case 'EDIT_SINGLE':
         return SingleEditor;
       case 'EDIT_ENTRY':
@@ -64,7 +64,6 @@ class Editor extends React.Component {
               <CurrentEditor schema={this.getCurrentSchema()}
                              microcastleSchema={this.props.schemas}
                              microcastleStore={this.props.microcastle}
-                             microcastleEditor={this.props.microcastleEditor}
                              changeTempState={this.onChangeTempState.bind(this)}
                              dispatch={this.props.dispatch}
                              ref={c => this._editor = c}/>
@@ -74,7 +73,6 @@ class Editor extends React.Component {
 
 const connectReducers = connect((state) => {
   return {
-    microcastleEditor: state.microcastleEditor,
     microcastle: state.microcastle,
   };
 });
