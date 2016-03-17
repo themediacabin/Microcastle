@@ -129,7 +129,7 @@ function reducer(state = initalState, action) {
     }
 
     case MICROCASTLE_EDITOR_SET_TEMP_STATE:
-      return state.set(['editor', 'tempState'], action.state);
+      return state.setIn(['editor', 'tempState'], action.state);
 
     default:
       return state;
