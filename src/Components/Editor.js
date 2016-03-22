@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import _ from 'lodash';
 
-import DataStore from '../Store/Data';
-import EditorStore from '../Store/Editor';
+import Store from '../Store/Store';
 
 import EditorFrame from './EditorFrame';
 import NewEditor from './Editors/New';
@@ -36,17 +35,17 @@ class Editor extends React.Component {
 
   onSubmit() {
     this._editor.onSubmit();
-    const action = EditorStore.actions.close();
+    const action = Store.actions.close();
     return this.props.dispatch(action);
   }
 
   onCancel() {
-    const action = EditorStore.actions.close();
+    const action = Store.actions.close();
     return this.props.dispatch(action);
   }
 
   onChangeTempState(newState) {
-    const action = EditorStore.actions.setTempState(newState);
+    const action = Store.actions.setTempState(newState);
     return this.props.dispatch(action);
   }
 

@@ -1,17 +1,16 @@
 import Editor from './Components/Editor.js';
 import Connector from './Components/Connector.js';
 
-import DataStore from './Store/Store.js';
-import EditorStore from './Store/Editor.js';
+import MicrocastleStore from './Store/Store';
 
 export default {
   Microcastle: Connector,
   MicrocastleEditor: Editor,
-  MicrocastleStore: DataStore,
+  MicrocastleStore: MicrocastleStore,
 };
 
 export {
   Connector as Microcastle,
   Editor as MicrocastleEditor,
-  DataStore as MicrocastleStore,
+  MicrocastleStore as MicrocastleStore,
 };

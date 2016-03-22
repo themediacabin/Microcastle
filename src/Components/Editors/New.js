@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import _ from 'lodash';
 
-import DataStore from '../../Store/Data';
-import EditorStore from '../../Store/Editor';
+import Store from '../../Store/Store';
 import EditorFrame from '../EditorFrame';
 
 import DataTypes from '../DataTypes';
@@ -18,7 +17,7 @@ class Editor extends React.Component {
       return new Promise((resolve, reject) => {
         schema.onNew(this.getTempState().toJS()).then((edited) => {
             _.forIn(edited, (value, entryID) => {
-              const action = DataStore.actions.insertData(
+              const action = Store.actions.insertData(
                 self.props.microcastleStore.get('editor').get('schema'),
                 entryID,
                 value

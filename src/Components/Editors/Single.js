@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import _ from 'lodash';
 
-import DataStore from '../../Store/Data';
-import EditorStore from '../../Store/Editor';
+import Store from '../../Store/Store';
 import EditorFrame from '../EditorFrame';
 
 import DataTypes from '../DataTypes';
@@ -19,7 +18,7 @@ class Editor extends React.Component {
       attributeSchema.onChange(
             this.props.microcastleStore.get('editor').get('tempState'), {id: entryID})
         .then((edited) => {
-            const action = DataStore.actions.updateData(
+            const action = Store.actions.updateData(
               self.props.microcastleStore.get('editor').get('schema'),
               entryID,
               self.props.microcastleStore.get('editor').get('attribute'),
