@@ -3,8 +3,6 @@ import Immutable from 'immutable';
 
 import DataTypes from '../DataTypes';
 
-import FlatButton from 'material-ui/lib/flat-button';
-
 const style = {
   base: {
   }
@@ -51,11 +49,11 @@ class ArrayEditor extends React.Component {
           {components}
         </div>
         <div>
-          <FlatButton
+          <button
             label="-"
             secondary={true}
             onClick={this.onRemove.bind(this)} />
-          <FlatButton
+          <button
             label="+"
             primary={true}
             onClick={this.onAdd.bind(this)} />

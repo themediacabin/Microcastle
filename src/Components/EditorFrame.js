@@ -52,10 +52,22 @@ const style = {
     margin: 0,
   },
   body: {
-    flex: '1 1 1',
-    padding: 20,
+    flex: '1 1 1px',
     background: 'white',
+    display: 'flex',
+    flexDirection: 'column',
   },
+  padding: {
+    flex: '1 1 1px',
+    background: 'white',
+    display: 'flex',
+  },
+  paddingColor: {
+    background: '#FCDDD6',
+    width: 100,
+    flexGrow: 0,
+    flexShink: 0,
+  }
 }
 
 class EditorFrame extends React.Component {
@@ -73,6 +85,10 @@ class EditorFrame extends React.Component {
         </div>
         <div style={style.body}>
           {this.props.children}
+          <div style={style.padding}>
+            <div style={style.paddingColor}></div>
+            <div></div>
+          </div>
         </div>
       </div>
     </div>;

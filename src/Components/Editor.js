@@ -58,7 +58,7 @@ class Editor extends React.Component {
     return <EditorFrame
               onSubmit={self.onSubmit.bind(self)}
               onCancel={self.onCancel.bind(self)}
-              title="Microcatle Editor"
+              title="Microcastle Editor"
               open={true}>
               <CurrentEditor schema={this.getCurrentSchema()}
                              microcastleSchema={this.props.schemas}

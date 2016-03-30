@@ -7,15 +7,6 @@ import DataTypes from '../DataTypes';
 import EntryEditor from '../Editors/Entry';
 import NewEditor from '../Editors/New';
 
-import FlatButton from 'material-ui/lib/flat-button';
-import Paper from 'material-ui/lib/paper';
-import AppBar from 'material-ui/lib/app-bar';
-import NavigationClose from 'material-ui/lib/svg-icons/navigation/close';
-import IconButton from 'material-ui/lib/icon-button';
-import GridList from 'material-ui/lib/grid-list/grid-list';
-import GridTile from 'material-ui/lib/grid-list/grid-tile';
-import NavigationExpandMoreIcon from 'material-ui/lib/svg-icons/navigation/expand-more';
-
 
 const style = {
   base: {

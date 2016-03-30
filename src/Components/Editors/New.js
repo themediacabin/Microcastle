@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 import Store from '../../Store/Store';
 import EditorFrame from '../EditorFrame';
+import ItemFrame from '../ItemFrame';
 
 import DataTypes from '../DataTypes';
 
@@ -50,15 +51,14 @@ class Editor extends React.Component {
     const editorComponents = _.values(_.mapValues(schema, (columnOptions, columnName) => {
       const ColumnComponent = DataTypes.stringToComponent(columnOptions.type);
       return (
-        <span key={columnName}>
-          <h2>{columnName}</h2>
+        <ItemFrame title={columnName} key={columnName}>
           <ColumnComponent onChange={this.onComponentChange.bind(this, columnName)}
                            value={this.getCurrentValue(columnName, ColumnComponent.defaultValue())}
                            options={columnOptions.options}
                            microcastleStore={this.props.microcastleStore}
                            microcastleSchema={this.props.microcastleSchema}
                            dispatch={this.props.dispatch} />
-        </span>
+        </ItemFrame>
       );
     }));
 
