@@ -1,7 +1,5 @@
 import React from 'react';
 
-import TextField from 'material-ui/lib/text-field';
-
 const style = {
   base: {
     width: '90%',
@@ -18,10 +16,9 @@ class TextEditor extends React.Component {
   }
 
   render() {
-    return <TextField
+    return <input type='text'
       defaultValue={this.props.value}
       onChange={this.onChange.bind(this)}
-      multiLine={true}
       style={style.base} />;
   }
 }

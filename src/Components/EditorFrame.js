@@ -1,40 +1,81 @@
 import React from 'react';
 
-import Dialog from 'material-ui/lib/dialog';
-import FlatButton from 'material-ui/lib/flat-button';
-
-
 const style = {
   content: {
     minWidth: '80%',
     minHeight: '80vh',
-  }
+  },
+  background: {
+    background: 'rgba(0, 0, 0, 0.5)',
+    width: '100vw',
+    height: '100vh',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modal: {
+    background: 'white',
+    maxWidth: 1200,
+    width: '90%',
+    height: '90%',
+    display: 'flex',
+    flexDirection: 'column',
+    fontFamily: '\'Helvetica Neue\', Helvetica, Arial, sans-serif'
+  },
+  header: {
+    background: '#F57F61',
+    minHeight: 50,
+    padding: 20,
+    color: 'white',
+    flexGrow: 0,
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+  },
+  headerButton: {
+    background: 'white',
+    color: '#F57F61',
+    margin: 5,
+    marginBottom: 0,
+    fontSize: '0.9em',
+    padding: '5px 10px',
+    border: 'none',
+    borderRadius: 0,
+    cursor: 'pointer',
+  },
+  headerTitle: {
+    padding: 0,
+    margin: 0,
+  },
+  body: {
+    flex: '1 1 1',
+    padding: 20,
+    background: 'white',
+  },
 }
 
 class EditorFrame extends React.Component {
   render() {
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        secondary={true}
-        onClick={this.props.onCancel} />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        onClick={this.props.onSubmit} />,
-    ];
+    if (!this.props.open) return null;
 
-    return (
-      <Dialog
-          title={this.props.title}
-          actions={actions}
-          modal={true}
-          contentStyle={style.content}
-          autoScrollBodyContent={true}
-          open={this.props.open || false} >
-        {this.props.children}
-      </Dialog>
-    );
+    return <div style={style.background}>
+      <div style={style.modal}>
+        <div style={style.header}>
+          <h2 style={style.headerTitle}>{this.props.title}</h2>
+          <div>
+            <button style={style.headerButton} onClick={this.props.onSubmit}>Save</button>
+            <button style={style.headerButton} onClick={this.props.onCancel}>Close</button>
+          </div>
+        </div>
+        <div style={style.body}>
+          {this.props.children}
+        </div>
+      </div>
+    </div>;
   }
 }
 
