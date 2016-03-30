@@ -10,23 +10,26 @@ import NewEditor from '../Editors/New';
 
 const style = {
   base: {
-    marginTop: '10px',
-    marginBottom: '10px',
+    boxShadow: 'rgb(43, 43, 43) 0px 0px 14px -6px',
   },
-  gridItem: {
-    cursor: 'pointer',
+  header: {
+    background: '#F57F61',
+    color: 'white',
+    padding: 5,
   },
   selector: {
-    height: '300px',
-    overflowY: 'scroll',
-    overflowX: 'hidden',
-    width: '100%',
+    padding: 5,
   },
-  editor: {
-    height: '300px',
-    overflowY: 'scroll',
-    width: '100%',
-    padding: '5px',
+  headerButton: {
+    float: 'right',
+    background: 'white',
+    border: 0,
+    borderRadius: 'none',
+    margin: 1,
+    color: '#F57F61',
+  },
+  headerTitle: {
+    display: 'inline',
   },
 }
 
@@ -115,16 +118,11 @@ class RelationEditor extends React.Component {
 
     return (
       <div>
-        <AppBar title={"Creating New " + relationName}
-           iconElementLeft={
-             <IconButton onClick={this.onReselect.bind(this)}>
-               <NavigationClose />
-             </IconButton>
-           }
-           iconElementRight={
-             <FlatButton label="Save And Use"
-                         onClick={this.onSaveNew.bind(this)} />
-           } />
+        <div style={style.header}>
+          <h4 style={style.headerTitle}>{"Creating New " + relationName}</h4>
+          <button style={style.headerButton} onClick={this.onReselect.bind(this)}>Close</button>
+          <button style={style.headerButton} onClick={this.onSaveNew.bind(this)}>Save</button>
+        </div>
         <div style={style.editor}>
           <NewEditor schema={this.getCurrentSchema()}
                      microcastleStore={this.props.microcastleStore}
@@ -141,16 +139,12 @@ class RelationEditor extends React.Component {
   getEditingView() {
     return (
       <div>
-        <AppBar title={this.props.value}
-            iconElementLeft={
-              <IconButton onClick={this.onReselect.bind(this)}>
-                <NavigationClose />
-              </IconButton>
-            }
-           iconElementRight={
-             <FlatButton label="Save Changes"
-                         onClick={this.onSaveEdit.bind(this)} />
-           } />
+        <div style={style.header}>
+          <h4 style={style.headerTitle}>{this.props.value}</h4>
+          <button style={style.headerButton} onClick={this.onReselect.bind(this)}>Reselect</button>
+          <button style={style.headerButton} onClick={this.onSaveEdit.bind(this)}>Save</button>
+        </div>
+
         <div style={style.editor}>
           <EntryEditor schema={this.getCurrentSchema()}
                        microcastleStore={this.props.microcastleStore}
@@ -167,17 +161,11 @@ class RelationEditor extends React.Component {
   getChosenView() {
     return (
       <div>
-        <AppBar title={this.props.value}
-            iconElementLeft={
-              <IconButton onClick={this.onReselect.bind(this)}>
-                <NavigationClose />
-              </IconButton>
-            }
-           iconElementRight={
-             <IconButton onClick={this.setEditing.bind(this)}>
-               <NavigationExpandMoreIcon />
-             </IconButton>
-           } />
+        <div style={style.header}>
+          <h4 style={style.headerTitle}>{this.props.value}</h4>
+          <button style={style.headerButton} onClick={this.onReselect.bind(this)}>Reselect</button>
+          <button style={style.headerButton} onClick={this.setEditing.bind(this)}>Edit</button>
+        </div>
       </div>
     );
   }
@@ -188,28 +176,22 @@ class RelationEditor extends React.Component {
 
     const selection = relation.map((value, name) => {
       const image = getFirstImageAttributeName(this.getCurrentSchema());
-      return (
-        <GridTile key={name}
-                  style={style.gridItem}
-                  title={name}
-                  onClick={this.onChoose.bind(this, name)}>
-          {image ? <img src={value.get(image)} /> : <span />}
-        </GridTile>
-      );
+      return  <div key={name} onClick={this.onChoose.bind(this, name)}>
+        {name}
+        {image ? <img src={value.get(image)} /> : null}
+      </div>
     }).toArray();
 
     return (
       <div>
-        <AppBar title={"Choose One " + relationName}
-                showMenuIconButton={false} zDepth={0}
-                iconElementRight={
-                  <FlatButton label="Create New"
-                              onClick={this.onCreate.bind(this)} />
-                } />
+        <div style={style.header}>
+          <h4 style={style.headerTitle}>{"Choose One " + relationName}</h4>
+          <button style={style.headerButton} onClick={this.onCreate.bind(this)}>Create New</button>
+        </div>
         <div style={style.selector}>
-          <GridList cols={3} cellHeight={200} padding={1}>
+          <div>
             {selection}
-          </GridList>
+          </div>
         </div>
       </div>
     );
@@ -228,9 +210,9 @@ class RelationEditor extends React.Component {
   }
 
   render() {
-    return <Paper zDepth={3} style={style.base}>
+    return <div style={style.base}>
         {this.getView()}
-    </Paper>;
+    </div>;
   }
 }
 

@@ -18,6 +18,7 @@ const style = {
   },
   modal: {
     background: 'white',
+    boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
     maxWidth: 1200,
     width: '90%',
     height: '90%',
@@ -63,7 +64,7 @@ const style = {
     display: 'flex',
   },
   paddingColor: {
-    background: '#FCDDD6',
+    background: 'rgb(243, 243, 243)',
     width: 100,
     flexGrow: 0,
     flexShink: 0,

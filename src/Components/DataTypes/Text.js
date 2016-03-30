@@ -2,7 +2,8 @@ import React from 'react';
 
 const style = {
   base: {
-    width: '90%',
+    boxSizing: 'border-box',
+    width: '100%',
   },
 };
 
@@ -17,7 +18,7 @@ class TextEditor extends React.Component {
 
   render() {
     return <input type='text'
-      defaultValue={this.props.value}
+      value={this.props.value}
       onChange={this.onChange.bind(this)}
       style={style.base} />;
   }

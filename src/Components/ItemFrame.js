@@ -6,7 +6,7 @@ const style = {
     minHeight: 20,
   },
   titleBox: {
-    background: '#FCDDD6',
+    background: 'rgb(243, 243, 243)',
     width: 100,
     textAlign: 'right',
     flexGrow: 0,
