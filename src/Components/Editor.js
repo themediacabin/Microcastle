@@ -10,6 +10,9 @@ import NewEditor from './Editors/New';
 import SingleEditor from './Editors/Single';
 import EntryEditor from './Editors/Entry';
 
+import HTML5Backend from 'react-dnd-html5-backend';
+import {DragDropContext} from 'react-dnd';
+
 class Editor extends React.Component {
 
   isOpen() {
@@ -50,7 +53,7 @@ class Editor extends React.Component {
   }
 
   render() {
-    if (!this.isOpen()) return false;
+    if (!this.isOpen()) return null;
     const self = this;
 
     const CurrentEditor = this.getEditor();
@@ -75,5 +78,4 @@ const connectReducers = connect((state) => {
     microcastle: state.microcastle,
   };
 });
-
-export default connectReducers(Editor);
+export default DragDropContext(HTML5Backend)(connectReducers(Editor))
