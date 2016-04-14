@@ -115,6 +115,7 @@ class RelationEditor extends React.Component {
 
   getCreatingView() {
     const relationName = this.props.options.relative;
+    const wrappedStore = this.props.microcastleStore.set('editor', this.state.editorWrap);
 
     return (
       <div>
@@ -125,7 +126,7 @@ class RelationEditor extends React.Component {
         </div>
         <div style={style.editor}>
           <NewEditor schema={this.getCurrentSchema()}
-                     microcastleStore={this.props.microcastleStore}
+                     microcastleStore={wrappedStore}
                      microcastleSchema={this.props.microcatleSchema}
                      microcastleEditor={this.state.editorWrap}
                      changeTempState={this.onEditorChange.bind(this)}
@@ -137,6 +138,7 @@ class RelationEditor extends React.Component {
   }
 
   getEditingView() {
+    const wrappedStore = this.props.microcastleStore.set('editor', this.state.editorWrap);
     return (
       <div>
         <div style={style.header}>
@@ -147,7 +149,7 @@ class RelationEditor extends React.Component {
 
         <div style={style.editor}>
           <EntryEditor schema={this.getCurrentSchema()}
-                       microcastleStore={this.props.microcastleStore}
+                       microcastleStore={wrappedStore}
                        microcastleSchema={this.props.microcatleSchema}
                        microcastleEditor={this.state.editorWrap}
                        changeTempState={this.onEditorChange.bind(this)}

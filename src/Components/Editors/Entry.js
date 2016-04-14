@@ -17,7 +17,7 @@ const style = {
   }
 }
 
-class Editor extends React.Component {
+class EntryEditor extends React.Component {
   onSubmit() {
     let self = this;
     const entryID = self.props.microcastleStore.get('editor').get('entry');
@@ -75,4 +75,4 @@ class Editor extends React.Component {
   }
 }
 
-export default Editor;
+export default EntryEditor;

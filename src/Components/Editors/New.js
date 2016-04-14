@@ -10,7 +10,7 @@ import ItemFrame from '../ItemFrame';
 import DataTypes from '../DataTypes';
 
 
-class Editor extends React.Component {
+class NewEditor extends React.Component {
   onSubmit() {
     let self = this;
     const schema = this.props.schema;
@@ -68,4 +68,4 @@ class Editor extends React.Component {
   }
 }
 
-export default Editor;
+export default NewEditor;

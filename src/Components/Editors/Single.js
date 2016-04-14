@@ -10,7 +10,7 @@ import ItemFrame from '../ItemFrame';
 import DataTypes from '../DataTypes';
 
 
-class Editor extends React.Component {
+class SingleEditor extends React.Component {
   onSubmit() {
     let self = this;
     const entryID = self.props.microcastleStore.get('editor').get('entry');
@@ -63,4 +63,4 @@ class Editor extends React.Component {
 }
 
 
-export default Editor
+export default SingleEditor
