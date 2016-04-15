@@ -30,7 +30,7 @@ class EntryEditor extends React.Component {
               self.props.microcastleStore.get('editor').get('schema'),
               entryID,
               attributeName,
-              value
+              Immutable.fromJS(value)
             );
             return self.props.dispatch(action);
           });
