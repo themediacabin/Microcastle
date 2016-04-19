@@ -15,6 +15,7 @@ const style = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: '99999999',
   },
   modal: {
     background: 'white',

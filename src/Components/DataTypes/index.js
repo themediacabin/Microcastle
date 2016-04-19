@@ -3,9 +3,10 @@ import Text from './Text';
 import Array from './Array';
 import Image from './Image';
 import Relation from './Relation';
+import Markdown from './Markdown';
 
 function stringToComponent(string) {
-  switch(string) {
+  switch (string) {
     case 'text':
       return Text;
     case 'select':
@@ -16,6 +17,8 @@ function stringToComponent(string) {
       return Image;
     case 'relation':
       return Relation;
+    case 'markdown':
+      return Markdown;
   };
   return false;
 }
@@ -27,4 +30,4 @@ export default {
   Image,
   Relation,
   stringToComponent,
-}
+};
