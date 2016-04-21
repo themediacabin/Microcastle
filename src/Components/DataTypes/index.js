@@ -29,5 +29,6 @@ export default {
   Array,
   Image,
   Relation,
+  Markdown,
   stringToComponent,
 };
