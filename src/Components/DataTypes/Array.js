@@ -133,7 +133,7 @@ class ArrayEditor extends React.Component {
     const value = this.props.value.get(prevIndex);
     const removed = this.props.value.delete(prevIndex);
     const inserted = removed.insert(newIndex, value);
-    this.props.onChange(inserted);
+    this.props.onChange(Immutable.fromJS(inserted));
   }
 
   individualChange(index, value) {

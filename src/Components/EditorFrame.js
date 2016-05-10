@@ -58,6 +58,7 @@ const style = {
     background: 'white',
     display: 'flex',
     flexDirection: 'column',
+    overflowY: 'scroll',
   },
   padding: {
     flex: '1 1 1px',

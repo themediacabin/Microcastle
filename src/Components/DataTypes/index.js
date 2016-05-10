@@ -4,6 +4,7 @@ import Array from './Array';
 import Image from './Image';
 import Relation from './Relation';
 import Markdown from './Markdown';
+import Group from './Group';
 
 function stringToComponent(string) {
   switch (string) {
@@ -19,6 +20,8 @@ function stringToComponent(string) {
       return Relation;
     case 'markdown':
       return Markdown;
+    case 'group':
+      return Group;
   };
   return false;
 }
