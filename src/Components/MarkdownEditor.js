@@ -8,6 +8,7 @@ export default class MarkdownEditor extends React.Component {
     this._editor.codemirror.on("change", () => {
       this.props.onChange(self._editor.value());
     });
+    this._editor.value(this.props.value);
   }
   
   componentWillUnmount() {
