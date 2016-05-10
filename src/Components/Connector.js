@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import I from 'immutable';
 
 function connectMicrocastle(Original, schemaNames) {
   const MicrocastleConnector = class extends React.Component {

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import marked from 'marked';
+import MarkdownEditor from '../MarkdownEditor';
 
 const style = {
   base: {
@@ -47,28 +48,13 @@ class TextEditor extends React.Component {
     return '';
   }
 
-  onChange(event) {
-    this.props.onChange(event.target.value);
+  onChange(v) {
+    this.props.onChange(v);
   }
 
   render() {
     return <span>
-      <div style={style.base}>
-        <div style={style.textAreaContainer}>
-          <p style={style.fieldLabel}>
-            Markdown (<a href='http://commonmark.org/help/' target='_blank'>?</a>)
-          </p>
-          <textarea
-            value={this.props.value}
-            onChange={this.onChange.bind(this)}
-            style={style.textArea} />
-        </div>
-        <div style={style.previewContainer}>
-          <p style={style.fieldLabel}>Preview</p>
-          <div style={style.preview}
-            dangerouslySetInnerHTML={{ __html: marked(this.props.value) }} />
-        </div>
-      </div>
+      <MarkdownEditor value={this.props.value}  onChange={this.onChange.bind(this)} />
     </span>;
   }
 }
