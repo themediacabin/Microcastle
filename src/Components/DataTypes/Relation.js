@@ -161,12 +161,24 @@ class RelationEditor extends React.Component {
   }
 
   getChosenView() {
+    const relationName = this.props.options.relative;
+    const currentSchema = this.getCurrentSchema();
+    const value = this.props.microcastleStore.get('data').get(relationName).get(this.props.value);
+
+    const view = currentSchema.display == null ? null
+                                               : <currentSchema.display onClick={() => {}} name={this.props.value} value={value} />;
+    
     return (
       <div>
         <div style={style.header}>
           <h4 style={style.headerTitle}>{this.props.value}</h4>
           <button style={style.headerButton} onClick={this.onReselect.bind(this)}>Reselect</button>
           <button style={style.headerButton} onClick={this.setEditing.bind(this)}>Edit</button>
+        </div>
+        <div style={style.selector}>
+          <div>
+            {view}
+          </div>
         </div>
       </div>
     );
@@ -177,11 +189,16 @@ class RelationEditor extends React.Component {
     const relation = this.props.microcastleStore.get('data').get(relationName);
 
     const selection = relation.map((value, name) => {
+      const currentSchema = this.getCurrentSchema()
       const image = getFirstImageAttributeName(this.getCurrentSchema());
-      return  <div key={name} onClick={this.onChoose.bind(this, name)}>
-        {name}
-        {image ? <img src={value.get(image)} /> : null}
-      </div>
+      if (currentSchema.display == null) {
+        return  <div key={name} onClick={this.onChoose.bind(this, name)}>
+          {name}
+        </div>
+      } else {
+        const currentSchema = this.getCurrentSchema()
+        return <currentSchema.display key={name} onClick={this.onChoose.bind(this, name)} name={name} value={value} />
+      }
     }).toArray();
 
     return (
