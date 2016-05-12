@@ -53,7 +53,7 @@ class SingleEditor extends React.Component {
       <ItemFrame title={attributeName}>
         <EditorComponent onChange={this.onChange.bind(this)}
                          value={this.getCurrentValue()}
-                         options={schema.options}
+                         options={schema}
                          microcastleStore={this.props.microcastleStore}
                          microcastleSchema={this.props.microcastleSchema}
                          dispatch={this.props.dispatch} />

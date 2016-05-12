@@ -61,7 +61,7 @@ class EntryEditor extends React.Component {
         <ItemFrame title={columnName} key={columnName}>
           <ColumnComponent onChange={this.onComponentChange.bind(this, columnName)}
                            value={this.getCurrentValue(columnName, ColumnComponent.defaultValue())}
-                           options={columnOptions.options}
+                           options={columnOptions}
                            microcastleStore={this.props.microcastleStore}
                            microcastleSchema={this.props.microcastleSchema}
                            dispatch={this.props.dispatch} />

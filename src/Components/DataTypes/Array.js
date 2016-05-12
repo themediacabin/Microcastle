@@ -79,7 +79,7 @@ class ArrayItem extends React.Component {
           <this.props.SubType
                 onChange={this.props.individualChange.bind(this, index)}
                 value={this.props.individualValue}
-                options={this.props.options.suboptions}
+                options={this.props.options}
                 microcastleStore={this.props.microcastleStore}
                 microcastleSchema={this.props.microcastleSchema}
                 dispatch={this.props.dispatch} />
@@ -121,7 +121,7 @@ class ArrayEditor extends React.Component {
 
   onAdd() {
     this.props.onChange(this.props.value.insert(0,
-      DataTypes.stringToComponent(this.props.options.subtype).defaultValue()
+      DataTypes.stringToComponent(this.props.options.subtype.type).defaultValue()
     ));
   }
 
@@ -141,7 +141,7 @@ class ArrayEditor extends React.Component {
   }
 
   render() {
-    const SubType = DataTypes.stringToComponent(this.props.options.subtype)
+    const SubType = DataTypes.stringToComponent(this.props.options.subtype.type)
 
     const sortedComponents = this.props.value.sort();
 
@@ -156,7 +156,7 @@ class ArrayEditor extends React.Component {
                                 individualChange={this.individualChange.bind(this)}
                                 individualValue={individualValue}
                                 SubType={SubType}
-                                options={this.props.options}
+                                options={this.props.options.subtype}
                                 microcastleStore={this.props.microcastleStore}
                                 microcastleSchema={this.props.microcastleSchema}
                                 dispatch={this.props.dispatch} />

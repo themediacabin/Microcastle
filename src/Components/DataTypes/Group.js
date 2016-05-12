@@ -52,7 +52,7 @@ class GroupEditor extends React.Component {
       return <div key={key}>
                 <h3>{key}</h3>
                 <TypeEditor
-                  options={val.options}
+                  options={val}
                   value={individualValue}
                   onChange={this.onChangeIndividual.bind(this, key)}
                   microcastleStore={this.props.microcastleStore}
