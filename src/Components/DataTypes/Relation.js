@@ -93,12 +93,12 @@ class RelationEditor extends React.Component {
       .set('tempState', false)
     });
 
-    this.props.onChange(false);
+    this.props.onChange(null);
   }
 
   onReselect() {
     this.setState({editorWrap: new Immutable.Map()});
-    this.props.onChange(false);
+    this.props.onChange(null);
   }
 
   onSaveEdit() {
