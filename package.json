@@ -1,6 +1,6 @@
 {
   "name": "microcastle",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Frontend only CMS",
   "main": "lib/index.js",
   "scripts": {
@@ -32,7 +32,8 @@
     "react-redux": "^4.0.6",
     "react-textarea-autosize": "^3.3.1",
     "redux": "^3.0.5",
-    "simplemde": "^1.10.1"
+    "simplemde": "^1.10.1",
+    "spell-checker": "0.0.26"
   },
   "devDependencies": {
     "babel-core": "^6.4.5",
