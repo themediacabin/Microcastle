@@ -127,7 +127,7 @@ class RelationEditor extends React.Component {
         <div style={style.editor}>
           <NewEditor schema={this.getCurrentSchema()}
                      microcastleStore={wrappedStore}
-                     microcastleSchema={this.props.microcatleSchema}
+                     microcastleSchema={this.props.microcastleSchema}
                      microcastleEditor={this.state.editorWrap}
                      changeTempState={this.onEditorChange.bind(this)}
                      dispatch={this.props.dispatch}
@@ -150,7 +150,7 @@ class RelationEditor extends React.Component {
         <div style={style.editor}>
           <EntryEditor schema={this.getCurrentSchema()}
                        microcastleStore={wrappedStore}
-                       microcastleSchema={this.props.microcatleSchema}
+                       microcastleSchema={this.props.microcastleSchema}
                        microcastleEditor={this.state.editorWrap}
                        changeTempState={this.onEditorChange.bind(this)}
                        dispatch={this.props.dispatch}
