@@ -10,12 +10,13 @@ import NewEditor from '../Editors/New';
 
 const style = {
   base: {
-    boxShadow: 'rgb(43, 43, 43) 0px 0px 14px -6px',
+    border: '1px solid rgb(214, 214, 214)',
   },
   header: {
-    background: '#F57F61',
-    color: 'white',
+    background: 'white',
     padding: 5,
+    fontWeight: '200',
+    color: '#888',
   },
   selector: {
     padding: 5,
@@ -26,7 +27,8 @@ const style = {
     border: 0,
     borderRadius: 'none',
     margin: 1,
-    color: '#F57F61',
+    color: '#888',
+    cursor: 'pointer',
   },
   headerTitle: {
     display: 'inline',

@@ -4,12 +4,15 @@ import Immutable from 'immutable';
 import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
+import TimesIcon from 'react-icons/lib/md/clear';
+import BarsIcon from 'react-icons/lib/md/reorder';
+
 import DataTypes from '../DataTypes';
 
 const style = {
   header: {
-    background: '#F57F61',
-    color: 'white',
+    flex: '0 0',
+    color: 'gray',
     margin: 0,
     padding: 5,
   },
@@ -18,17 +21,38 @@ const style = {
     background: 'white',
     marginTop: 5,
     marginBottom: 5,
-    boxShadow: 'rgb(43, 43, 43) 0px 0px 14px -6px',
+    border: 'solid 1px rgb(204, 204, 204)',
+    display: 'flex',
   }),
   content: {
+    flex: '1 1',
     padding: 5,
   },
+  dragIcon: {
+    display: 'block',
+    fontSize: '20px',
+    marginRight: 5,
+    marginBottom: 10,
+    cursor: 'move',
+    color: 'rgb(204, 204, 204)',
+  },
+  closeIcon: {
+    display: 'block',
+    fontSize: '20px',
+    marginRight: 5,
+    marginBottom: 5,
+    cursor: 'pointer',
+    color: 'rgb(204, 204, 204)',
+  },
   button: {
-    margin: 3,
-    background: 'white',
-    color: '#F57F61',
-    borderRadius: 0,
+    background: '#F57F61',
+    color: 'white',
+    fontSize: 13,
+    borderRadius: 4,
+    padding: '4px 8px',
     border: 'none',
+    cursor: 'pointer',
+    margin: 2,
   }
 
 };
@@ -70,10 +94,11 @@ class ArrayItem extends React.Component {
     const onMove = this.props.onMove;
     const onDelete = this.props.onDelete;
 
-    return this.props.connectDragSource(this.props.connectDropTarget(
+    return this.props.connectDragPreview(this.props.connectDropTarget(
       <div key={index} style={style.item(this.props.draggingIndex !== index)}>
-        <div style={style.header}>
-          <button style={style.button} onClick={onDelete}>Delete</button>
+        <div style={style.header}> 
+          {this.props.connectDragSource(<div><BarsIcon style={style.dragIcon} /></div>)}
+          <TimesIcon style={style.closeIcon} onClick={onDelete} />
         </div>
         <div style={style.content}>
           <this.props.SubType
@@ -92,7 +117,8 @@ class ArrayItem extends React.Component {
 const connectFn = (connect, monitor) => {
   return {
     connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
+    connectDragPreview: connect.dragPreview(),
+    isDragging: monitor.isDragging()
   }
 }
 
