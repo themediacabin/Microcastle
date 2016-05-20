@@ -28,10 +28,9 @@ const style = {
     fontFamily: '\'Helvetica Neue\', Helvetica, Arial, sans-serif'
   },
   header: {
-    background: '#F57F61',
-    minHeight: 50,
+    background: 'white',
     padding: 20,
-    color: 'white',
+    color: '#F57F61',
     flexGrow: 0,
     flexShrink: 0,
     display: 'flex',
@@ -39,14 +38,14 @@ const style = {
     justifyContent: 'space-between',
   },
   headerButton: {
-    background: 'white',
-    color: '#F57F61',
+    background: '#F57F61',
+    color: 'white',
     margin: 5,
+    borderRadius: 3,
     marginBottom: 0,
     fontSize: '0.9em',
     padding: '5px 10px',
     border: 'none',
-    borderRadius: 0,
     cursor: 'pointer',
   },
   headerTitle: {
@@ -66,7 +65,7 @@ const style = {
     display: 'flex',
   },
   paddingColor: {
-    background: 'rgb(243, 243, 243)',
+    background: 'white',
     width: 100,
     flexGrow: 0,
     flexShink: 0,
