@@ -36,6 +36,16 @@ function createNew(schemaName) {
   };
 }
 
+function edit(schemaName, entryID, attributeName) {
+  if (editID == null) {
+    createNew(schemaName);
+  } else if (attributeName == null) {
+    editEntry(schemaName, entryID);
+  } else {
+    editSingle(schemaName, entryID, attributeName);
+  }
+}
+
 function close() {
   return {
     type: MICROCASTLE_EDITOR_CLOSE,
@@ -145,6 +155,7 @@ export default {
     editEntry,
     createNew,
     close,
+    edit,
     setTempState,
   },
   constants: {

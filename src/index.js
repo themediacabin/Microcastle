@@ -4,13 +4,13 @@ import Connector from './Components/Connector.js'
 import MicrocastleStore from './Store/Store'
 
 export default {
-  Microcastle: Connector,
   MicrocastleEditor: Editor,
   MicrocastleStore: MicrocastleStore,
+  MicrocastleConnect: Connector,
 }
 
 export {
-  Connector as Microcastle,
+  Connector as MicrocastleConnect,
   Editor as MicrocastleEditor,
   MicrocastleStore as MicrocastleStore,
 }
