@@ -33,6 +33,14 @@ const style = {
   headerTitle: {
     display: 'inline',
   },
+  defaultOption: {
+    marginBottom: 5,
+    padding: 5,
+    cursor: 'pointer',
+    background: '#EEE',
+    color: '#333',
+    paddingLeft: 10,
+  }
 }
 
 
@@ -194,7 +202,7 @@ class RelationEditor extends React.Component {
       const currentSchema = this.getCurrentSchema()
       const image = getFirstImageAttributeName(this.getCurrentSchema());
       if (currentSchema.display == null) {
-        return  <div key={name} onClick={this.onChoose.bind(this, name)}>
+        return  <div key={name} style={style.defaultOption} onClick={this.onChoose.bind(this, name)}>
           {name}
         </div>
       } else {
