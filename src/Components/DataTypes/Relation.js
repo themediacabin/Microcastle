@@ -23,11 +23,11 @@ const style = {
   },
   headerButton: {
     float: 'right',
-    background: 'white',
+    background: '#888',
     border: 0,
-    borderRadius: 'none',
+    borderRadius: 2,
     margin: 1,
-    color: '#888',
+    color: 'white',
     cursor: 'pointer',
   },
   headerTitle: {
