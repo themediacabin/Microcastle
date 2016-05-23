@@ -1,5 +1,9 @@
 import React from 'react';
-import SimpleMDE from 'simplemde/dist/simplemde.min';
+
+let SimpleMDE = null
+if (typeof window !== 'undefined') {
+  SimpleMDE = require('simplemde/dist/simplemde.min');
+}
 
 export default class MarkdownEditor extends React.Component {
   componentDidMount() {
