@@ -5,6 +5,7 @@ import Image from './Image';
 import Relation from './Relation';
 import Markdown from './Markdown';
 import Group from './Group';
+import Flex from './Flex';
 
 function stringToComponent(string) {
   switch (string) {
@@ -22,6 +23,8 @@ function stringToComponent(string) {
       return Markdown;
     case 'group':
       return Group;
+    case 'flex':
+      return Flex;
   };
   return false;
 }
