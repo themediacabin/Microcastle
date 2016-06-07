@@ -59,6 +59,18 @@ class EditAttributeButton extends React.Component {
   }  
 }
 
+class BaseButton extends React.Component {
+  render() {
+    const text = this.props.text ? this.props.text : 'Edit';
+    if (!this.props.visible) return null;
+    
+    return <button style={style.button} onClick={this.props.onClick}>
+      <PencilIcon style={style.icon} />
+      {text}
+    </button>  
+  }  
+}
+
 const connectedCreateButton = connect()(CreateButton);
 const connectedEditEntryButton = connect()(EditEntryButton);
 const connectedEditAttributeButton = connect()(EditAttributeButton);
@@ -67,10 +79,12 @@ export default {
   Create: connectedCreateButton,
   EditEntry: connectedEditEntryButton,
   EditAttribute: connectedEditAttributeButton,
+  Base: BaseButton,
 }
 
 export {
-  connectedCreateButton as EditAttributeButton,
+  connectedCreateButton as CreateButton,
   connectedEditEntryButton as EditEntryButton,
   connectedEditAttributeButton as AttributeButton,
+  BaseButton as BaseButton,
 }
