@@ -10,6 +10,7 @@ class SelectEditor extends React.Component {
   }
 
   render() {
+
     let options = [<span />];
     if (this.props.options){
       options = this.props.options.choices.map((name, i) => {
@@ -19,6 +20,7 @@ class SelectEditor extends React.Component {
 
     return (
       <select value={this.props.value} onChange={this.onChange.bind(this)}>
+        <option value=''>Choose One</option>
         {options}
       </select>
     );
