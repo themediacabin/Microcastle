@@ -27,14 +27,14 @@
     "react-dnd": "^2.1.3",
     "react-dnd-html5-backend": "^2.1.2",
     "react-textarea-autosize": "^3.3.1",
-    "simplemde": "^1.10.1",
+    "simplemde": "^1.11.0",
     "react-icons": "^2.0.1",
     "react-redux": "^4.4.1",
-    "react-dom": "^0.14.8"
-  },
-  "peerDependencies": {
+    "react-dom": "^0.14.8",
     "redux": "^3.0.5",
-    "react": "^0.14.8"
+    "react": "^0.14.8",
+    "codemirror": "^5.15.2"
+ 
   },
   "devDependencies": {
     "babel-core": "^6.4.5",
