@@ -12,7 +12,6 @@ import DataTypes from '../DataTypes';
 const style = {
   base: {
     background: 'white',
-    display: 'flex',
     flexDirection: 'column',
   }
 }
