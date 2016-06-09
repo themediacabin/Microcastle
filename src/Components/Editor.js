@@ -9,6 +9,7 @@ import EditorFrame from './EditorFrame';
 import NewEditor from './Editors/New';
 import SingleEditor from './Editors/Single';
 import EntryEditor from './Editors/Entry';
+import PartEditor from './Editors/Part';
 
 import HTML5Backend from 'react-dnd-html5-backend';
 import {DragDropContext} from 'react-dnd';
@@ -32,6 +33,8 @@ class Editor extends React.Component {
         return EntryEditor;
       case 'CREATE_NEW':
         return NewEditor;
+      case 'EDIT_PART':
+        return PartEditor;
     }
     return NewEditor;
   }

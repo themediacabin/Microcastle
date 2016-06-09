@@ -169,8 +169,6 @@ class ArrayEditor extends React.Component {
   render() {
     const SubType = DataTypes.stringToComponent(this.props.options.subtype.type)
 
-    const sortedComponents = this.props.value.sort();
-
     const components = this.props.value.map((individualValue, index) => {
       return <WrappedArrayItem  key={index}
                                 index={index}

@@ -4,11 +4,13 @@ const MICROCASTLE_UPDATE_DATA = 'MICROCASTLE_UPDATE_DATA';
 const MICROCASTLE_INSERT_DATA = 'MICROCASTLE_INSERT_DATA';
 const MICROCASTLE_EDITOR_EDIT_SINGLE = 'MICROCASTLE_EDITOR_EDIT_SINGLE';
 const MICROCASTLE_EDITOR_EDIT_ENTRY = 'MICROCASTLE_EDITOR_EDIT_ENTRY';
+const MICROCASTLE_EDITOR_EDIT_PART = 'MICROCASTLE_EDITOR_EDIT_PART';
 const MICROCASTLE_EDITOR_CREATE_NEW = 'MICROCASTLE_EDITOR_CREATE_NEW';
 const MICROCASTLE_EDITOR_CLOSE = 'MICROCASTLE_EDITOR_CLOSE';
 const MICROCASTLE_EDITOR_SET_TEMP_STATE = 'MICROCASTLE_EDITOR_SET_TEMP_STATE';
 
 const EDIT_SINGLE = 'EDIT_SINGLE';
+const EDIT_PART = 'EDIT_PART';
 const EDIT_ENTRY = 'EDIT_ENTRY';
 const CREATE_NEW = 'CREATE_NEW';
 
@@ -18,6 +20,16 @@ function editSingle(schemaName, entryID, attributeName) {
     schemaName,
     entryID,
     attributeName,
+  };
+}
+
+function editPart(schemaName, entryID, attributeName, part) {
+  return {
+    type: MICROCASTLE_EDITOR_EDIT_PART,
+    schemaName,
+    entryID,
+    attributeName,
+    part
   };
 }
 
@@ -114,6 +126,20 @@ function reducer(state = initalState, action) {
       return state.set('editor', newEditor);
     }
 
+    case MICROCASTLE_EDITOR_EDIT_PART:{
+      const currentState = state.get('data').get(action.schemaName).get(action.entryID).get(action.attributeName);
+
+      const newEditor = state.get('editor').set('open', true)
+                                           .set('action', EDIT_PART)
+                                           .set('schema', action.schemaName)
+                                           .set('entry', action.entryID)
+                                           .set('attribute', action.attributeName)
+                                           .set('part', action.part)
+                                           .set('tempState', currentState);
+
+      return state.set('editor', newEditor);
+    }
+
     case MICROCASTLE_EDITOR_EDIT_ENTRY: {
       const currentState = state.get('data').get(action.schemaName)
                                 .get(action.entryID);
@@ -153,6 +179,7 @@ export default {
     insertData,
     editSingle,
     editEntry,
+    editPart,
     createNew,
     close,
     edit,
@@ -161,7 +188,8 @@ export default {
   constants: {
     MICROCASTLE_UPDATE_DATA,
     MICROCASTLE_INSERT_DATA,
-    MICROCASTLE_EDITOR_EDIT_SINGLE ,
+    MICROCASTLE_EDITOR_EDIT_SINGLE,
+    MICROCASTLE_EDITOR_EDIT_PART,
     MICROCASTLE_EDITOR_CREATE_NEW,
     MICROCASTLE_EDITOR_CLOSE,
     MICROCASTLE_EDITOR_SET_TEMP_STATE,
