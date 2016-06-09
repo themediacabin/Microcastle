@@ -7,7 +7,7 @@ if (typeof window !== 'undefined') {
 
 export default class MarkdownEditor extends React.Component {
   componentDidMount() {
-    this._editor = new SimpleMDE({ element: this._textarea });
+    this._editor = new SimpleMDE({ 	spellChecker: false, element: this._textarea });
     const self = this;
     this._editor.codemirror.on("change", () => {
       this.props.onChange(self._editor.value());
