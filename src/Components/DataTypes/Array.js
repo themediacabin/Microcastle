@@ -146,7 +146,13 @@ class ArrayEditor extends React.Component {
   }
 
   onAdd() {
-    this.props.onChange(this.props.value.insert(0,
+
+    let val = this.props.value;
+    if (this.props.value == null || this.props.value === '') {
+      val = Immutable.List();
+    }
+
+    this.props.onChange(val.insert(0,
       DataTypes.stringToComponent(this.props.options.subtype.type).defaultValue()
     ));
   }
@@ -169,12 +175,17 @@ class ArrayEditor extends React.Component {
   render() {
     const SubType = DataTypes.stringToComponent(this.props.options.subtype.type)
 
-    const components = this.props.value.map((individualValue, index) => {
+    let val = this.props.value;
+    if (this.props.value == null || this.props.value === '') {
+      val = Immutable.List();
+    }
+
+    const components = val.map((individualValue, index) => {
       return <WrappedArrayItem  key={index}
                                 index={index}
                                 setDraggingIndex={this.setDraggingIndex.bind(this)}
                                 draggingIndex={this.state.draggingIndex}
-                                size={this.props.value.size}
+                                size={val.size}
                                 onMove={this.onMove.bind(this)}
                                 onDelete={this.onDelete.bind(this, index)}
                                 individualChange={this.individualChange.bind(this)}

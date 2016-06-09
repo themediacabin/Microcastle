@@ -12,6 +12,14 @@ const style = {
     borderBottom: '1px solid #ccc',
     fontSize: '0.9em',
   },
+  title: {
+    color: '#333',
+    padding: 0,
+    fontWeight: '200',
+    fontSize: '0.9em',
+    marginTop: '1em',    
+    marginBottom: '0.5em',
+  }
 };
 
 class FlexEditor extends React.Component {
@@ -34,7 +42,7 @@ class FlexEditor extends React.Component {
       const FieldComponent = DataTypes.stringToComponent(val.type);
 
       return <div key={key}>
-        <h4>{key}</h4>
+        <h4 style={style.title}>{key}</h4>
         <div>
           <FieldComponent
                 onChange={this.onChangeField.bind(this, key)}

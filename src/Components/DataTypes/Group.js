@@ -6,6 +6,14 @@ import _ from 'lodash';
 const style = {
   image: {
     maxHeight: '300px',
+  },
+  title: {
+    color: '#333',
+    padding: 0,
+    fontWeight: '200',
+    fontSize: '0.9em',
+    marginTop: '1em',    
+    marginBottom: '0.5em',
   }
 };
 
@@ -50,7 +58,7 @@ class GroupEditor extends React.Component {
       const individualValue = this.props.value.get(key, defaultValue);
       
       return <div key={key}>
-                <h3>{key}</h3>
+                <h3 style={style.title}>{key}</h3>
                 <TypeEditor
                   options={val}
                   value={individualValue}
