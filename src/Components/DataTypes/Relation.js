@@ -12,6 +12,12 @@ const style = {
   base: {
     border: '1px solid rgb(214, 214, 214)',
   },
+  error: {
+    padding: 5,
+    color: 'red',
+    fontWeight: 900,
+    margin: 5
+  },
   header: {
     background: 'white',
     padding: 5,
@@ -62,7 +68,18 @@ class RelationEditor extends React.Component {
     super(props);
     this.state = {
       editorWrap: new Immutable.Map(),
+      error: false,
     };
+  }
+
+  onSave() {
+    if (this.getDisplayState() == EDITING) {
+      this.setState({error: true});
+      return new Promise((res, rej) => {rej('Not Saved')});
+    } else if (this.getDisplayState() == CREATING) {
+      this.setState({error: true});
+      return new Promise((res, rej) => {rej('Not Saved')});
+    }
   }
 
   getDisplayState() {
@@ -85,10 +102,14 @@ class RelationEditor extends React.Component {
   }
 
   onChoose(chosen) {
+    this.setState({error: false});
+
     this.props.onChange(chosen);
   }
 
   setEditing() {
+    this.setState({error: false});
+
     this.setState({editorWrap: this.state.editorWrap
       .set('open', true).set('schema', this.props.options.relative)
       .set('entry', this.props.value).set('action', 'EDIT_ENTRY')
@@ -97,6 +118,8 @@ class RelationEditor extends React.Component {
   }
 
   onCreate() {
+    this.setState({error: false});
+
     this.setState({editorWrap: this.state.editorWrap
       .set('open', true).set('schema', this.props.options.relative)
       .set('action', 'CREATE_NEW')
@@ -107,20 +130,29 @@ class RelationEditor extends React.Component {
   }
 
   onReselect() {
+    this.setState({error: false});
+
     this.setState({editorWrap: new Immutable.Map()});
     this.props.onChange(null);
   }
 
-  onSaveEdit() {
-    this._editor.onSubmit();
-    this.setState({editorWrap: new Immutable.Map()});
+  onSaveEdit(mounted = true) {
+    this.setState({error: false});
+    return new Promise((resolve, reject) => {
+      this._editor.onSubmit().then((created) => {
+        if (mounted) this.setState({editorWrap: new Immutable.Map()});
+        resolve();
+      }).catch((e) => reject(e));
+    });
   }
 
-  onSaveNew() {
-    this._editor.onSubmit().then((created) => {
-      _.forEach(created, (val, key) => this.onChoose(key));
-      this.setState({editorWrap: new Immutable.Map()});
-    });
+  onSaveNew(mounted = true) {
+    return this._editor.onSubmit()
+      .then((created) => new Promise((resolve) => {
+        _.forEach(created, (val, key) => this.onChoose(key));
+        if (mounted) this.setState({editorWrap: new Immutable.Map()});
+        resolve();
+      })).catch((e) => reject(e));
   }
 
   getCreatingView() {
@@ -240,6 +272,7 @@ class RelationEditor extends React.Component {
 
   render() {
     return <div style={style.base}>
+        {this.state.error ? <div style={style.error}>This Needs To Be Saved</div> : false}
         {this.getView()}
     </div>;
   }

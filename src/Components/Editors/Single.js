@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import _ from 'lodash';
-
+ 
 import Store from '../../Store/Store';
 import EditorFrame from '../EditorFrame';
 import ItemFrame from '../ItemFrame';
@@ -25,7 +25,8 @@ class SingleEditor extends React.Component {
               self.props.microcastleStore.get('editor').get('attribute'),
               edited
             );
-            return self.props.dispatch(action);
+            self.props.dispatch(action);
+            if (this.props.closeEditor != undefined) this.props.closeEditor();
         });
     }
   }

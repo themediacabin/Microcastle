@@ -25,7 +25,8 @@ class PartEditor extends React.Component {
               self.props.microcastleStore.get('editor').get('attribute'),
               edited
             );
-            return self.props.dispatch(action);
+            self.props.dispatch(action);
+            if (this.props.closeEditor != undefined) this.props.closeEditor();
         });
     }
   }

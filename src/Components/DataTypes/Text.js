@@ -16,6 +16,10 @@ class TextEditor extends React.Component {
     return '';
   }
 
+  onSave() {
+    return new Promise((resolve) => resolve());
+  }
+
   onChange(event) {
     this.props.onChange(event.target.value);
   }

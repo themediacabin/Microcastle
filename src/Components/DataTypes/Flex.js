@@ -27,6 +27,10 @@ class FlexEditor extends React.Component {
     return new Immutable.fromJS({_flex_type: undefined});
   }
 
+  onSave() {
+    return Promise.all(_.map(this._editors, (e) => e.onSave()))
+  }
+
   onChangeFlexType(event) {
     const result = event.target.value === 'Select One' ? undefined : event.target.value; 
     this.props.onChange(new Immutable.fromJS({_flex_type: result}));
@@ -45,6 +49,7 @@ class FlexEditor extends React.Component {
         <h4 style={style.title}>{key}</h4>
         <div>
           <FieldComponent
+                ref={(r) => this._editors.push(r)}
                 onChange={this.onChangeField.bind(this, key)}
                 value={this.props.value.get(key)}
                 options={val}
@@ -61,6 +66,7 @@ class FlexEditor extends React.Component {
   }
 
   render() {
+    this._editors = [];
     const flexTypes = _.map(_.concat(['Select One'], _.keys(this.props.options.flexes)), (title) => {
       return <option key={title} name={title}>{title}</option>;
     });

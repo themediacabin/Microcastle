@@ -24,6 +24,9 @@ class NewEditor extends React.Component {
                 value
               );
               self.props.dispatch(action);
+
+              if (this.props.closeEditor != undefined) this.props.closeEditor();
+
               resolve(edited);
             });
         });

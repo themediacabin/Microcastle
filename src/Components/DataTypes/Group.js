@@ -46,12 +46,17 @@ class GroupEditor extends React.Component {
   static defaultValue() {
     return new Immutable.fromJS({});
   }
+
+  onSave() {
+    return Promise.all(_.map(this._editors, (e) => e.onSave()))
+  }
   
   onChangeIndividual(key, value) {
     this.props.onChange(this.props.value.set(key, value));
   }
 
   render() {
+    this._editors = [];
     const editors = _.map(this.props.options.members, (val, key) => {
       const TypeEditor = DataTypes.stringToComponent(val.type);
       const defaultValue = TypeEditor.defaultValue();
@@ -60,6 +65,7 @@ class GroupEditor extends React.Component {
       return <div key={key}>
                 <h3 style={style.title}>{key}</h3>
                 <TypeEditor
+                  ref={(r) => this._editors.push(r)}
                   options={val}
                   value={individualValue}
                   onChange={this.onChangeIndividual.bind(this, key)}

@@ -39,10 +39,13 @@ class Editor extends React.Component {
     return NewEditor;
   }
 
+  onClose() {
+    const closeAction = Store.actions.close();
+    this.props.dispatch(closeAction);
+  }
+
   onSubmit() {
     this._editor.onSubmit();
-    const action = Store.actions.close();
-    return this.props.dispatch(action);
   }
 
   onCancel() {
@@ -80,6 +83,7 @@ class Editor extends React.Component {
               title="Microcastle Editor"
               open={true}>
               <CurrentEditor schema={this.getCurrentSchema()}
+                             closeEditor={this.onClose.bind(this)}
                              microcastleSchema={this.props.schemas}
                              microcastleStore={this.props.microcastle}
                              changeTempState={this.onChangeTempState.bind(this)}

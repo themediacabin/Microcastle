@@ -2,13 +2,17 @@ import React from 'react';
 
 const style = {
   image: {
-    maxHeight: '300px',
+    maxHeight: '300px', 
   }
 };
 
 class ImageEditor extends React.Component {
   static defaultValue() {
     return '';
+  }
+
+  onSave() {
+    return new Promise((resolve) => resolve());
   }
 
   onChange(event) {

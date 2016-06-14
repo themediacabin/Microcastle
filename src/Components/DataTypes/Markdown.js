@@ -48,6 +48,10 @@ class TextEditor extends React.Component {
     return '';
   }
 
+  onSave() {
+    return new Promise((resolve) => resolve());
+  }
+
   onChange(v) {
     this.props.onChange(v);
   }

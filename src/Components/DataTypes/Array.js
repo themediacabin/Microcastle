@@ -88,7 +88,15 @@ const dragTarget = {
 };
 
 class ArrayItem extends React.Component {
+  onSave() {
+    if (this._editor != null) {
+      return this._editor.onSave();
+    }
+    return new Promise((resolve) => resolve());
+  }
+
   render() {
+    this._editor = null;
     const index = this.props.index;
     const size = this.props.size;
     const onMove = this.props.onMove;
@@ -102,6 +110,7 @@ class ArrayItem extends React.Component {
         </div>
         <div style={style.content}>
           <this.props.SubType
+                ref={(r) => {this._editor = r}}
                 onChange={this.props.individualChange.bind(this, index)}
                 value={this.props.individualValue}
                 options={this.props.options}
@@ -132,6 +141,10 @@ class ArrayEditor extends React.Component {
     this.state = {
       draggingIndex: null,
     }
+  }
+
+  onSave() {
+    return Promise.all(_.map(this._editors, (e) => e.onSave()))
   }
 
   setDraggingIndex(i) {
@@ -173,6 +186,7 @@ class ArrayEditor extends React.Component {
   }
 
   render() {
+    this._items = [];
     const SubType = DataTypes.stringToComponent(this.props.options.subtype.type)
 
     let val = this.props.value;
@@ -181,7 +195,8 @@ class ArrayEditor extends React.Component {
     }
 
     const components = val.map((individualValue, index) => {
-      return <WrappedArrayItem  key={index}
+      return <WrappedArrayItem  ref={(r) => this._items.push(r)}
+                                key={index}
                                 index={index}
                                 setDraggingIndex={this.setDraggingIndex.bind(this)}
                                 draggingIndex={this.state.draggingIndex}

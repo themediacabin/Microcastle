@@ -19,23 +19,28 @@ const style = {
 class EntryEditor extends React.Component {
   onSubmit() {
     let self = this;
-    const entryID = self.props.microcastleStore.get('editor').get('entry');
-    const schema = this.props.schema;
-    if (!!schema.onEdit){
-      schema.onEdit(this.getTempState().toJS(), {id: entryID})
-        .then((edited) => {
-          _.forIn(edited, (value, attributeName) => {
-            const action = Store.actions.updateData(
-              self.props.microcastleStore.get('editor').get('schema'),
-              entryID,
-              attributeName,
-              Immutable.fromJS(value)
-            );
-            return self.props.dispatch(action);
-          });
-        });
-    }
+    return Promise.all(_.map(this._columns, (e) => e == null ? true : e.onSave()))
+    .then(() => {
+      const entryID = self.props.microcastleStore.get('editor').get('entry');
+      const schema = this.props.schema;
+      if (!!schema.onEdit){
+          schema.onEdit(this.getTempState().toJS(), {id: entryID})
+            .then((edited) => {
+              _.forIn(edited, (value, attributeName) => {
+                const action = Store.actions.updateData(
+                  self.props.microcastleStore.get('editor').get('schema'),
+                  entryID,
+                  attributeName,
+                  Immutable.fromJS(value)
+                );
+                return self.props.dispatch(action);
+              });
+              if (this.props.closeEditor != undefined) this.props.closeEditor();
+            });
+      }
+    }).catch((e) => console.log('Not Saved', e));
   }
+
 
   getTempState() {
     return this.props.microcastleStore.get('editor').get('tempState') || Immutable.Map({});
@@ -53,12 +58,14 @@ class EntryEditor extends React.Component {
 
   render() {
     const schema = this.props.schema.attributes;
+    this._columns = [];
 
     const editorComponents = _.values(_.mapValues(schema, (columnOptions, columnName) => {
       const ColumnComponent = DataTypes.stringToComponent(columnOptions.type);
       return (
         <ItemFrame title={columnName} key={columnName}>
-          <ColumnComponent onChange={this.onComponentChange.bind(this, columnName)}
+          <ColumnComponent ref={(r) => this._columns.push(r)}
+                           onChange={this.onComponentChange.bind(this, columnName)}
                            value={this.getCurrentValue(columnName, ColumnComponent.defaultValue())}
                            options={columnOptions}
                            microcastleStore={this.props.microcastleStore}
