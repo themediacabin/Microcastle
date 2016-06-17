@@ -68,7 +68,7 @@ class FlexEditor extends React.Component {
   render() {
     this._editors = [];
     const flexTypes = _.map(_.concat(['Select One'], _.keys(this.props.options.flexes)), (title) => {
-      return <option key={title} name={title}>{title}</option>;
+      return <option key={title} value={title}>{title}</option>;
     });
     
     return <div>
