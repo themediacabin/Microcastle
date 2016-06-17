@@ -62,6 +62,7 @@ const dragSource = {
     setTimeout(_ => props.setDraggingIndex(props.index), 0);
     return {
       id: props.id,
+      parent: props.parent,
       index: props.index
     };
   },
@@ -74,6 +75,7 @@ const dragTarget = {
   hover: (props, monitor, component) => {
     const dragIndex = monitor.getItem().index;
     const hoverIndex = props.index;
+    if (props.parent !== monitor.getItem().parent) return;
     if (dragIndex === hoverIndex) return;
     const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
     const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
@@ -209,7 +211,8 @@ class ArrayEditor extends React.Component {
                                 options={this.props.options.subtype}
                                 microcastleStore={this.props.microcastleStore}
                                 microcastleSchema={this.props.microcastleSchema}
-                                dispatch={this.props.dispatch} />
+                                dispatch={this.props.dispatch} 
+                                parent={this}/>
     })
 
     return (
