@@ -16,11 +16,24 @@ const style = {
   }
 }
 
+const checkForErrors = (results) => {
+      const flatResults = _.flattenDeep(results);
+      let error = null;
+      _.forEach(flatResults, (result) => {
+        if (_.has(result, 'error')) error = result.error;
+      });
+      return error != null;
+};
+
 class EntryEditor extends React.Component {
   onSubmit() {
     let self = this;
-    return Promise.all(_.map(this._columns, (e) => e == null ? true : e.onSave()))
-    .then(() => {
+
+    const saveAllEditors = _.map(this._columns, (e) => e == null ? true : e.onSave());
+    return Promise.all(saveAllEditors).then(checkForErrors)
+    .then((error) => {
+      if (error) return;
+      
       const entryID = self.props.microcastleStore.get('editor').get('entry');
       const schema = this.props.schema;
       if (!!schema.onEdit){

@@ -75,11 +75,12 @@ class RelationEditor extends React.Component {
   onSave() {
     if (this.getDisplayState() == EDITING) {
       this.setState({error: true});
-      return new Promise((res, rej) => {rej('Not Saved')});
+      return new Promise((res, rej) => {res({error: 'Not Saved'})});
     } else if (this.getDisplayState() == CREATING) {
       this.setState({error: true});
-      return new Promise((res, rej) => {rej('Not Saved')});
+      return new Promise((res, rej) => {res({error: 'Not Saved'})});
     }
+    return new Promise((res, rej) => {res()});
   }
 
   getDisplayState() {
