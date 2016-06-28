@@ -9,13 +9,24 @@ import ItemFrame from '../ItemFrame';
 
 import DataTypes from '../DataTypes';
 
+const checkForErrors = (results) => {
+      const flatResults = _.flattenDeep(results);
+      let error = null;
+      _.forEach(flatResults, (result) => {
+        if (_.has(result, 'error')) error = result.error;
+      });
+      return error != null;
+};
 
 class NewEditor extends React.Component {
   onSubmit() {
     let self = this;
     const schema = this.props.schema;
     if (!!schema.onNew){
-      return new Promise((resolve, reject) => {
+      const saveAllEditors = _.map(this._columns, (e) => e == null ? true : e.onSave());
+      return Promise.all(saveAllEditors).then(checkForErrors)
+      .then((err) => new Promise((resolve, reject) => {
+        if (err) return reject('Not Saved');
         schema.onNew(this.getTempState().toJS()).then((edited) => {
             _.forIn(edited, (value, entryID) => {
               const action = Store.actions.insertData(
@@ -30,7 +41,7 @@ class NewEditor extends React.Component {
               resolve(edited);
             });
         });
-      });
+      })).catch((e) => console.log('Not Saved', e));
     }
   }
 
@@ -50,12 +61,14 @@ class NewEditor extends React.Component {
 
   render() {
     const schema = this.props.schema.attributes;
+    this._columns = [];
 
     const editorComponents = _.values(_.mapValues(schema, (columnOptions, columnName) => {
       const ColumnComponent = DataTypes.stringToComponent(columnOptions.type);
       return (
         <ItemFrame title={columnName} key={columnName}>
-          <ColumnComponent onChange={this.onComponentChange.bind(this, columnName)}
+          <ColumnComponent ref={(r) => this._columns.push(r)}
+                           onChange={this.onComponentChange.bind(this, columnName)}
                            value={this.getCurrentValue(columnName, ColumnComponent.defaultValue())}
                            options={columnOptions}
                            microcastleStore={this.props.microcastleStore}

@@ -273,7 +273,7 @@ class RelationEditor extends React.Component {
 
   render() {
     return <div style={style.base}>
-        {this.state.error ? <div style={style.error}>This Needs To Be Saved</div> : false}
+        {this.state.error ? <div style={style.error}>This Needs To Be Saved (Click the small gray Save Button)</div> : false}
         {this.getView()}
     </div>;
   }

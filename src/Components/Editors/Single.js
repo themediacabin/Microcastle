@@ -9,6 +9,14 @@ import ItemFrame from '../ItemFrame';
 
 import DataTypes from '../DataTypes';
 
+const checkForErrors = (results) => {
+      const flatResults = _.flattenDeep([results]);
+      let error = null;
+      _.forEach(flatResults, (result) => {
+        if (_.has(result, 'error')) error = result.error;
+      });
+      return error != null;
+};
 
 class SingleEditor extends React.Component {
   onSubmit() {
@@ -16,7 +24,10 @@ class SingleEditor extends React.Component {
     const entryID = self.props.microcastleStore.get('editor').get('entry');
     const attributeSchema = this.getAttributeSchema();
     if (!!attributeSchema.onChange){
-      attributeSchema.onChange(
+      const save = this._editor.onSave();
+      return save.then(checkForErrors).then((err) => new Promise((resolve, reject) => {
+        if (err) return reject('Not Saved');
+        attributeSchema.onChange(
             this.props.microcastleStore.get('editor').get('tempState'), {id: entryID})
         .then((edited) => {
             const action = Store.actions.updateData(
@@ -28,6 +39,7 @@ class SingleEditor extends React.Component {
             self.props.dispatch(action);
             if (this.props.closeEditor != undefined) this.props.closeEditor();
         });
+      })).catch((e) => console.log('Not Saved', e));
     }
   }
 
@@ -52,7 +64,8 @@ class SingleEditor extends React.Component {
 
     return (
       <ItemFrame title={attributeName}>
-        <EditorComponent onChange={this.onChange.bind(this)}
+        <EditorComponent ref={(r) => this._editor = r}
+                         onChange={this.onChange.bind(this)}
                          value={this.getCurrentValue()}
                          options={schema}
                          microcastleStore={this.props.microcastleStore}
