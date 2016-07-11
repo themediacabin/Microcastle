@@ -21,7 +21,7 @@ class ImageEditor extends React.Component {
       let reader = new FileReader();
       reader.onload = function(e) {
           let dataURL = reader.result;
-          self.props.onChange(dataURL);
+          self.props.onChange({full: dataURL});
       }
       reader.readAsDataURL(event.target.files[0]);
     }
@@ -30,8 +30,8 @@ class ImageEditor extends React.Component {
   render() {
     return (
       <span>
-      <img src={this.props.value} style={style.image}  />
-      <input type="file" onChange={this.onChange.bind(this)} />
+        <img src={this.props.value.full} style={style.image}  />
+        <input type="file" onChange={this.onChange.bind(this)} />
       </span>
     );
   }

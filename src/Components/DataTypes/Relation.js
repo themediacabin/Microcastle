@@ -7,6 +7,9 @@ import DataTypes from '../DataTypes';
 import EntryEditor from '../Editors/Entry';
 import NewEditor from '../Editors/New';
 
+import Store from '../../Store/Store';
+
+import { connect } from 'react-redux';
 
 const style = {
   base: {
@@ -104,8 +107,20 @@ class RelationEditor extends React.Component {
 
   onChoose(chosen) {
     this.setState({error: false});
-
     this.props.onChange(chosen);
+  }
+
+  onDelete(val, info) {
+    console.log(2);
+    return this.getCurrentSchema().onDelete(val, info).then(
+      () => {
+        console.log(1);
+        this.props.dispatch(
+          Store.actions.deleteEntry(this.props.options.relative, info.id)
+        );
+      }
+    );
+
   }
 
   setEditing() {
@@ -235,12 +250,13 @@ class RelationEditor extends React.Component {
       const currentSchema = this.getCurrentSchema()
       const image = getFirstImageAttributeName(this.getCurrentSchema());
       if (currentSchema.display == null) {
-        return  <div key={name} style={style.defaultOption} onClick={this.onChoose.bind(this, name)}>
-          {name}
+        return  <div key={name} style={style.defaultOption}>
+          <span onClick={this.onChoose.bind(this, name)}>{name}</span>
+          <span onClick={this.onDelete.bind(this, value, {id: name})}>Delete</span>
         </div>
       } else {
         const currentSchema = this.getCurrentSchema()
-        return <currentSchema.display key={name} onClick={this.onChoose.bind(this, name)} name={name} value={value} />
+        return <currentSchema.display key={name} onChoose={this.onChoose.bind(this, name)} onDelete={this.onDelete.bind(this, value, {id: name})} name={name} value={value} />
       }
     }).toArray();
 
@@ -279,4 +295,4 @@ class RelationEditor extends React.Component {
   }
 }
 
-export default RelationEditor;
+export default connect()(RelationEditor);

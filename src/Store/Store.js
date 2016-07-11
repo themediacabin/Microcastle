@@ -2,6 +2,7 @@ import Immutable from 'immutable';
 
 const MICROCASTLE_UPDATE_DATA = 'MICROCASTLE_UPDATE_DATA';
 const MICROCASTLE_INSERT_DATA = 'MICROCASTLE_INSERT_DATA';
+const MICROCASTLE_DELETE_ENTRY = 'MICROCASTLE_DELETE_ENTRY';
 const MICROCASTLE_EDITOR_EDIT_SINGLE = 'MICROCASTLE_EDITOR_EDIT_SINGLE';
 const MICROCASTLE_EDITOR_EDIT_ENTRY = 'MICROCASTLE_EDITOR_EDIT_ENTRY';
 const MICROCASTLE_EDITOR_EDIT_PART = 'MICROCASTLE_EDITOR_EDIT_PART';
@@ -91,6 +92,14 @@ function insertData(schemaName, entryID, entryValue) {
   };
 }
 
+function deleteEntry(schemaName, entryID) {
+  return {
+    type: MICROCASTLE_DELETE_ENTRY,
+    schemaName,
+    entryID
+  };
+}
+
 const initalState = Immutable.fromJS({
   data: {},
   editor: {},
@@ -112,6 +121,11 @@ function reducer(state = initalState, action) {
       const newValue = {[schemaName]: {[entryID]: entryValue}};
       const newData = state.get('data').mergeDeep(newValue);
       return state.set('data', newData);
+    }
+
+    case MICROCASTLE_DELETE_ENTRY: {
+      let {schemaName, entryID} = action;
+      return state.deleteIn(['data', schemaName, entryID]);
     }
 
     case MICROCASTLE_EDITOR_EDIT_SINGLE:{
@@ -184,6 +198,7 @@ export default {
     close,
     edit,
     setTempState,
+    deleteEntry
   },
   constants: {
     MICROCASTLE_UPDATE_DATA,
