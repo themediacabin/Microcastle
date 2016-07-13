@@ -169,7 +169,7 @@ class RelationEditor extends React.Component {
       this._editor.onSubmit().then((created) => {
         if (mounted) this.setState({editorWrap: new Immutable.Map()});
         resolve();
-      }).catch((e) => reject(e));
+      });
     });
   }
 
@@ -179,7 +179,7 @@ class RelationEditor extends React.Component {
         _.forEach(created, (val, key) => this.onChoose(key));
         if (mounted) this.setState({editorWrap: new Immutable.Map()});
         resolve();
-      })).catch((e) => reject(e));
+      }));
   }
 
   getCreatingView() {
