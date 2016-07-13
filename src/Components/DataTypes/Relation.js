@@ -49,6 +49,18 @@ const style = {
     background: '#EEE',
     color: '#333',
     paddingLeft: 10,
+  },
+  nextButton: {
+    float: 'right',
+    border: 'none',
+    background: '#999',
+    color: 'black',
+  },
+  prevButton: {
+    float: 'left',
+    border: 'none',
+    background: '#999',
+    color: 'black',
   }
 }
 
@@ -72,6 +84,7 @@ class RelationEditor extends React.Component {
     this.state = {
       editorWrap: new Immutable.Map(),
       error: false,
+      page: 0,
     };
   }
 
@@ -111,10 +124,8 @@ class RelationEditor extends React.Component {
   }
 
   onDelete(val, info) {
-    console.log(2);
     return this.getCurrentSchema().onDelete(val, info).then(
       () => {
-        console.log(1);
         this.props.dispatch(
           Store.actions.deleteEntry(this.props.options.relative, info.id)
         );
@@ -242,17 +253,34 @@ class RelationEditor extends React.Component {
     );
   }
 
+  setPage(i) {
+    this.setState({page: i});
+  }
+
   getChoosingView() {
     const relationName = this.props.options.relative;
     const relation = this.props.microcastleStore.get('data').get(relationName);
 
+    const pageSize = 15;
+
+    let i = 0;
     const selection = relation.map((value, name) => {
+      if (i >= pageSize * this.state.page + pageSize) {
+        i++;
+        return null;
+      }
+      if (i < pageSize * this.state.page) {
+        i++;
+        return null;
+      }
+      i++;
+
       const currentSchema = this.getCurrentSchema()
       const image = getFirstImageAttributeName(this.getCurrentSchema());
       if (currentSchema.display == null) {
         return  <div key={name} style={style.defaultOption}>
           <span onClick={this.onChoose.bind(this, name)}>{name}</span>
-          <span onClick={this.onDelete.bind(this, value, {id: name})}>Delete</span>
+          {currentSchema.onDelete == null ? null : <span style={{float: 'right', background: '#881111', borderRadius: '50%', color: 'white', width: 20, height: 20, textAlign: 'center'}} onClick={this.onDelete.bind(this, value, {id: name})}>x</span>}
         </div>
       } else {
         const currentSchema = this.getCurrentSchema()
@@ -270,6 +298,9 @@ class RelationEditor extends React.Component {
           <div>
             {selection}
           </div>
+          {this.state.page > 0 ? <button style={style.prevButton} onClick={this.setPage.bind(this, this.state.page-1)}>Prev</button> : null}
+          {relation.size / pageSize > this.state.page + 1 ? <button style={style.nextButton} onClick={this.setPage.bind(this, this.state.page+1)}>Next</button> : null}
+          <div style={{clear: 'both'}} />
         </div>
       </div>
     );
