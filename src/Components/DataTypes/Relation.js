@@ -295,4 +295,4 @@ class RelationEditor extends React.Component {
   }
 }
 
-export default connect()(RelationEditor);
+export default RelationEditor;
