@@ -6,7 +6,7 @@ Backend agnostic data store and editor for react and redux
 
 `npm install`
 
-`gulp`
+`npm run-script build`
 
 # Guide
 

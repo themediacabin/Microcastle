@@ -1,8 +1,8 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import Immutable from 'immutable';
-import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
+import _ from 'lodash';
+import { DragSource, DropTarget } from 'react-dnd';
 
 import TimesIcon from 'react-icons/lib/md/clear';
 import BarsIcon from 'react-icons/lib/md/reorder';
@@ -59,7 +59,7 @@ const style = {
 
 const dragSource = {
   beginDrag: (props) => {
-    setTimeout(_ => props.setDraggingIndex(props.index), 0);
+    setTimeout(() => props.setDraggingIndex(props.index), 0);
     return {
       id: props.id,
       parent: props.parent,
@@ -100,8 +100,6 @@ class ArrayItem extends React.Component {
   render() {
     this._editor = null;
     const index = this.props.index;
-    const size = this.props.size;
-    const onMove = this.props.onMove;
     const onDelete = this.props.onDelete;
 
     return this.props.connectDragPreview(this.props.connectDropTarget(
@@ -112,7 +110,7 @@ class ArrayItem extends React.Component {
         </div>
         <div style={style.content}>
           <this.props.SubType
-                ref={(r) => {this._editor = r}}
+                ref={(r) => {this._editor = r;}}
                 onChange={this.props.individualChange.bind(this, index)}
                 value={this.props.individualValue}
                 options={this.props.options}
@@ -130,23 +128,21 @@ const connectFn = (connect, monitor) => {
     connectDragSource: connect.dragSource(),
     connectDragPreview: connect.dragPreview(),
     isDragging: monitor.isDragging()
-  }
-}
+  };
+};
 
-const WrappedArrayItem = DropTarget('card', dragTarget, connect => ({connectDropTarget: connect.dropTarget()}))
-  ((DragSource('card', dragSource, connectFn))
-    (ArrayItem));
+const WrappedArrayItem = DropTarget('card', dragTarget, connect => ({connectDropTarget: connect.dropTarget()}))((DragSource('card', dragSource, connectFn))(ArrayItem));
 
 class ArrayEditor extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       draggingIndex: null,
-    }
+    };
   }
 
   onSave() {
-    return Promise.all(_.map(this._editors, (e) => e.onSave()))
+    return Promise.all(_.map(this._editors, (e) => e.onSave()));
   }
 
   setDraggingIndex(i) {
@@ -189,7 +185,7 @@ class ArrayEditor extends React.Component {
 
   render() {
     this._items = [];
-    const SubType = DataTypes.stringToComponent(this.props.options.subtype.type)
+    const SubType = DataTypes.stringToComponent(this.props.options.subtype.type);
 
     let val = this.props.value;
     if (this.props.value == null || this.props.value === '') {
@@ -212,8 +208,8 @@ class ArrayEditor extends React.Component {
                                 microcastleStore={this.props.microcastleStore}
                                 microcastleSchema={this.props.microcastleSchema}
                                 dispatch={this.props.dispatch} 
-                                parent={this}/>
-    })
+                                parent={this}/>;
+    });
 
     return (
       <div style={style.base}>

@@ -25,7 +25,7 @@ function stringToComponent(string) {
       return Group;
     case 'flex':
       return Flex;
-  };
+  }
   return false;
 }
 

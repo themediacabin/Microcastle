@@ -25,7 +25,7 @@ const style = {
     flex: '1 1 1px',
     padding: 10,
   },
-}
+};
 
 class ItemFrame extends React.Component {
   render() {

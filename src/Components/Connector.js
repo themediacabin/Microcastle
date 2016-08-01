@@ -6,7 +6,7 @@ import Store from '../Store/Store';
 const connectMC = schemaNames => Original => {
   const MicrocastleConnector = class extends React.Component {
     render() {
-      return <Original {...this.props} />
+      return <Original {...this.props} />;
     }
   };
   
@@ -26,7 +26,7 @@ const connectMC = schemaNames => Original => {
         if (entry == null) return undefined;
         return entry.get(attributeName, undefined);
       },
-    }
+    };
     
     for (const schemaName of schemaNames) {
       ret.mcSchemas[schemaName] = state.microcastle.get('data').get(schemaName);
@@ -42,6 +42,6 @@ const connectMC = schemaNames => Original => {
   });
   
   return connect(connectStore, connectDispatch)(MicrocastleConnector);
-} 
+};
   
 export default connectMC;

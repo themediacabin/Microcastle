@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Store from '../Store/Store';
 
 import PencilIcon from 'react-icons/lib/fa/pencil';
@@ -21,17 +20,17 @@ const style = {
     marginTop: -2,
     marginRight: 2,
   }
-}
+};
 
 class CreateButton extends React.Component {
   render() {
     const text = this.props.text ? this.props.text : 'Edit';
     if (!this.props.visible) return null;
 
-    return <button style={style.button} onClick={_ => this.props.dispatch(Store.actions.createNew(this.props.schema))}>
+    return <button style={style.button} onClick={() => this.props.dispatch(Store.actions.createNew(this.props.schema))}>
       <PencilIcon style={style.icon} />
       {text}
-    </button>  
+    </button>;
   }  
 }
 
@@ -40,10 +39,10 @@ class EditEntryButton extends React.Component {
     const text = this.props.text ? this.props.text : 'Edit';
     if (!this.props.visible) return null;
 
-    return <button style={style.button} onClick={_ => this.props.dispatch(Store.actions.editEntry(this.props.schema, this.props.entry))}>
+    return <button style={style.button} onClick={() => this.props.dispatch(Store.actions.editEntry(this.props.schema, this.props.entry))}>
       <PencilIcon style={style.icon} />
       {text}
-    </button>  
+    </button>;
   }  
 }
 
@@ -52,10 +51,10 @@ class EditAttributeButton extends React.Component {
     const text = this.props.text ? this.props.text : 'Edit';
     if (!this.props.visible) return null;
     
-    return <button style={style.button} onClick={_ => this.props.dispatch(Store.actions.editSingle(this.props.schema, this.props.entry, this.props.attribute))}>
+    return <button style={style.button} onClick={() => this.props.dispatch(Store.actions.editSingle(this.props.schema, this.props.entry, this.props.attribute))}>
       <PencilIcon style={style.icon} />
       {text}
-    </button>  
+    </button>;
   }  
 }
 
@@ -64,10 +63,10 @@ class EditPartButton extends React.Component {
     const text = this.props.text ? this.props.text : 'Edit';
     if (!this.props.visible) return null;
     
-    return <button style={style.button} onClick={_ => this.props.dispatch(Store.actions.editPart(this.props.schema, this.props.entry, this.props.attribute, this.props.part))}>
+    return <button style={style.button} onClick={() => this.props.dispatch(Store.actions.editPart(this.props.schema, this.props.entry, this.props.attribute, this.props.part))}>
       <PencilIcon style={style.icon} />
       {text}
-    </button>  
+    </button>;
   }  
 }
 
@@ -79,7 +78,7 @@ class BaseButton extends React.Component {
     return <button style={style.button} onClick={this.props.onClick}>
       <PencilIcon style={style.icon} />
       {text}
-    </button>  
+    </button>;
   }  
 }
 
@@ -94,7 +93,7 @@ export default {
   EditAttribute: connectedEditAttributeButton,
   EditPart: connectedEditPartButton,
   Base: BaseButton,
-}
+};
 
 export {
   connectedCreateButton as CreateButton,
@@ -102,4 +101,4 @@ export {
   connectedEditAttributeButton as AttributeButton,
   connectedEditPartButton as EditPartButton,
   BaseButton as BaseButton,
-}
+};

@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import _ from 'lodash';
 
 import Store from '../../Store/Store';
-import EditorFrame from '../EditorFrame';
 import ItemFrame from '../ItemFrame';
 
 import DataTypes from '../DataTypes';
@@ -14,7 +12,7 @@ const style = {
     background: 'white',
     flexDirection: 'column',
   }
-}
+};
 
 const checkForErrors = (results) => {
       const flatResults = _.flattenDeep(results);
@@ -36,7 +34,7 @@ class EntryEditor extends React.Component {
       
       const entryID = self.props.microcastleStore.get('editor').get('entry');
       const schema = this.props.schema;
-      if (!!schema.onEdit){
+      if (schema.onEdit){
           schema.onEdit(this.getTempState().toJS(), {id: entryID})
             .then((edited) => {
               _.forIn(edited, (value, attributeName) => {
@@ -51,7 +49,7 @@ class EntryEditor extends React.Component {
               if (this.props.closeEditor != undefined) this.props.closeEditor();
             });
       }
-    }).catch((e) => console.log('Not Saved', e));
+    }).catch(() => {});
   }
 
 

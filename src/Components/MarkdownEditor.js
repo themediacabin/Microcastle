@@ -1,6 +1,7 @@
 import React from 'react';
 
-let SimpleMDE = null
+let SimpleMDE = null;
+
 if (typeof window !== 'undefined') {
   SimpleMDE = require('simplemde');
 }
@@ -21,7 +22,7 @@ export default class MarkdownEditor extends React.Component {
     }
   }
   
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     if (nextProps.value != this._editor.value()) {
       this._editor.value(nextProps.value);
     }
@@ -29,6 +30,6 @@ export default class MarkdownEditor extends React.Component {
   }
   
   render() {
-    return <textarea ref={r => this._textarea = r} />
+    return <textarea ref={r => this._textarea = r} />;
   }
-};
+}

@@ -70,7 +70,7 @@ const style = {
     flexGrow: 0,
     flexShink: 0,
   }
-}
+};
 
 class EditorFrame extends React.Component {
   render() {

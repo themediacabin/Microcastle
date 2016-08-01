@@ -48,7 +48,7 @@ class GroupEditor extends React.Component {
   }
 
   onSave() {
-    return Promise.all(_.map(this._editors, (e) => e.onSave()))
+    return Promise.all(_.map(this._editors, (e) => e.onSave()));
   }
   
   onChangeIndividual(key, value) {
@@ -72,7 +72,7 @@ class GroupEditor extends React.Component {
                   microcastleStore={this.props.microcastleStore}
                   microcastleSchema={this.props.microcastleSchema}
                   dispatch={this.props.dispatch} />
-              </div>
+              </div>;
     });        
     return (
       <div>

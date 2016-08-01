@@ -1,5 +1,4 @@
 import React from 'react';
-import Textarea from 'react-textarea-autosize';
 import Immutable from 'immutable';
 import _ from 'lodash';
 import DataTypes from '../DataTypes';
@@ -28,7 +27,7 @@ class FlexEditor extends React.Component {
   }
 
   onSave() {
-    return Promise.all(_.map(this._editors, (e) => e.onSave()))
+    return Promise.all(_.map(this._editors, (e) => e.onSave()));
   }
 
   onChangeFlexType(event) {
@@ -62,7 +61,7 @@ class FlexEditor extends React.Component {
     
     return <div>
       {fields}
-    </div>
+    </div>;
   }
 
   render() {
@@ -74,7 +73,7 @@ class FlexEditor extends React.Component {
     return <div>
       <div><select value={this.props.value.get('_flex_type')} onChange={this.onChangeFlexType.bind(this)}>{flexTypes}</select></div>
       {this.props.value.get('_flex_type') == undefined ? null : this.renderFields()}
-    </div>
+    </div>;
   }
 }
 

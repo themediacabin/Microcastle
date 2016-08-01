@@ -50,7 +50,7 @@ function createNew(schemaName) {
 }
 
 function edit(schemaName, entryID, attributeName) {
-  if (editID == null) {
+  if (entryID == null) {
     createNew(schemaName);
   } else if (attributeName == null) {
     editEntry(schemaName, entryID);

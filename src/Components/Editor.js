@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Immutable from 'immutable';
-import _ from 'lodash';
 
 import Store from '../Store/Store';
 
@@ -89,7 +87,7 @@ class Editor extends React.Component {
                              changeTempState={this.onChangeTempState.bind(this)}
                              dispatch={this.props.dispatch}
                              ref={c => this._editor = c}/>
-    </EditorFrame>
+    </EditorFrame>;
   }
 }
 
@@ -98,4 +96,5 @@ const connectReducers = connect((state) => {
     microcastle: state.microcastle,
   };
 });
-export default DragDropContext(HTML5Backend)(connectReducers(Editor))
+
+export default DragDropContext(HTML5Backend)(connectReducers(Editor));

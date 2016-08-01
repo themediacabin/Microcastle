@@ -1,15 +1,12 @@
 import React from 'react';
 import Immutable from 'immutable';
-import _ from 'lodash'
+import _ from 'lodash';
 
-import DataTypes from '../DataTypes';
 
 import EntryEditor from '../Editors/Entry';
 import NewEditor from '../Editors/New';
 
 import Store from '../../Store/Store';
-
-import { connect } from 'react-redux';
 
 const style = {
   base: {
@@ -62,12 +59,7 @@ const style = {
     background: '#999',
     color: 'black',
   }
-}
-
-
-function getFirstImageAttributeName(schema) {
-  return _.findKey(schema.attributes, attr => attr.type == 'image');
-}
+};
 
 const EDITING = 'EDITING';
 const CHOSEN = 'CHOSEN';
@@ -91,12 +83,12 @@ class RelationEditor extends React.Component {
   onSave() {
     if (this.getDisplayState() == EDITING) {
       this.setState({error: true});
-      return new Promise((res, rej) => {res({error: 'Not Saved'})});
+      return new Promise((res) => {res({error: 'Not Saved'});});
     } else if (this.getDisplayState() == CREATING) {
       this.setState({error: true});
-      return new Promise((res, rej) => {res({error: 'Not Saved'})});
+      return new Promise((res) => {res({error: 'Not Saved'});});
     }
-    return new Promise((res, rej) => {res()});
+    return new Promise((res) => {res();});
   }
 
   getDisplayState() {
@@ -165,8 +157,8 @@ class RelationEditor extends React.Component {
 
   onSaveEdit(mounted = true) {
     this.setState({error: false});
-    return new Promise((resolve, reject) => {
-      this._editor.onSubmit().then((created) => {
+    return new Promise((resolve) => {
+      this._editor.onSubmit().then(() => {
         if (mounted) this.setState({editorWrap: new Immutable.Map()});
         resolve();
       });
@@ -275,16 +267,15 @@ class RelationEditor extends React.Component {
       }
       i++;
 
-      const currentSchema = this.getCurrentSchema()
-      const image = getFirstImageAttributeName(this.getCurrentSchema());
+      const currentSchema = this.getCurrentSchema();
       if (currentSchema.display == null) {
         return  <div key={name} style={style.defaultOption}>
           <span onClick={this.onChoose.bind(this, name)}>{name}</span>
           {currentSchema.onDelete == null ? null : <span style={{float: 'right', background: '#881111', borderRadius: '50%', color: 'white', width: 20, height: 20, textAlign: 'center'}} onClick={this.onDelete.bind(this, value, {id: name})}>x</span>}
-        </div>
+        </div>;
       } else {
-        const currentSchema = this.getCurrentSchema()
-        return <currentSchema.display key={name} onChoose={this.onChoose.bind(this, name)} onDelete={this.onDelete.bind(this, value, {id: name})} name={name} value={value} />
+        const currentSchema = this.getCurrentSchema();
+        return <currentSchema.display key={name} onChoose={this.onChoose.bind(this, name)} onDelete={this.onDelete.bind(this, value, {id: name})} name={name} value={value} />;
       }
     }).toArray();
 

@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import _ from 'lodash';
 
 import Store from '../../Store/Store';
-import EditorFrame from '../EditorFrame';
 import ItemFrame from '../ItemFrame';
 
 import DataTypes from '../DataTypes';
@@ -22,7 +20,7 @@ class NewEditor extends React.Component {
   onSubmit() {
     let self = this;
     const schema = this.props.schema;
-    if (!!schema.onNew){
+    if (schema.onNew){
       const saveAllEditors = _.map(this._columns, (e) => e == null ? true : e.onSave());
       return Promise.all(saveAllEditors).then(checkForErrors)
       .then((err) => new Promise((resolve, reject) => {
@@ -41,7 +39,7 @@ class NewEditor extends React.Component {
               resolve(edited);
             });
         });
-      })).catch((e) => console.log('Not Saved', e));
+      })).catch(() => {});
     }
   }
 

@@ -1,10 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import Immutable from 'immutable';
 import _ from 'lodash';
  
 import Store from '../../Store/Store';
-import EditorFrame from '../EditorFrame';
 import ItemFrame from '../ItemFrame';
 
 import DataTypes from '../DataTypes';
@@ -23,7 +20,7 @@ class SingleEditor extends React.Component {
     let self = this;
     const entryID = self.props.microcastleStore.get('editor').get('entry');
     const attributeSchema = this.getAttributeSchema();
-    if (!!attributeSchema.onChange){
+    if (attributeSchema.onChange){
       const save = this._editor.onSave();
       return save.then(checkForErrors).then((err) => new Promise((resolve, reject) => {
         if (err) return reject('Not Saved');
@@ -39,7 +36,7 @@ class SingleEditor extends React.Component {
             self.props.dispatch(action);
             if (this.props.closeEditor != undefined) this.props.closeEditor();
         });
-      })).catch((e) => console.log('Not Saved', e));
+      })).catch(() => {});
     }
   }
 
@@ -59,7 +56,6 @@ class SingleEditor extends React.Component {
   render() {
     const attributeName = this.props.microcastleStore.get('editor').get('attribute');
     const schema = this.getAttributeSchema();
-    const entryID = this.props.microcastleStore.get('editor').get('entry');
     const EditorComponent = DataTypes.stringToComponent(schema.type);
 
     return (
@@ -77,4 +73,4 @@ class SingleEditor extends React.Component {
 }
 
 
-export default SingleEditor
+export default SingleEditor;

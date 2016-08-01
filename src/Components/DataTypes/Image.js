@@ -19,10 +19,10 @@ class ImageEditor extends React.Component {
     if (event.target.files[0].type.match('image.*')) {
       let self = this;
       let reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function() {
           let dataURL = reader.result;
           self.props.onChange({full: dataURL});
-      }
+      };
       reader.readAsDataURL(event.target.files[0]);
     }
   }

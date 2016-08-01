@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import Immutable from 'immutable';
 import _ from 'lodash';
 
 import Store from '../../Store/Store';
-import EditorFrame from '../EditorFrame';
 import ItemFrame from '../ItemFrame';
 
 import DataTypes from '../DataTypes';
@@ -23,7 +21,7 @@ class PartEditor extends React.Component {
     let self = this;
     const entryID = self.props.microcastleStore.get('editor').get('entry');
     const attributeSchema = this.getAttributeSchema();
-    if (!!attributeSchema.onChange){
+    if (attributeSchema.onChange){
       const save = this._editor.onSave();
       return save.then(checkForErrors).then((err) => new Promise((resolve, reject) => {
         if (err) return reject('Not Saved');
@@ -39,7 +37,7 @@ class PartEditor extends React.Component {
             self.props.dispatch(action);
             if (this.props.closeEditor != undefined) this.props.closeEditor();
         });
-      })).catch((e) => console.log('Not Saved', e));
+      })).catch(() => {});
     }
   }
 
@@ -56,7 +54,6 @@ class PartEditor extends React.Component {
   }
 
   getEditingValueType() {
-    const schema = this.getAttributeSchema();
     let parts = Immutable.fromJS(this.props.microcastleStore.get('editor').get('part'));
     let currentSchema = this.getAttributeSchema();
     let solved = [];
@@ -65,7 +62,7 @@ class PartEditor extends React.Component {
       parts = parts.rest();
 
       if (currentSchema.type == 'array') {
-        currentSchema = currentSchema.subtype
+        currentSchema = currentSchema.subtype;
       } else if (currentSchema.type == 'flex') {
         const flexType = this.props.microcastleStore.get('editor').get('tempState').getIn(solved).get('_flex_type');
         currentSchema = currentSchema.flexes[flexType][currentPart];
@@ -86,8 +83,6 @@ class PartEditor extends React.Component {
 
   render() {
     const attributeName = this.props.microcastleStore.get('editor').get('attribute');
-    const schema = this.getAttributeSchema();
-    const entryID = this.props.microcastleStore.get('editor').get('entry');
     const EditorComponent = DataTypes.stringToComponent(this.getEditingValueType().type);
 
     return (
