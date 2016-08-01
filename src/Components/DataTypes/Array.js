@@ -223,3 +223,8 @@ class ArrayEditor extends React.Component {
 }
 
 export default (ArrayEditor);
+
+export {
+  ArrayEditor as ArrayEditor,
+  ArrayItem as WrappedArrayItem,
+};
