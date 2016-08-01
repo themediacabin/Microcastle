@@ -8,7 +8,7 @@
     "test": "./node_modules/.bin/mocha lib/Tests",
     "clean": "rm -r lib/",
     "lint": "./node_modules/.bin/eslint src/",
-    "all": "npm run-script clean && npm run-script lint && npm run-script build && npm run-script test"
+    "all": "npm run-script lint && npm run-script build && npm run-script test"
   },
   "repository": {
     "type": "git",
