@@ -27,6 +27,7 @@ class EntryEditor extends React.Component {
   onSubmit() {
     let self = this;
 
+
     const saveAllEditors = _.map(this._columns, (e) => e == null ? true : e.onSave());
     return Promise.all(saveAllEditors).then(checkForErrors)
     .then((error) => {

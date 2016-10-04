@@ -142,7 +142,7 @@ class ArrayEditor extends React.Component {
   }
 
   onSave() {
-    return Promise.all(_.map(this._editors, (e) => e.onSave()));
+    return Promise.all(_.map(this._items, (e) => e == null ? true : e.decoratedComponentInstance.decoratedComponentInstance.onSave()));
   }
 
   setDraggingIndex(i) {

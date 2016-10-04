@@ -27,7 +27,7 @@ class FlexEditor extends React.Component {
   }
 
   onSave() {
-    return Promise.all(_.map(this._editors, (e) => e.onSave()));
+    return Promise.all(_.map(this._editors, (e) => e == null ? true : e.onSave()));
   }
 
   onChangeFlexType(event) {
