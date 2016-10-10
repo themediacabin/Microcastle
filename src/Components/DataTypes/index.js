@@ -2,6 +2,7 @@ import Select from './Select';
 import Text from './Text';
 import Array from './Array';
 import Image from './Image';
+import File from './File';
 import Relation from './Relation';
 import Markdown from './Markdown';
 import Group from './Group';
@@ -17,6 +18,8 @@ function stringToComponent(string) {
       return Array;
     case 'image':
       return Image;
+    case 'file':
+      return File;
     case 'relation':
       return Relation;
     case 'markdown':
@@ -31,6 +34,7 @@ function stringToComponent(string) {
 
 export default {
   Select,
+  File,
   Text,
   Array,
   Image,
