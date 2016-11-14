@@ -88,7 +88,7 @@ describe('General', () => {
         rendered.find('textarea').simulate('change', {target: {value: 'new'}});
         rendered.find('button').at(0).simulate('click');
         setTimeout(() => {
-          expect(schema.news.onNew).to.have.been.calledTwice;
+          expect(schema.news.onNew).to.have.been.calledOnce;
           expect(store.getState().microcastle.getIn(['data', 'news', 'new', 'title'])).to.equal('new');
           resolve();
         }, 0);
