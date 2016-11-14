@@ -3,7 +3,7 @@ import React from 'react';
 import MarkdownEditor from '../MarkdownEditor';
 
 class TextEditor extends React.Component {
-  static defaultValue() {
+  static defaultValue(options) {
     return '';
   }
 

@@ -1,13 +1,13 @@
 {
   "name": "microcastle",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "Frontend only CMS",
   "main": "lib/index.js",
   "scripts": {
-    "build": "./node_modules/.bin/babel -d lib/ src/",
-    "test": "./node_modules/.bin/mocha lib/Tests",
+    "build": "babel -d lib/ src/",
+    "test": "mocha --require lib/TestSuite.js lib/**/**.test.js",
     "clean": "rm -r lib/",
-    "lint": "./node_modules/.bin/eslint src/",
+    "lint": "eslint src/",
     "all": "npm run-script lint && npm run-script build && npm run-script test"
   },
   "repository": {
@@ -25,19 +25,23 @@
   "license": "GPL-3.0",
   "homepage": "https://bitbucket.org/mediacabin/microcastle",
   "dependencies": {
+    "codemirror": "^5.16.0",
     "immutable": "^3.8.1",
+    "jsdom": "^9.8.3",
     "lodash": "^4.13.1",
     "marked": "^0.3.5",
+    "mocha-as-promised": "^2.0.0",
+    "react": "15.1.0",
     "react-dnd": "^2.1.4",
     "react-dnd-html5-backend": "^2.1.2",
-    "react-textarea-autosize": "^4.0.3",
-    "simplemde": "^1.11.2",
+    "react-dom": "^15.1.0",
     "react-icons": "^2.1.0",
     "react-redux": "^4.4.5",
-    "react-dom": "^15.1.0",
+    "react-textarea-autosize": "^4.0.3",
     "redux": "^3.5.2",
-    "react": "15.1.0",
-    "codemirror": "^5.16.0"
+    "simplemde": "^1.11.2",
+    "sinon": "2.0.0-pre.4",
+    "sinon-chai": "^2.8.0"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
