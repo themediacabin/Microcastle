@@ -64,7 +64,7 @@ class NewEditor extends React.Component {
     const editorComponents = _.values(_.mapValues(schema, (columnOptions, columnName) => {
       const ColumnComponent = DataTypes.stringToComponent(columnOptions.type);
       return (
-        <ItemFrame title={columnName} key={columnName}>
+        <ItemFrame title={columnOptions.name || columnName} key={columnName}>
           <ColumnComponent ref={(r) => this._columns.push(r)}
                            onChange={this.onComponentChange.bind(this, columnName)}
                            value={this.getCurrentValue(columnName, ColumnComponent.defaultValue())}

@@ -184,6 +184,9 @@ class ArrayEditor extends React.Component {
   }
 
   render() {
+
+    const singularName = this.props.options.singularName || 'Item';
+
     this._items = [];
     const SubType = DataTypes.stringToComponent(this.props.options.subtype.type);
 
@@ -213,7 +216,7 @@ class ArrayEditor extends React.Component {
 
     return (
       <div style={style.base}>
-        <button style={style.button} onClick={this.onAdd.bind(this)}>Add Item</button>
+        <button style={style.button} onClick={this.onAdd.bind(this)}>Add {singularName}</button>
         <div>
           {components}
         </div>

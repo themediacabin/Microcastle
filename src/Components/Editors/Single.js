@@ -59,7 +59,7 @@ class SingleEditor extends React.Component {
     const EditorComponent = DataTypes.stringToComponent(schema.type);
 
     return (
-      <ItemFrame title={attributeName}>
+      <ItemFrame title={schema.name || attributeName}>
         <EditorComponent ref={(r) => this._editor = r}
                          onChange={this.onChange.bind(this)}
                          value={this.getCurrentValue()}
