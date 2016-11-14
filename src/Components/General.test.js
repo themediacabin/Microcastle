@@ -1,6 +1,6 @@
 import Microcastle from '../index.js';
 
-import { createStore, compose, combineReducers } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import I from 'immutable';
 
@@ -20,7 +20,7 @@ const store = createStore(reducer, {
 const schema = {
     news: {
         onNew:  sinon.spy((v) => Promise.resolve({[v.title]: v})),
-        onEdit: sinon.spy((v, i) => Promise.resolve(v)),
+        onEdit: sinon.spy((v) => Promise.resolve(v)),
         attributes: {
             title: {
                 onChange: sinon.spy((v) => {return Promise.resolve(v);}),
@@ -28,7 +28,7 @@ const schema = {
             },
         }
     }  
-}
+};
 
 describe('General', () => {
     afterEach(() => {

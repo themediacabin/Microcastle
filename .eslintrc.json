@@ -22,5 +22,10 @@
     },
     "plugins": [
         "react"
-    ]
+    ],
+    "globals": {
+      "sinon": true,
+      "mount": true,
+      "expect": true
+    }
 }

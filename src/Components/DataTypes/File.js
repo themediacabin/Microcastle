@@ -1,11 +1,5 @@
 import React from 'react';
 
-const style = {
-  image: {
-    maxHeight: '300px', 
-  }
-};
-
 class FileEditor extends React.Component {
   static defaultValue() {
     return '';
