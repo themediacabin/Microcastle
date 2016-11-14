@@ -27,10 +27,8 @@
   "dependencies": {
     "codemirror": "^5.16.0",
     "immutable": "^3.8.1",
-    "jsdom": "^9.8.3",
     "lodash": "^4.13.1",
     "marked": "^0.3.5",
-    "mocha-as-promised": "^2.0.0",
     "react": "15.1.0",
     "react-dnd": "^2.1.4",
     "react-dnd-html5-backend": "^2.1.2",
@@ -39,12 +37,14 @@
     "react-redux": "^4.4.5",
     "react-textarea-autosize": "^4.0.3",
     "redux": "^3.5.2",
-    "simplemde": "^1.11.2",
-    "sinon": "2.0.0-pre.4",
-    "sinon-chai": "^2.8.0"
+    "simplemde": "^1.11.2"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
+    "jsdom": "^9.8.3",
+    "sinon-chai": "^2.8.0",
+    "sinon": "2.0.0-pre.4",
+    "mocha-as-promised": "^2.0.0",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.11.1",
     "chai": "^3.5.0",
@@ -52,7 +52,6 @@
     "eslint": "^3.2.0",
     "eslint-plugin-react": "^5.2.2",
     "mocha": "^3.0.0",
-    "react-addons-test-utils": "^15.3.0",
-    "sinon": "^1.17.5"
+    "react-addons-test-utils": "^15.3.0"
   }
 }
