@@ -81,7 +81,7 @@ class EditorFrame extends React.Component {
         <div style={style.header}>
           <h2 style={style.headerTitle}>{this.props.title}</h2>
           <div>
-            <button style={style.headerButton} onClick={this.props.onSubmit}>Save</button>
+            <button style={style.headerButton} className="microcastle-editor-save" onClick={this.props.onSubmit}>Save</button>
             <button style={style.headerButton} onClick={this.props.onCancel}>Close</button>
           </div>
         </div>

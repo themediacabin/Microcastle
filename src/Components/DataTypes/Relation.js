@@ -183,7 +183,7 @@ class RelationEditor extends React.Component {
         <div style={style.header}>
           <h4 style={style.headerTitle}>{"Creating New " + relationName}</h4>
           <button style={style.headerButton} onClick={this.onReselect.bind(this)}>Close</button>
-          <button style={style.headerButton} onClick={this.onSaveNew.bind(this)}>Save</button>
+          <button style={style.headerButton} className="microcastle-relation-save" onClick={this.onSaveNew.bind(this)}>Save</button>
         </div>
         <div style={style.editor}>
           <NewEditor schema={this.getCurrentSchema()}
@@ -204,8 +204,8 @@ class RelationEditor extends React.Component {
       <div>
         <div style={style.header}>
           <h4 style={style.headerTitle}>{this.props.value}</h4>
-          <button style={style.headerButton} onClick={this.onReselect.bind(this)}>Reselect</button>
-          <button style={style.headerButton} onClick={this.onSaveEdit.bind(this)}>Save</button>
+          <button style={style.headerButton} className="microcastle-relation-reselect" onClick={this.onReselect.bind(this)}>Reselect</button>
+          <button style={style.headerButton} className="microcastle-relation-save" onClick={this.onSaveEdit.bind(this)}>Save</button>
         </div>
 
         <div style={style.editor}>
@@ -233,7 +233,7 @@ class RelationEditor extends React.Component {
       <div>
         <div style={style.header}>
           <h4 style={style.headerTitle}>{this.props.value}</h4>
-          <button style={style.headerButton} onClick={this.onReselect.bind(this)}>Reselect</button>
+          <button style={style.headerButton} className="microcastle-relation-reselect" onClick={this.onReselect.bind(this)}>Reselect</button>
           <button style={style.headerButton} onClick={this.setEditing.bind(this)}>Edit</button>
         </div>
         <div style={style.selector}>
@@ -283,7 +283,7 @@ class RelationEditor extends React.Component {
       <div>
         <div style={style.header}>
           <h4 style={style.headerTitle}>{"Choose One " + relationName}</h4>
-          <button style={style.headerButton} onClick={this.onCreate.bind(this)}>Create New</button>
+          <button style={style.headerButton} className="microcastle-relation-create" onClick={this.onCreate.bind(this)}>Create New</button>
         </div>
         <div style={style.selector}>
           <div>
