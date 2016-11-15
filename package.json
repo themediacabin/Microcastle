@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel -d lib/ src/",
-    "test": "mocha --require lib/TestSuite.js lib/**/**.test.js",
+    "watch": "babel -d lib/ src/ -w",
+    "test": "mocha --opts mocha.opts",
     "clean": "rm -r lib/",
     "lint": "eslint src/",
     "all": "npm run-script lint && npm run-script build && npm run-script test"
