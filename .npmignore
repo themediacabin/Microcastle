@@ -15,3 +15,6 @@ node_modules
 src
 .DS_STORE
 gulpfile.js
+bitbucket-pipelines.yml
+Dockerfile
+mocha.opts
