@@ -1,5 +1,4 @@
 var jsdom = require('jsdom').jsdom;
-require("mocha-as-promised")();
 
 global.document = jsdom('');
 global.window = document.defaultView;
