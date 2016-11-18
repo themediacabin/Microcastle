@@ -47,7 +47,7 @@ const schema = {
 };
 
 describe('Datatype Relation', () => {
-    it('Can Create New Entry From Relation Field', () => new Promise (resolve => {
+    it('Can Create New Entry From Relation Field', async () => {
         const rendered = mount(
             <Provider store={store}>
               <div>
@@ -64,11 +64,10 @@ describe('Datatype Relation', () => {
         rendered.find('.microcastle-relation-save').simulate('click');
         rendered.find('.microcastle-editor-save').at(0).simulate('click');
 
-        setTimeout(() => {
-          expect(schema.team.onNew).to.have.been.calledOnce;
-          expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(2);
-          resolve();
-        }, 0);
-    }));
+        await new Promise(r => setImmediate(r));
+
+        expect(schema.team.onNew).to.have.been.calledOnce;
+        expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(2);
+    });
 });
 
