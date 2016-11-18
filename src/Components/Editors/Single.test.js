@@ -5,6 +5,7 @@ import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import I from 'immutable';
 
+
 const reducer = combineReducers({
     microcastle: Microcastle.MicrocastleStore.reducer,
 });
