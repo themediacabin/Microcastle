@@ -18,7 +18,12 @@ global.React = require('react');
 
 var sinonChai = require("sinon-chai");
 var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+var chaiImmutable = require("chai-immutable");
+
+chai.use(chaiImmutable);
 chai.use(sinonChai);
+chai.use(chaiAsPromised);
 global.expect = chai.expect;
 
 

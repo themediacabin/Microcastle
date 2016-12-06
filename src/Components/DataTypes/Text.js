@@ -15,6 +15,12 @@ class TextEditor extends React.Component {
   static defaultValue() {
     return '';
   }
+  
+  static validate(scheme, attribute) {
+    if (scheme.required && (!attribute || attribute==''))
+      return ['required'];
+    return [];
+  }
 
   onSave() {
     return new Promise((resolve) => resolve());

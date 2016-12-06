@@ -8,7 +8,7 @@ import Markdown from './Markdown';
 import Group from './Group';
 import Flex from './Flex';
 
-function stringToComponent(string) {
+export function stringToComponent(string) {
   switch (string) {
     case 'text':
       return Text;
