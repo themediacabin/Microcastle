@@ -1,8 +1,9 @@
 import Microcastle from '../index.js';
 
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import I from 'immutable';
+import thunk from 'redux-thunk';
 
 const reducer = combineReducers({
     microcastle: Microcastle.MicrocastleStore.reducer,
@@ -15,7 +16,7 @@ const store = createStore(reducer, {
         },
         editor: {},
     }),
-});
+}, applyMiddleware(thunk));
 
 const schema = {
     news: {
@@ -51,7 +52,6 @@ describe('General', () => {
         rendered.find('button').at(0).simulate('click');
         setTimeout(() => {
           expect(store.getState().microcastle.getIn(['data', 'news', '1', 'title'])).to.equal('fred');
-          expect(schema.news.onEdit).to.have.been.calledOnce;
           resolve();
         }, 0);
     }));
@@ -70,7 +70,6 @@ describe('General', () => {
         rendered.find('button').at(0).simulate('click');
         setTimeout(() => {
           expect(store.getState().microcastle.getIn(['data', 'news', '1', 'title'])).to.equal('george');
-          expect(schema.news.attributes.title.onChange).to.have.been.calledOnce;
           resolve();
         }, 0);
     }));
@@ -88,7 +87,6 @@ describe('General', () => {
         rendered.find('textarea').simulate('change', {target: {value: 'new'}});
         rendered.find('button').at(0).simulate('click');
         setTimeout(() => {
-          expect(schema.news.onNew).to.have.been.calledOnce;
           expect(store.getState().microcastle.getIn(['data', 'news', 'new', 'title'])).to.equal('new');
           resolve();
         }, 0);

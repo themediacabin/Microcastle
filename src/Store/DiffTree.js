@@ -59,3 +59,25 @@ export const saveChangeState = async (changeState, originalState, schema) => {
   return originalState.merge(changed);
 }
 
+export const saveIndividualNew = async (state, changeState, schema) => {
+  const type = state.get('type');  
+  const saveFn = schema[type]['onNew'];
+
+  const resolved = await saveFn(state.get('data'));
+
+  const entryID = Object.keys(resolved)[0];
+  const value = Object.values(resolved)[0];
+
+  return {
+    newState: I.fromJS({
+      created: true,
+      entryID,
+    }),
+    changeState: changeState.setIn([type, entryID], value),
+  };
+}
+
+export const saveNewState = async (newState, schema) => {
+  
+}
+

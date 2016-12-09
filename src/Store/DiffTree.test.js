@@ -1,5 +1,5 @@
 import I from 'immutable';
-import { validateTree, validateEntry, saveChangeState } from './DiffTree';
+import { validateTree, validateEntry, saveChangeState, saveIndividualNew } from './DiffTree';
 
 describe('DiffTree', () => {
   
@@ -7,6 +7,9 @@ describe('DiffTree', () => {
     news: {
       onEdit: sinon.spy(async (val, info) => {
         return val;
+      }),
+      onNew: sinon.spy(async (val) => {
+        return {[val.get('title')]: val}
       }),
       attributes: {
         title: {type: 'text', required: true},
@@ -125,6 +128,47 @@ describe('DiffTree', () => {
 
       await saveChangeState(changeState, originalState, schema);
       expect(schema.news.onEdit).to.have.been.calledOnce;
+    });
+  });
+
+  describe('saveIndividualNew', () => {
+    it('return the changeState with the new entry', async () => {
+
+      const state = I.fromJS({
+        id: 13918409182409180,
+        type: 'news',
+        data: {
+          title: 'hello',
+          content: 'world'
+        }
+      });
+
+      const changeState = I.fromJS({
+        news: {
+          one: {
+            title: 'hello',
+            content: 'world',
+          }
+        }
+      });
+
+      const expected = I.fromJS({
+        news: {
+          one: {
+            title: 'hello',
+            content: 'world',
+          },
+          hello: {
+            title: 'hello',
+            content: 'world',
+          }
+        }
+      });
+
+      const result = await saveIndividualNew(state, changeState, schema);
+
+      expect(result.changeState).to.equal(expected);
+
     });
   });
 

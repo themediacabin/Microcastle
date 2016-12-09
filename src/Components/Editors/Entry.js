@@ -25,34 +25,8 @@ const checkForErrors = (results) => {
 
 class EntryEditor extends React.Component {
   onSubmit() {
-    let self = this;
-
-
-    const saveAllEditors = _.map(this._columns, (e) => e == null ? true : e.onSave());
-    return Promise.all(saveAllEditors).then(checkForErrors)
-    .then((error) => {
-      if (error) return;
-      
-      const entryID = self.props.microcastleStore.get('editor').get('entry');
-      const schema = this.props.schema;
-      if (schema.onEdit){
-          schema.onEdit(this.getTempState().toJS(), {id: entryID})
-            .then((edited) => {
-              _.forIn(edited, (value, attributeName) => {
-                const action = Store.actions.updateData(
-                  self.props.microcastleStore.get('editor').get('schema'),
-                  entryID,
-                  attributeName,
-                  Immutable.fromJS(value)
-                );
-                return self.props.dispatch(action);
-              });
-              if (this.props.closeEditor != undefined) this.props.closeEditor();
-            });
-      }
-    }).catch(() => {});
+    this.props.dispatch(Store.actions.save(this.props.microcastleSchema));
   }
-
 
   getTempState() {
     return this.props.microcastleStore.get('editor').get('tempState') || Immutable.Map({});

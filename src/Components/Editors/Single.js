@@ -17,27 +17,7 @@ const checkForErrors = (results) => {
 
 class SingleEditor extends React.Component {
   onSubmit() {
-    let self = this;
-    const entryID = self.props.microcastleStore.get('editor').get('entry');
-    const attributeSchema = this.getAttributeSchema();
-    if (attributeSchema.onChange){
-      const save = this._editor.onSave();
-      return save.then(checkForErrors).then((err) => new Promise((resolve, reject) => {
-        if (err) return reject('Not Saved');
-        attributeSchema.onChange(
-            this.props.microcastleStore.get('editor').get('tempState'), {id: entryID})
-        .then((edited) => {
-            const action = Store.actions.updateData(
-              self.props.microcastleStore.get('editor').get('schema'),
-              entryID,
-              self.props.microcastleStore.get('editor').get('attribute'),
-              edited
-            );
-            self.props.dispatch(action);
-            if (this.props.closeEditor != undefined) this.props.closeEditor();
-        });
-      })).catch(() => {});
-    }
+    this.props.dispatch(Store.actions.save(this.props.microcastleSchema));
   }
 
   onChange(value) {
@@ -45,7 +25,10 @@ class SingleEditor extends React.Component {
   }
 
   getCurrentValue() {
-    return this.props.microcastleStore.get('editor').get('tempState', '');
+    const editor = this.props.microcastleStore.get('editor');
+    const tmpVal = editor.getIn('tempState', editor.get('schema'), editor.get('entry'), editor.get('attribute'));
+    const savVal = this.props.microcastleStore.getIn('data', editor.get('schema'), editor.get('entry'), editor.get('attribute'));
+    return tmpVal || savVal;
   }
 
   getAttributeSchema() {

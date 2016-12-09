@@ -125,6 +125,9 @@ function deleteEntry(schemaName, entryID) {
   };
 }
 
+export function saveNew() {
+
+}
 
 export function save(schema) {
   return async (dispatch, getState) => {
@@ -146,6 +149,10 @@ const initalState = Immutable.fromJS({
 function reducer(state = initalState, action) {
   switch (action.type) {
 
+    case MICROCASTLE_MERGE_TREE: {
+      return state.mergeDeepIn(['data'], action.tree);
+    }
+
     case MICROCASTLE_UPDATE_DATA: {
       let {schemaName, entryID, attributeName, value} = action;
       const newValue = {[schemaName]: {[entryID]: {[attributeName]: value}}};
@@ -153,12 +160,6 @@ function reducer(state = initalState, action) {
                                        .setIn([schemaName, entryID, attributeName], value);
       return state.set('data', newData);
     }
-
- //   case MICROCASTLE_MERGE_DIFF: {
- //     let {diff} = action;
- //     const newData = state.get('data').mergeDeep(diff);
- //     return state.set('data', newData);
- //   }
 
     case MICROCASTLE_INSERT_DATA: {
       let {schemaName, entryID, entryValue} = action;
@@ -180,41 +181,37 @@ function reducer(state = initalState, action) {
                                            .set('schema', action.schemaName)
                                            .set('entry', action.entryID)
                                            .set('attribute', action.attributeName)
-                                           .set('tempState', currentState);
+                                           .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
     }
 
     case MICROCASTLE_EDITOR_EDIT_PART: {
       const currentState = state.get('data').get(action.schemaName).get(action.entryID).get(action.attributeName);
-
       const newEditor = state.get('editor').set('open', true)
                                            .set('action', EDIT_PART)
                                            .set('schema', action.schemaName)
                                            .set('entry', action.entryID)
                                            .set('attribute', action.attributeName)
                                            .set('part', action.part)
-                                           .set('tempState', currentState);
-
+                                           .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
     }
 
     case MICROCASTLE_EDITOR_EDIT_ENTRY: {
-      const currentState = state.get('data').get(action.schemaName)
-                                .get(action.entryID);
       const newEditor = state.get('editor').set('open', true)
                                            .set('action', EDIT_ENTRY)
                                            .set('schema', action.schemaName)
                                            .set('entry', action.entryID)
-                                           .set('tempState', currentState);
+                                           .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
     }
 
 
     case MICROCASTLE_EDITOR_CREATE_NEW: {
       const newEditor = state.get('editor').set('open', true)
-                                                  .set('action', CREATE_NEW)
-                                                  .set('schema', action.schemaName)
-                                                  .set('tempState', '');
+                                           .set('action', CREATE_NEW)
+                                           .set('schema', action.schemaName)
+                                           .set('tempState', '');
       return state.set('editor', newEditor);
     }
 
@@ -222,8 +219,16 @@ function reducer(state = initalState, action) {
       return state.setIn(['editor', 'open'], false);
     }
 
-    case MICROCASTLE_EDITOR_SET_TEMP_STATE:
-      return state.setIn(['editor', 'tempState'], action.state);
+    case MICROCASTLE_EDITOR_SET_TEMP_STATE: {
+      const editor = state.get('editor');
+      const editorAction = editor.get('action');
+      if (editorAction == EDIT_ENTRY)
+        return state.setIn(['editor', 'tempState', editor.get('schema'), editor.get('entry')], action.state);
+      if (editorAction == EDIT_SINGLE) {
+        return state.setIn(['editor', 'tempState', editor.get('schema'), editor.get('entry'), editor.get('attribute')], action.state);
+      }
+      return state;
+    }
 
     default:
       return state;
@@ -242,7 +247,8 @@ export default {
     close,
     edit,
     setTempState,
-    deleteEntry
+    deleteEntry,
+    save
   },
   constants: {
     MICROCASTLE_UPDATE_DATA,
