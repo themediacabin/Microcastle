@@ -1,6 +1,8 @@
 import Immutable from 'immutable';
+import {saveChangeState, validateTree} from './DiffTree';
 
 const MICROCASTLE_UPDATE_DATA = 'MICROCASTLE_UPDATE_DATA';
+const MICROCASTLE_MERGE_TREE = 'MICROCASTLE_MERGE_TREE';
 const MICROCASTLE_INSERT_DATA = 'MICROCASTLE_INSERT_DATA';
 const MICROCASTLE_DELETE_ENTRY = 'MICROCASTLE_DELETE_ENTRY';
 const MICROCASTLE_EDITOR_EDIT_SINGLE = 'MICROCASTLE_EDITOR_EDIT_SINGLE';
@@ -9,6 +11,7 @@ const MICROCASTLE_EDITOR_EDIT_PART = 'MICROCASTLE_EDITOR_EDIT_PART';
 const MICROCASTLE_EDITOR_CREATE_NEW = 'MICROCASTLE_EDITOR_CREATE_NEW';
 const MICROCASTLE_EDITOR_CLOSE = 'MICROCASTLE_EDITOR_CLOSE';
 const MICROCASTLE_EDITOR_SET_TEMP_STATE = 'MICROCASTLE_EDITOR_SET_TEMP_STATE';
+const MICROCASTLE_REPORT_ERRORS = 'MICROCASTLE_REPORT_ERRORS';
 
 const EDIT_SINGLE = 'EDIT_SINGLE';
 const EDIT_PART = 'EDIT_PART';
@@ -100,19 +103,40 @@ function deleteEntry(schemaName, entryID) {
   };
 }
 
-/*
-function save(schema) {
-  return (dispatch, getState) => {
-    const tempState = getState().get('editor').get('tempState');
-    const validationErrors = validate(tempState, schema);
+function reportErrors(errors) {
+  return {
+    type: MICROCASTLE_REPORT_ERRORS,
+    errors
+  };
+}
+
+function mergeTree(tree) {
+  return {
+    type: MICROCASTLE_MERGE_TREE,
+    tree
+  };
+}
+
+function deleteEntry(schemaName, entryID) {
+  return {
+    type: MICROCASTLE_DELETE_ENTRY,
+    schemaName,
+    entryID
+  };
+}
+
+
+export function save(schema) {
+  return async (dispatch, getState) => {
+    const tempState = getState().microcastle.get('editor').get('tempState');
+    const validationErrors = validateTree(schema, tempState);
     if (validationErrors.length > 0) {
-      return dispatch(reportError(validationErrors));
+      return dispatch(reportErrors(validationErrors));
     }
-    const savedTree = save(schema, getState().get('editor'));
-    return dispatch(mergeDiff(savedTree));
+    const savedTree = await saveChangeState(tempState, getState().microcastle.get('data'), schema);
+    return dispatch(mergeTree(savedTree));
   }
 }
-*/
 
 const initalState = Immutable.fromJS({
   data: {},

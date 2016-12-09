@@ -1,13 +1,13 @@
 import I from 'immutable';
-import { validateTree, saveTree } from './DiffTree';
+import { validateTree, validateEntry, saveChangeState } from './DiffTree';
 
 describe('DiffTree', () => {
   
   const schema = {
     news: {
-      onEdit: async (val, info) => {
+      onEdit: sinon.spy(async (val, info) => {
         return val;
-      },
+      }),
       attributes: {
         title: {type: 'text', required: true},
         content: {type: 'text', required: true},
@@ -15,6 +15,26 @@ describe('DiffTree', () => {
     }
   }
 
+  afterEach(function() {
+    schema.news.onEdit.reset();
+  });
+
+  describe('validateEntry', () => {
+    it('Should return an empty array on pass', () => {
+      const diff = I.fromJS({
+        title: 'hello',
+        content: 'text',
+      });
+      expect(validateEntry(schema.news, diff)).to.deep.equal([]);
+    });
+
+    it('should return an array of errors on fail', () => {
+      const diff = I.fromJS({
+        title: '',
+      });
+      expect(validateEntry(schema.news, diff)).to.have.lengthOf(2);
+    });
+  });
 
   describe('validateTree', () => {
     it('Should return an empty array on pass', () => {
@@ -41,23 +61,72 @@ describe('DiffTree', () => {
     });
   });
 
-  describe('saveTree', () => {
-    it('Should return an the saved tree on pass', async () => {
-      const editor = I.fromJS({
-        schema: 'news',
-        entry: 'test',
-        action: 'EDIT_SINGLE',
-        tempState: {
-          news: {
-            test: {
-              title: 'hello',
-              content: 'text',
-            },
-          },
+  describe('saveChangeState', () => {
+    const originalState = I.fromJS({
+      news: {
+        test: {
+          title: 'hello',
+          content: 'world',
+        }
+      }
+    });
+
+    it('Should overwrite changes', async () => {
+      const changeState = I.fromJS({
+        news: {
+          test: {
+            title: 'woah',
+            content: 'hello world',
+          }
         }
       });
-      await expect(saveTree(schema, editor)).to.eventually.equal(editor.get('tempState'));
+
+      const expected = I.fromJS({
+        news: {
+          test: {
+            title: 'woah',
+            content: 'hello world'
+          }
+        }
+      });
+      
+      await expect(saveChangeState(changeState, originalState, schema)).to.eventually.equal(expected);    
+    });
+
+    it('Should preserve unchanged state', async () => {
+      const changeState = I.fromJS({
+        news: {
+          test: {
+            content: 'hello world',
+          }
+        }
+      });
+
+      const expected = I.fromJS({
+        news: {
+          test: {
+            title: 'hello',
+            content: 'hello world'
+          }
+        }
+      });
+      
+      await expect(saveChangeState(changeState, originalState, schema)).to.eventually.equal(expected);    
+    });
+
+    it('Should call onEdit of all Entries with new state', async () => {
+      const changeState = I.fromJS({
+        news: {
+          test: {
+            content: 'hello world',
+          }
+        }
+      });
+
+      await saveChangeState(changeState, originalState, schema);
+      expect(schema.news.onEdit).to.have.been.calledOnce;
     });
   });
+
 });
 

@@ -2,41 +2,60 @@ import I from 'immutable';
 import R from 'ramda';
 import {stringToComponent} from '../Components/DataTypes';
 
+function promiseProps(object) {
+    let promisedProperties = [];
+    const objectKeys = object.keySeq();
+    objectKeys.forEach((key) => promisedProperties.push(object.get(key)));
+
+    return Promise.all(promisedProperties)
+                  .then((resolvedValues) => {
+                    return I.fromJS(resolvedValues.reduce((resolvedObject, property, index) => {
+                      return resolvedObject.set(objectKeys.get(index), property);
+                    }, new I.Map()));
+           });
+
+}
+
+
+
+export const validateEntry = (entrySchema, entry) => {
+  let errors = [];
+
+  new I.Map(entrySchema['attributes']).forEach((_, attributeName) => {
+    const scheme = entrySchema['attributes'][attributeName];
+    const type = scheme.type;
+    const dataType = stringToComponent(type);
+    const data = entry.get(attributeName);
+    const ourErrors = dataType.validate(scheme, data);
+    errors = errors.concat(ourErrors);
+  });
+
+  return errors;
+}
+
 export const validateTree = (schema, tree) => {
   let errors = [];
 
   tree.forEach((type, typeName) => {
     type.forEach((entry, entryName) => {
-      const entrySchema = schema[typeName]['attributes'];
-      new I.Map(entrySchema).forEach((_, attributeName) => {
-        const scheme = schema[typeName]['attributes'][attributeName];
-        const type = scheme.type;
-        const dataType = stringToComponent(type);
-        const data = entry.get(attributeName);
-        const ourErrors = dataType.validate(scheme, data);
-        errors = errors.concat(ourErrors);
-      });
+      const entrySchema = schema[typeName];
+      const entryErrors = validateEntry(entrySchema, entry);
+      errors = errors.concat(entryErrors);
     });
   });
 
   return errors;
 }
 
-export const saveEntry = async (schema, editor) => {
-  const typeName = editor.get('schema');
-  const entryID = editor.get('entry');
-
-  const value = editor.getIn(['tempState', typeName, entryID]);
-  const saveFunction = schema[typeName]['onEdit'];
-
-  const saved = await saveFunction(value, {id: entryID});
-  return editor.get('tempState').mergeIn([typeName, entryID], saved); 
-}
-
-export const saveTree = async (schema, editor) => {
-  if (editor.get('action') == 'EDIT_SINGLE') {
-    return await saveEntry(schema, editor);
-  }
-  return '';
+export const saveChangeState = async (changeState, originalState, schema) => {
+  const changed = await promiseProps(changeState.map(async (type, typeName) => 
+    promiseProps(type.map(async (entry, entryName) => {
+      const merged = originalState.getIn([typeName, entryName])
+                                  .merge(changeState.getIn([typeName, entryName]));
+      const saveFn = schema[typeName]['onEdit']; 
+      return await saveFn(merged, {id: entryName});
+    }))
+  ));
+  return originalState.merge(changed);
 }
 
