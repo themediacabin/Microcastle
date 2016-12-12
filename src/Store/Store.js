@@ -1,5 +1,6 @@
 import Immutable from 'immutable';
 import {saveChangeState, validateTree} from './DiffTree';
+import {changeViewValue} from './View';
 
 const MICROCASTLE_UPDATE_DATA = 'MICROCASTLE_UPDATE_DATA';
 const MICROCASTLE_MERGE_TREE = 'MICROCASTLE_MERGE_TREE';
@@ -12,6 +13,7 @@ const MICROCASTLE_EDITOR_CREATE_NEW = 'MICROCASTLE_EDITOR_CREATE_NEW';
 const MICROCASTLE_EDITOR_CLOSE = 'MICROCASTLE_EDITOR_CLOSE';
 const MICROCASTLE_EDITOR_SET_TEMP_STATE = 'MICROCASTLE_EDITOR_SET_TEMP_STATE';
 const MICROCASTLE_REPORT_ERRORS = 'MICROCASTLE_REPORT_ERRORS';
+const MICROCASTLE_EDITOR_CHANGE_VIEW = 'MICROCASTLE_EDITOR_CHANGE_VIEW';
 
 const EDIT_SINGLE = 'EDIT_SINGLE';
 const EDIT_PART = 'EDIT_PART';
@@ -125,6 +127,13 @@ function deleteEntry(schemaName, entryID) {
   };
 }
 
+function changeView(view, value) {
+  return {
+    type: MICROCASTLE_EDITOR_CHANGE_VIEW,
+    view,
+    value,
+  };
+}
 export function saveNew() {
 
 }
@@ -219,6 +228,10 @@ function reducer(state = initalState, action) {
       return state.setIn(['editor', 'open'], false);
     }
 
+    case MICROCASTLE_EDITOR_CHANGE_VIEW: {
+      return changeViewValue(state, action.view, action.value);
+    }
+
     case MICROCASTLE_EDITOR_SET_TEMP_STATE: {
       const editor = state.get('editor');
       const editorAction = editor.get('action');
@@ -248,7 +261,8 @@ export default {
     edit,
     setTempState,
     deleteEntry,
-    save
+    save,
+    changeView,
   },
   constants: {
     MICROCASTLE_UPDATE_DATA,

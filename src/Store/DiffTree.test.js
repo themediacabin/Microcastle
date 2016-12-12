@@ -1,5 +1,5 @@
 import I from 'immutable';
-import { validateTree, validateEntry, saveChangeState, saveIndividualNew } from './DiffTree';
+import { validateTree, validateEntry, saveChangeState, saveIndividualNew, saveNewState } from './DiffTree';
 
 describe('DiffTree', () => {
   
@@ -169,6 +169,123 @@ describe('DiffTree', () => {
 
       expect(result.changeState).to.equal(expected);
 
+    });
+
+    it('return the newState with the new entryID and same id', async () => {
+      const state = I.fromJS({
+        id: 13918409182409180,
+        type: 'news',
+        data: {
+          title: 'hello',
+          content: 'world'
+        }
+      });
+
+      const changeState = I.fromJS({
+        news: {
+          one: {
+            title: 'hello',
+            content: 'world',
+          }
+        }
+      });
+
+      const result = await saveIndividualNew(state, changeState, schema);
+
+      expect(result.newState).to.have.property('id', 13918409182409180);
+      expect(result.newState).to.have.property('created', true);
+      expect(result.newState).to.have.property('entryID', 'hello');
+    });
+  });
+
+  describe('saveNewState', () => {
+    it('should return new changeState', async () => {
+
+      const state = I.fromJS([{
+        id: 12,
+        type: 'news',
+        data: {
+          title: 'hello',
+          content: 'world'
+        }
+      }, {
+        id: 12,
+        type: 'news',
+        data: {
+          title: 'what',
+          content: 'world'
+        }
+      }]);
+
+      const changeState = I.fromJS({
+        news: {
+          one: {
+            title: 'hello',
+            content: 'world',
+          }
+        }
+      });
+
+      const expected = I.fromJS({
+        news: {
+          one: {
+            title: 'hello',
+            content: 'world',
+          },
+          hello: {
+            title: 'hello',
+            content: 'world',
+          },
+          what: {
+            title: 'what',
+            content: 'world',
+          }
+        }
+      });
+
+      const result = await saveNewState(state, changeState, schema);
+      expect(result.changeState).to.equal(expected);
+    });
+
+    it('should return altered newState', async () => {
+
+      const state = I.fromJS([{
+        id: 12,
+        type: 'news',
+        data: {
+          title: 'hello',
+          content: 'world'
+        }
+      }, {
+        id: 13,
+        type: 'news',
+        data: {
+          title: 'what',
+          content: 'world'
+        }
+      }]);
+
+      const changeState = I.fromJS({
+        news: {
+          one: {
+            title: 'hello',
+            content: 'world',
+          }
+        }
+      });
+
+      const expected = I.fromJS([{
+        id: 12,
+        created: true,
+        entryID: 'hello',
+      }, {
+        id: 13,
+        created: true,
+        entryID: 'what',
+      }]);
+
+      const result = await saveNewState(state, changeState, schema);
+      expect(result.newState).to.equal(expected);
     });
   });
 

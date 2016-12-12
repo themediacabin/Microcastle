@@ -82,6 +82,27 @@ describe('View', () => {
 
       expect(getViewValue(microcastleState, view)).to.equal('hi');
     });
+
+    it('can get a part of an attribute', () => {
+      const microcastleState = I.fromJS({
+        editor: {
+          newState: [
+            {id: 99, data: {title: 'hi', content: 'hi', array: [{val: 11}, {val: 12}]}}
+          ]
+        }
+      });
+
+      const view = I.fromJS({
+        type: 'news',
+        state: 'new',
+        entry: 99,
+        attribute: 'array',
+        part: [1, 'val']
+      });
+
+      const newState = getViewValue(microcastleState, view);
+      expect(newState).to.equal(12);
+    });
   });
 
   describe('changeViewValue', () => {

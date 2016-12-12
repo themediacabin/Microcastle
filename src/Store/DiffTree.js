@@ -70,6 +70,7 @@ export const saveIndividualNew = async (state, changeState, schema) => {
 
   return {
     newState: I.fromJS({
+      id: state.get('id'),
       created: true,
       entryID,
     }),
@@ -77,7 +78,19 @@ export const saveIndividualNew = async (state, changeState, schema) => {
   };
 }
 
-export const saveNewState = async (newState, schema) => {
+export const saveNewState = async (newState, changeState, schema) => {
+  let newChangeState = changeState;
+  let newNewState = new I.List();
+
+  for (let i = 0; i < newState.size; i++) {
+    const saved = await saveIndividualNew(newState.get(i), newChangeState, schema);  
+    newChangeState = saved.changeState;
+    newNewState = newNewState.set(i, saved.newState);
+  }
   
+  return {
+    newState: newNewState,
+    changeState: newChangeState 
+  };
 }
 
