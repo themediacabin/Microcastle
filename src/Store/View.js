@@ -40,3 +40,14 @@ export const changeViewValue = (microcastleState, view, value) => {
 
 }
 
+export const getSchemaFromView = (schema, view) => {
+
+  const type = schema[view.get('type')];
+  const attributes = type['attributes'];
+  if (!attributes) return type;
+  const attribute = attributes[view.get('attribute')]; 
+  if (!attribute) return type;
+  return attribute;
+
+}
+

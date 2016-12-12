@@ -9,7 +9,7 @@ describe('DiffTree', () => {
         return val;
       }),
       onNew: sinon.spy(async (val) => {
-        return {[val.get('title')]: val}
+        return {[val.title]: val}
       }),
       attributes: {
         title: {type: 'text', required: true},
@@ -89,6 +89,32 @@ describe('DiffTree', () => {
           test: {
             title: 'woah',
             content: 'hello world'
+          }
+        }
+      });
+      
+      await expect(saveChangeState(changeState, originalState, schema)).to.eventually.equal(expected);    
+    });
+
+    it('Should be able to create state state', async () => {
+      const changeState = I.fromJS({
+        news: {
+          new: {
+            title: 'helloworld',
+            content: 'helloworld',
+          }
+        }
+      });
+
+      const expected = I.fromJS({
+        news: {
+          new: {
+            title: 'helloworld',
+            content: 'helloworld',
+          },
+          test: {
+            title: 'hello',
+            content: 'world'
           }
         }
       });

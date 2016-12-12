@@ -20,7 +20,7 @@ const store = createStore(reducer, {
 
 const schema = {
     news: {
-        onNew:  sinon.spy((v) => Promise.resolve({[v.title]: v})),
+        onNew:  sinon.spy((v) => Promise.resolve({[v.title]: v})) ,
         onEdit: sinon.spy((v) => Promise.resolve(v)),
         attributes: {
             title: {

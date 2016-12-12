@@ -1,5 +1,5 @@
 import Immutable from 'immutable';
-import {saveChangeState, validateTree} from './DiffTree';
+import {saveChangeState, validateTree, saveNewState} from './DiffTree';
 import {changeViewValue} from './View';
 
 const MICROCASTLE_UPDATE_DATA = 'MICROCASTLE_UPDATE_DATA';
@@ -127,7 +127,7 @@ function deleteEntry(schemaName, entryID) {
   };
 }
 
-function changeView(view, value) {
+export function changeView(view, value) {
   return {
     type: MICROCASTLE_EDITOR_CHANGE_VIEW,
     view,
@@ -141,11 +141,13 @@ export function saveNew() {
 export function save(schema) {
   return async (dispatch, getState) => {
     const tempState = getState().microcastle.get('editor').get('tempState');
+    const newState = getState().microcastle.get('editor').get('newState');
     const validationErrors = validateTree(schema, tempState);
     if (validationErrors.length > 0) {
       return dispatch(reportErrors(validationErrors));
     }
-    const savedTree = await saveChangeState(tempState, getState().microcastle.get('data'), schema);
+    const savedNewState = await saveNewState(newState, tempState, schema);
+    const savedTree = await saveChangeState(savedNewState.changeState, getState().microcastle.get('data'), schema);
     return dispatch(mergeTree(savedTree));
   }
 }
@@ -189,8 +191,15 @@ function reducer(state = initalState, action) {
                                            .set('action', EDIT_SINGLE)
                                            .set('schema', action.schemaName)
                                            .set('entry', action.entryID)
+                                           .set('view', Immutable.fromJS({
+                                             state: 'change',
+                                             type: action.schemaName,
+                                             entry: action.entryID,
+                                             attribute: action.attributeName,
+                                           }))
                                            .set('attribute', action.attributeName)
-                                           .set('tempState', new Immutable.Map());
+                                           .set('tempState', new Immutable.Map())
+                                           .set('newState', new Immutable.List());
       return state.set('editor', newEditor);
     }
 
@@ -202,14 +211,21 @@ function reducer(state = initalState, action) {
                                            .set('entry', action.entryID)
                                            .set('attribute', action.attributeName)
                                            .set('part', action.part)
+                                           .set('newState', new Immutable.List())
                                            .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
     }
 
     case MICROCASTLE_EDITOR_EDIT_ENTRY: {
       const newEditor = state.get('editor').set('open', true)
+                                           .set('view', Immutable.fromJS({
+                                             state: 'change',
+                                             type: action.schemaName,
+                                             entry: action.entryID,
+                                           }))
                                            .set('action', EDIT_ENTRY)
                                            .set('schema', action.schemaName)
+                                           .set('newState', new Immutable.List())
                                            .set('entry', action.entryID)
                                            .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
@@ -219,8 +235,14 @@ function reducer(state = initalState, action) {
     case MICROCASTLE_EDITOR_CREATE_NEW: {
       const newEditor = state.get('editor').set('open', true)
                                            .set('action', CREATE_NEW)
+                                           .set('view', Immutable.fromJS({
+                                             state: 'new',
+                                             type: action.schemaName,
+                                             entry: 1,
+                                           }))
+                                           .set('newState', new Immutable.fromJS([{id: 1, type: action.schemaName}]))
                                            .set('schema', action.schemaName)
-                                           .set('tempState', '');
+                                           .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
     }
 

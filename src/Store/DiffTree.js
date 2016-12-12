@@ -50,20 +50,19 @@ export const validateTree = (schema, tree) => {
 export const saveChangeState = async (changeState, originalState, schema) => {
   const changed = await promiseProps(changeState.map(async (type, typeName) => 
     promiseProps(type.map(async (entry, entryName) => {
-      const merged = originalState.getIn([typeName, entryName])
+      const merged = originalState.getIn([typeName, entryName], new I.Map())
                                   .merge(changeState.getIn([typeName, entryName]));
       const saveFn = schema[typeName]['onEdit']; 
       return await saveFn(merged, {id: entryName});
     }))
   ));
-  return originalState.merge(changed);
+  return originalState.mergeDeep(changed);
 }
 
 export const saveIndividualNew = async (state, changeState, schema) => {
   const type = state.get('type');  
   const saveFn = schema[type]['onNew'];
-
-  const resolved = await saveFn(state.get('data'));
+  const resolved = await saveFn(state.get('data').toJS());
 
   const entryID = Object.keys(resolved)[0];
   const value = Object.values(resolved)[0];
@@ -74,11 +73,18 @@ export const saveIndividualNew = async (state, changeState, schema) => {
       created: true,
       entryID,
     }),
-    changeState: changeState.setIn([type, entryID], value),
+    changeState: changeState.setIn([type, entryID], I.fromJS(value)),
   };
 }
 
 export const saveNewState = async (newState, changeState, schema) => {
+  if(newState == null) {
+    return {
+      newState: undefined,
+      changeState: changeState
+    }
+  }
+  
   let newChangeState = changeState;
   let newNewState = new I.List();
 

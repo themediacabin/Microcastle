@@ -1,6 +1,10 @@
 import React from 'react';
 import Textarea from 'react-textarea-autosize';
 
+import { connect } from 'react-redux';
+import { getViewValue } from '../../Store/View';
+import { changeView } from '../../Store/Store';
+
 const style = {
   base: {
     boxSizing: 'border-box',
@@ -11,8 +15,8 @@ const style = {
   },
 };
 
-class TextEditor extends React.Component {
-  static defaultValue() {
+export class TextEditor extends React.Component {
+  static defaultValue(scheme) {
     return '';
   }
   
@@ -22,12 +26,8 @@ class TextEditor extends React.Component {
     return [];
   }
 
-  onSave() {
-    return new Promise((resolve) => resolve());
-  }
-
   onChange(event) {
-    this.props.onChange(event.target.value);
+    this.props.dispatch(changeView(this.props.view, event.target.value));
   }
 
   render() {
@@ -40,4 +40,10 @@ class TextEditor extends React.Component {
   }
 }
 
-export default TextEditor;
+const connectComponent = connect((state, props) => {
+  return {
+    value: getViewValue(state.microcastle, props.view),
+  };
+});
+
+export default connectComponent(TextEditor);

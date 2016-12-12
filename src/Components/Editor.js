@@ -80,13 +80,12 @@ class Editor extends React.Component {
               onCancel={self.onCancel.bind(self)}
               title="Microcastle Editor"
               open={true}>
-              <CurrentEditor schema={this.getCurrentSchema()}
-                             closeEditor={this.onClose.bind(this)}
-                             microcastleSchema={this.props.schemas}
-                             microcastleStore={this.props.microcastle}
-                             changeTempState={this.onChangeTempState.bind(this)}
+              <CurrentEditor ref={e => this._editor = e}
                              dispatch={this.props.dispatch}
-                             ref={c => this._editor = c}/>
+                             schema={this.props.schemas}
+                             closeEditor={this.onClose.bind(this)}
+                             view={this.props.microcastle.get('editor').get('view')}
+                             />
     </EditorFrame>;
   }
 }
