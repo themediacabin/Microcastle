@@ -47,9 +47,23 @@ export const validateTree = (schema, tree) => {
   return errors;
 }
 
-export const saveChangeState = async (changeState, originalState, schema) => {
+export const saveChangeState = async (microcastle, schema) => {
+  const changeState = microcastle.getIn(['editor', 'tempState'], new I.Map());
+  const originalState = microcastle.get('data', new I.Map());
   const changed = await promiseProps(changeState.map(async (type, typeName) => 
     promiseProps(type.map(async (entry, entryName) => {
+      const changedFixed = changeState.getIn([typeName, entryName]).map((v, k) => {
+        const attrType = schema[typeName]['attributes'][k]['type'];
+        const beforeSave = stringToComponent(attrType).beforeSave;      
+        if (!beforeSave) return v;
+        const view = I.fromJS({
+          state: 'change',
+          type: typeName,
+          entry: entryName,
+          attribute: k,
+        });
+        return beforeSave(microcastle, view);
+      });
       const merged = originalState.getIn([typeName, entryName], new I.Map())
                                   .merge(changeState.getIn([typeName, entryName]));
       const saveFn = schema[typeName]['onEdit']; 

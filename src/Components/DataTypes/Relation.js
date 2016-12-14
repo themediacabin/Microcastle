@@ -1,12 +1,15 @@
 import React from 'react';
-import Immutable from 'immutable';
+import I from 'immutable';
 import _ from 'lodash';
 
+import { connect } from 'react-redux';
 
 import EntryEditor from '../Editors/Entry';
 import NewEditor from '../Editors/New';
 
 import Store from '../../Store/Store';
+import {changeView} from '../../Store/Store';
+import {getViewValue, changeViewValue, getSchemaFromView} from '../../Store/View';
 
 const style = {
   base: {
@@ -58,11 +61,20 @@ const style = {
     border: 'none',
     background: '#999',
     color: 'black',
-  }
+  },
+  deleteButton: {
+    float: 'right',
+    background: '#881111',
+    borderRadius: '50%',
+    color: 'white',
+    width: 20,
+    height: 20,
+    textAlign: 'center',
+  },
 };
 
-const EDITING = 'EDITING';
-const CHOSEN = 'CHOSEN';
+const EDITING  = 'EDITING';
+const CHOSEN   = 'CHOSEN';
 const CREATING = 'CREATING';
 const CHOOSING = 'CHOOSING';
 
@@ -71,168 +83,110 @@ class RelationEditor extends React.Component {
     return false;
   }
 
+  static beforeSave(microcastleState, view) {
+    const val = getViewValue(microcastleState, view);
+    if (!val.get('changing')) return val;
+
+    const newState = getViewValue(val.get('changing'));
+    return newState.get('entryID');
+  }
+
+  static validate() {
+    return [];
+  }
+
   constructor(props) {
     super(props);
     this.state = {
-      editorWrap: new Immutable.Map(),
-      error: false,
       page: 0,
+      editing: false,
     };
   }
 
-  onSave() {
-    if (this.getDisplayState() == EDITING) {
-      this.setState({error: true});
-      return new Promise((res) => {res({error: 'Not Saved'});});
-    } else if (this.getDisplayState() == CREATING) {
-      this.setState({error: true});
-      return new Promise((res) => {res({error: 'Not Saved'});});
-    }
-    return new Promise((res) => {res();});
-  }
-
   getDisplayState() {
-    if (!!this.props.value && this.state.editorWrap.get('open', false))
+    if (!!this.props.value && (this.state.editing || typeof this.props.value != 'string'))
       return EDITING;
-    if (!this.props.value && this.state.editorWrap.get('open', false))
-      return CREATING;
-    if (!!this.props.value && !this.state.editorWrap.get('open', false))
+    if (!!this.props.value && typeof this.props.value == 'string' && this.props.value != "")
       return CHOSEN;
     return CHOOSING;
   }
 
-  getCurrentSchema() {
-    const schema = this.props.options.relative;
-    return this.props.microcastleSchema[schema];
-  }
-
-  onEditorChange(v) {
-    this.setState({editorWrap: this.state.editorWrap.set('tempState', v)});
-  }
-
   onChoose(chosen) {
-    this.setState({error: false});
-    this.props.onChange(chosen);
+    this.props.dispatch(changeView(this.props.view, chosen));
   }
 
-  onDelete(val, info) {
-    return this.getCurrentSchema().onDelete(val, info).then(
-      () => {
-        this.props.dispatch(
-          Store.actions.deleteEntry(this.props.options.relative, info.id)
-        );
-      }
-    );
-
-  }
+  //onDelete(val, info) {
+  //  return this.getCurrentSchema().onDelete(val, info).then(
+  //    () => {
+  //      this.props.dispatch(
+  //        Store.actions.deleteEntry(this.props.options.relative, info.id)
+  //      );
+  //    }
+  //  );
+  //}
 
   setEditing() {
-    this.setState({error: false});
-
-    this.setState({editorWrap: this.state.editorWrap
-      .set('open', true).set('schema', this.props.options.relative)
-      .set('entry', this.props.value).set('action', 'EDIT_ENTRY')
-      .set('tempState', this.props.microcastleStore.get('data').getIn([this.props.options.relative, this.props.value]))
-    });
+    this.setState({editing: true});
   }
 
   onCreate() {
-    this.setState({error: false});
-
-    this.setState({editorWrap: this.state.editorWrap
-      .set('open', true).set('schema', this.props.options.relative)
-      .set('action', 'CREATE_NEW')
-      .set('tempState', false)
+    const newID = Math.random();
+    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const newValue = I.fromJS({
+      state: 'new',
+      type: schema.relative,
+      entry: newID,
     });
 
-    this.props.onChange(null);
+    this.props.dispatch(Store.actions.addNewState(newID, schema.relative));
+    this.props.dispatch(changeView(this.props.view, newValue));
   }
 
   onReselect() {
-    this.setState({error: false});
-
-    this.setState({editorWrap: new Immutable.Map()});
-    this.props.onChange(null);
+    this.props.dispatch(changeView(this.props.view, null));
   }
 
-  onSaveEdit(mounted = true) {
-    this.setState({error: false});
-    return new Promise((resolve) => {
-      this._editor.onSubmit().then(() => {
-        if (mounted) this.setState({editorWrap: new Immutable.Map()});
-        resolve();
+  getChildView() {
+    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    if (typeof this.props.value == 'string') {
+      return I.fromJS({
+        state: 'change',
+        type: schema.relation,
+        entry: this.props.value,
       });
-    });
-  }
-
-  onSaveNew(mounted = true) {
-    return this._editor.onSubmit()
-      .then((created) => new Promise((resolve) => {
-        _.forEach(created, (val, key) => this.onChoose(key));
-        if (mounted) this.setState({editorWrap: new Immutable.Map()});
-        resolve();
-      }));
-  }
-
-  getCreatingView() {
-    const relationName = this.props.options.relative;
-    const wrappedStore = this.props.microcastleStore.set('editor', this.state.editorWrap);
-
-    return (
-      <div>
-        <div style={style.header}>
-          <h4 style={style.headerTitle}>{"Creating New " + relationName}</h4>
-          <button style={style.headerButton} onClick={this.onReselect.bind(this)}>Close</button>
-          <button style={style.headerButton} className="microcastle-relation-save" onClick={this.onSaveNew.bind(this)}>Save</button>
-        </div>
-        <div style={style.editor}>
-          <NewEditor schema={this.getCurrentSchema()}
-                     microcastleStore={wrappedStore}
-                     microcastleSchema={this.props.microcastleSchema}
-                     microcastleEditor={this.state.editorWrap}
-                     changeTempState={this.onEditorChange.bind(this)}
-                     dispatch={this.props.dispatch}
-                     ref={c => this._editor = c} />
-        </div>
-      </div>
-    );
+    } 
+    return this.props.value;  
   }
 
   getEditingView() {
-    const wrappedStore = this.props.microcastleStore.set('editor', this.state.editorWrap);
+    const childView = this.getChildView();
     return (
       <div>
         <div style={style.header}>
-          <h4 style={style.headerTitle}>{this.props.value}</h4>
+          <h4 style={style.headerTitle}>{childView.get('entry')}</h4>
           <button style={style.headerButton} className="microcastle-relation-reselect" onClick={this.onReselect.bind(this)}>Reselect</button>
-          <button style={style.headerButton} className="microcastle-relation-save" onClick={this.onSaveEdit.bind(this)}>Save</button>
         </div>
 
         <div style={style.editor}>
-          <EntryEditor schema={this.getCurrentSchema()}
-                       microcastleStore={wrappedStore}
-                       microcastleSchema={this.props.microcastleSchema}
-                       microcastleEditor={this.state.editorWrap}
-                       changeTempState={this.onEditorChange.bind(this)}
-                       dispatch={this.props.dispatch}
-                       ref={c => this._editor = c} />
+          <EntryEditor schema={this.props.schema}
+                       view={childView}
+                       />
         </div>
       </div>
     );
   }
 
   getChosenView() {
-    const relationName = this.props.options.relative;
-    const currentSchema = this.getCurrentSchema();
-    const value = this.props.microcastleStore.get('data').get(relationName).get(this.props.value);
-
+    const childView = this.getChildView();
+    const childVal = getViewValue(this.props.microcastle, childView);
+    const currentSchema = getSchemaFromView(this.props.schema, this.props.view);
     const view = currentSchema.display == null ? null
-                                               : <currentSchema.display onClick={() => {}} name={this.props.value} value={value} />;
+                                               : <currentSchema.display onClick={() => {}} name={childView.get('entry')} value={childVal} />;
     
     return (
       <div>
         <div style={style.header}>
-          <h4 style={style.headerTitle}>{this.props.value}</h4>
+          <h4 style={style.headerTitle}>{childView.get('entry')}</h4>
           <button style={style.headerButton} className="microcastle-relation-reselect" onClick={this.onReselect.bind(this)}>Reselect</button>
           <button style={style.headerButton} onClick={this.setEditing.bind(this)}>Edit</button>
         </div>
@@ -250,8 +204,9 @@ class RelationEditor extends React.Component {
   }
 
   getChoosingView() {
-    const relationName = this.props.options.relative;
-    const relation = this.props.microcastleStore.get('data').get(relationName);
+    const currentSchema = getSchemaFromView(this.props.schema, this.props.view);
+    const relationName = currentSchema.relative;
+    const relation = this.props.microcastle.get('data').get(relationName);
 
     const pageSize = 15;
 
@@ -267,15 +222,13 @@ class RelationEditor extends React.Component {
       }
       i++;
 
-      const currentSchema = this.getCurrentSchema();
       if (currentSchema.display == null) {
         return  <div key={name} style={style.defaultOption}>
           <span onClick={this.onChoose.bind(this, name)}>{name}</span>
-          {currentSchema.onDelete == null ? null : <span style={{float: 'right', background: '#881111', borderRadius: '50%', color: 'white', width: 20, height: 20, textAlign: 'center'}} onClick={this.onDelete.bind(this, value, {id: name})}>x</span>}
+          {currentSchema.onDelete == null ? null : <span style={style.deleteButton} onClick={()=>{}}>x</span>}
         </div>;
       } else {
-        const currentSchema = this.getCurrentSchema();
-        return <currentSchema.display key={name} onChoose={this.onChoose.bind(this, name)} onDelete={this.onDelete.bind(this, value, {id: name})} name={name} value={value} />;
+        return <currentSchema.display key={name} onChoose={this.onChoose.bind(this, name)} onDelete={()=>{}} name={name} value={value} />;
       }
     }).toArray();
 
@@ -301,8 +254,6 @@ class RelationEditor extends React.Component {
     switch (this.getDisplayState()) {
       case EDITING:
         return this.getEditingView();
-      case CREATING:
-        return this.getCreatingView();
       case CHOSEN:
         return this.getChosenView();
     }
@@ -311,10 +262,16 @@ class RelationEditor extends React.Component {
 
   render() {
     return <div style={style.base}>
-        {this.state.error ? <div style={style.error}>This Needs To Be Saved (Click the small gray Save Button)</div> : false}
         {this.getView()}
     </div>;
   }
 }
 
-export default RelationEditor;
+const connectComponent = connect((state, props) => {
+  return {
+    value: getViewValue(state.microcastle, props.view),
+    microcastle: state.microcastle,
+  };
+});
+
+export default connectComponent(RelationEditor);

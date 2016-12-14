@@ -8,15 +8,17 @@ export const getViewValue = (microcastleState, view) => {
   if (view.get('state') == 'change') {
     const path = [view.get('type'), view.get('entry'), view.get('attribute'), ...parts];
 
+    const x = Symbol();
     const saved = microcastleState.getIn(['data', ...path]);
-    const changeState = microcastleState.getIn(['editor', 'tempState', ...path]);
+    const changeState = microcastleState.getIn(['editor', 'tempState', ...path], x);
 
-    return changeState || saved;
+    return changeState == x ? saved : changeState;
   }
 
   if (view.get('state') == 'new') {
     const newState = microcastleState.getIn(['editor', 'newState']);
     const entry = newState.find(v => v.get('id') == view.get('entry'));
+    if (!entry) return undefined;
     return entry.getIn(['data', view.get('attribute'), ...parts]); 
   }
 

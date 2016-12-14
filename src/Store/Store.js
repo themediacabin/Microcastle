@@ -3,6 +3,7 @@ import {saveChangeState, validateTree, saveNewState} from './DiffTree';
 import {changeViewValue} from './View';
 
 const MICROCASTLE_UPDATE_DATA = 'MICROCASTLE_UPDATE_DATA';
+const MICROCASTLE_CREATE_ADD_NEWSTATE = 'MICROCASTLE_CREATE_ADD_NEWSTATE';
 const MICROCASTLE_MERGE_TREE = 'MICROCASTLE_MERGE_TREE';
 const MICROCASTLE_INSERT_DATA = 'MICROCASTLE_INSERT_DATA';
 const MICROCASTLE_DELETE_ENTRY = 'MICROCASTLE_DELETE_ENTRY';
@@ -138,8 +139,17 @@ export function saveNew() {
 
 }
 
+export function addNewState(id, createdType) {
+  return {
+    type: MICROCASTLE_CREATE_ADD_NEWSTATE,
+    id,
+    createdType,
+  };
+}
+
 export function save(schema) {
   return async (dispatch, getState) => {
+    try {
     const tempState = getState().microcastle.get('editor').get('tempState');
     const newState = getState().microcastle.get('editor').get('newState');
     const validationErrors = validateTree(schema, tempState);
@@ -147,8 +157,11 @@ export function save(schema) {
       return dispatch(reportErrors(validationErrors));
     }
     const savedNewState = await saveNewState(newState, tempState, schema);
-    const savedTree = await saveChangeState(savedNewState.changeState, getState().microcastle.get('data'), schema);
+    const mergedNewState = getState().microcastle.setIn(['editor', 'tempState'], savedNewState.changeState)
+                                                 .setIn(['editor', 'newState'], savedNewState.newState);
+    const savedTree = await saveChangeState(mergedNewState, schema);
     return dispatch(mergeTree(savedTree));
+    } catch (e) {console.log(e)}
   }
 }
 
@@ -161,7 +174,9 @@ function reducer(state = initalState, action) {
   switch (action.type) {
 
     case MICROCASTLE_MERGE_TREE: {
-      return state.mergeDeepIn(['data'], action.tree);
+      return state.mergeDeepIn(['data'], action.tree)
+                  .setIn(['editor', 'tempState'], new Immutable.Map())
+                  .setIn(['editor', 'newState'], new Immutable.List())
     }
 
     case MICROCASTLE_UPDATE_DATA: {
@@ -182,6 +197,14 @@ function reducer(state = initalState, action) {
     case MICROCASTLE_DELETE_ENTRY: {
       let {schemaName, entryID} = action;
       return state.deleteIn(['data', schemaName, entryID]);
+    }
+
+    case MICROCASTLE_CREATE_ADD_NEWSTATE: {
+      const val = Immutable.fromJS({
+        id: action.id,
+        type: action.createdType
+      }); 
+      return state.updateIn(['editor', 'newState'], l => l.push(val));
     }
 
     case MICROCASTLE_EDITOR_EDIT_SINGLE: {
@@ -285,6 +308,7 @@ export default {
     deleteEntry,
     save,
     changeView,
+    addNewState,
   },
   constants: {
     MICROCASTLE_UPDATE_DATA,

@@ -65,21 +65,26 @@ describe('DiffTree', () => {
   });
 
   describe('saveChangeState', () => {
-    const originalState = I.fromJS({
-      news: {
-        test: {
-          title: 'hello',
-          content: 'world',
-        }
-      }
-    });
 
     it('Should overwrite changes', async () => {
-      const changeState = I.fromJS({
-        news: {
-          test: {
-            title: 'woah',
-            content: 'hello world',
+      const microcastle = I.fromJS({
+        data: {
+          news: {
+            test: {
+              title: 'hello',
+              content: 'world',
+            }
+          }
+        },
+        editor: {
+          newState: [],
+          tempState: {
+            news: {
+              test: {
+                title: 'woah',
+                content: 'hello world',
+              }
+            }
           }
         }
       });
@@ -93,15 +98,28 @@ describe('DiffTree', () => {
         }
       });
       
-      await expect(saveChangeState(changeState, originalState, schema)).to.eventually.equal(expected);    
+      await expect(saveChangeState(microcastle, schema)).to.eventually.equal(expected);    
     });
 
     it('Should be able to create state state', async () => {
-      const changeState = I.fromJS({
-        news: {
-          new: {
-            title: 'helloworld',
-            content: 'helloworld',
+      const microcastle = I.fromJS({
+        data: {
+          news: {
+            test: {
+              title: 'hello',
+              content: 'world',
+            }
+          }
+        },
+        editor: {
+          newState: [],
+          tempState: {
+            news: {
+              new: {
+                title: 'helloworld',
+                content: 'helloworld',
+              }
+            }
           }
         }
       });
@@ -119,14 +137,27 @@ describe('DiffTree', () => {
         }
       });
       
-      await expect(saveChangeState(changeState, originalState, schema)).to.eventually.equal(expected);    
+      await expect(saveChangeState(microcastle, schema)).to.eventually.equal(expected);    
     });
 
     it('Should preserve unchanged state', async () => {
-      const changeState = I.fromJS({
-        news: {
-          test: {
-            content: 'hello world',
+      const microcastle = I.fromJS({
+        data: {
+          news: {
+            test: {
+              title: 'hello',
+              content: 'world',
+            }
+          }
+        },
+        editor: {
+          newState: [],
+          tempState: {
+            news: {
+              test: {
+                content: 'hello world',
+              }
+            }
           }
         }
       });
@@ -140,19 +171,32 @@ describe('DiffTree', () => {
         }
       });
       
-      await expect(saveChangeState(changeState, originalState, schema)).to.eventually.equal(expected);    
+      await expect(saveChangeState(microcastle, schema)).to.eventually.equal(expected);    
     });
 
     it('Should call onEdit of all Entries with new state', async () => {
-      const changeState = I.fromJS({
-        news: {
-          test: {
-            content: 'hello world',
+      const microcastle = I.fromJS({
+        data: {
+          news: {
+            test: {
+              title: 'hello',
+              content: 'world',
+            }
+          }
+        },
+        editor: {
+          newState: [],
+          tempState: {
+            news: {
+              test: {
+                content: 'hello world',
+              }
+            }
           }
         }
       });
 
-      await saveChangeState(changeState, originalState, schema);
+      await saveChangeState(microcastle, schema);
       expect(schema.news.onEdit).to.have.been.calledOnce;
     });
   });

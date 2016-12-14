@@ -1,8 +1,9 @@
 import Microcastle from '../../index.js';
 
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import I from 'immutable';
+import thunk from 'redux-thunk';
 
 const reducer = combineReducers({
     microcastle: Microcastle.MicrocastleStore.reducer,
@@ -16,7 +17,7 @@ const store = createStore(reducer, {
         },
         editor: {},
     }),
-});
+}, applyMiddleware(thunk));
 
 const schema = {
     team: {
@@ -61,13 +62,12 @@ describe('Datatype Relation', () => {
         rendered.find('.microcastle-relation-reselect').simulate('click');
         rendered.find('.microcastle-relation-create').simulate('click');
         rendered.find('textarea').at(1).simulate('change', {target: {value: 'fredsteam'}});
-        rendered.find('.microcastle-relation-save').simulate('click');
         rendered.find('.microcastle-editor-save').at(0).simulate('click');
 
         await new Promise(r => setImmediate(r));
 
-        expect(schema.team.onNew).to.have.been.calledOnce;
-        expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(2);
+        await expect(schema.team.onNew).to.have.been.calledOnce;
+        await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(2);
     });
 });
 
