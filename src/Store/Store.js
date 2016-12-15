@@ -149,7 +149,6 @@ export function addNewState(id, createdType) {
 
 export function save(schema) {
   return async (dispatch, getState) => {
-    try {
     const tempState = getState().microcastle.get('editor').get('tempState');
     const newState = getState().microcastle.get('editor').get('newState');
     const validationErrors = validateTree(schema, tempState);
@@ -161,7 +160,6 @@ export function save(schema) {
                                                  .setIn(['editor', 'newState'], savedNewState.newState);
     const savedTree = await saveChangeState(mergedNewState, schema);
     return dispatch(mergeTree(savedTree));
-    } catch (e) {console.log(e)}
   }
 }
 

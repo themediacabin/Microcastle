@@ -65,7 +65,7 @@ export const saveChangeState = async (microcastle, schema) => {
         return beforeSave(microcastle, view);
       });
       const merged = originalState.getIn([typeName, entryName], new I.Map())
-                                  .merge(changeState.getIn([typeName, entryName]));
+                                  .merge(changedFixed);
       const saveFn = schema[typeName]['onEdit']; 
       return await saveFn(merged, {id: entryName});
     }))

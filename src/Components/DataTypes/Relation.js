@@ -9,7 +9,7 @@ import NewEditor from '../Editors/New';
 
 import Store from '../../Store/Store';
 import {changeView} from '../../Store/Store';
-import {getViewValue, changeViewValue, getSchemaFromView} from '../../Store/View';
+import {getViewValue, changeViewValue, getSchemaFromView, getNewViewEntry} from '../../Store/View';
 
 const style = {
   base: {
@@ -79,19 +79,19 @@ const CREATING = 'CREATING';
 const CHOOSING = 'CHOOSING';
 
 class RelationEditor extends React.Component {
-  static defaultValue() {
-    return false;
+  static defaultValue(schema) {
+    return null;
   }
 
   static beforeSave(microcastleState, view) {
     const val = getViewValue(microcastleState, view);
     if (!I.Map.isMap(val)) return val;
 
-    const newState = getViewValue(microcastleState, val);
+    const newState = getNewViewEntry(microcastleState, val);
     return newState.get('entryID');
   }
 
-  static validate() {
+  static validate(scheme, val) {
     return [];
   }
 

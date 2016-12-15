@@ -24,6 +24,12 @@ export const getViewValue = (microcastleState, view) => {
 
 };
 
+export const getNewViewEntry = (microcastleState, view) => {
+  const newState = microcastleState.getIn(['editor', 'newState']);
+  const entry = newState.find(v => v.get('id') == view.get('entry'));
+  return entry;
+}
+
 export const changeViewValue = (microcastleState, view, value) => {
 
   const parts = view.get('part') || [];

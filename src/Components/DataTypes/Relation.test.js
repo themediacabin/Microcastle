@@ -5,19 +5,7 @@ import { Provider } from 'react-redux';
 import I from 'immutable';
 import thunk from 'redux-thunk';
 
-const reducer = combineReducers({
-    microcastle: Microcastle.MicrocastleStore.reducer,
-});
-
-const store = createStore(reducer, {
-    microcastle: I.fromJS({
-        data: {
-            person: {'1': {name: 'bob', team: 'bobsteam'}},
-            team: {'bobsteam': {title: 'bobsteam'}},
-        },
-        editor: {},
-    }),
-}, applyMiddleware(thunk));
+import RelationEditor from './Relation';
 
 const schema = {
     team: {
@@ -48,6 +36,22 @@ const schema = {
 };
 
 describe('Datatype Relation', () => {
+  describe('Should Integrate', () => {
+
+    const reducer = combineReducers({
+        microcastle: Microcastle.MicrocastleStore.reducer,
+    });
+
+    const store = createStore(reducer, {
+        microcastle: I.fromJS({
+            data: {
+                person: {'1': {name: 'bob', team: 'bobsteam'}},
+                team: {'bobsteam': {title: 'bobsteam'}},
+            },
+            editor: {},
+        }),
+    }, applyMiddleware(thunk));
+
     it('Can Create New Entry From Relation Field', async () => {
         const rendered = mount(
             <Provider store={store}>
@@ -69,5 +73,49 @@ describe('Datatype Relation', () => {
         await expect(schema.team.onNew).to.have.been.calledOnce;
         await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(2);
     });
+  });
+
+  describe('#defaultValue', () => {
+    it('should return null', () => {
+      expect(RelationEditor.defaultValue(schema.person.attributes.team)).to.equal(null);    
+    });  
+  });
+
+  describe('#validate', () => {
+    it('should return empty array on pass', () => {
+      expect(RelationEditor.validate(new I.Map(), new I.Map())).to.be.a('array');    
+      expect(RelationEditor.validate(new I.Map(), new I.Map())).to.have.length(0);    
+    });  
+  });
+
+  describe('#beforeSave', () => {
+    it('if value is not a view, return it', () => {
+      const view = I.fromJS({state: 'change', type: 'person', entry: '1', attribute: 'team'});
+      const state = I.fromJS({
+        data: {
+            person: {'1': {name: 'bob', team: 'bobsteam'}},
+            team: {'bobsteam': {title: 'bobsteam'}},
+        },
+        editor: {},
+      });
+
+      expect(RelationEditor.beforeSave(state, view)).to.equal('bobsteam');
+    });  
+
+    it('if value is a view, return the entryID it created', () => {
+      const view = I.fromJS({state: 'change', type: 'person', entry: '1', attribute: 'team'});
+      const state = I.fromJS({
+        data: {
+          person: {'1': {name: 'bob', team: {state: 'new', entry: '22'}}},
+          team: {'bobsteam': {title: 'bobsteam'}},
+        },
+        editor: {
+          newState: [{id: '22', created: true, entryID: 'hello'}]
+        },
+      });
+
+      expect(RelationEditor.beforeSave(state, view)).to.equal('hello');
+    });
+  });
 });
 
