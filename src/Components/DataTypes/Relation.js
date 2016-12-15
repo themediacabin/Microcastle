@@ -142,7 +142,7 @@ class RelationEditor extends React.Component {
   onReselect() {
     if (I.Map.isMap(this.props.value)) {
       this.props.dispatch(removeNewState(this.props.value.get('entry')));
-    };
+    }
     this.props.dispatch(changeView(this.props.view, null));
   }
 
