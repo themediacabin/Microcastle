@@ -14,6 +14,7 @@ const MICROCASTLE_EDITOR_CREATE_NEW = 'MICROCASTLE_EDITOR_CREATE_NEW';
 const MICROCASTLE_EDITOR_CLOSE = 'MICROCASTLE_EDITOR_CLOSE';
 const MICROCASTLE_EDITOR_SET_TEMP_STATE = 'MICROCASTLE_EDITOR_SET_TEMP_STATE';
 const MICROCASTLE_REPORT_ERRORS = 'MICROCASTLE_REPORT_ERRORS';
+const MICROCASTLE_REMOVE_NEWSTATE = 'MICROCASTLE_REMOVE_NEWSTATE';
 const MICROCASTLE_EDITOR_CHANGE_VIEW = 'MICROCASTLE_EDITOR_CHANGE_VIEW';
 
 const EDIT_SINGLE = 'EDIT_SINGLE';
@@ -139,6 +140,13 @@ export function addNewState(id, createdType) {
   };
 }
 
+export function removeNewState(id) {
+  return {
+    type: MICROCASTLE_REMOVE_NEWSTATE,
+    id,
+  };
+}
+
 export function save(schema) {
   return async (dispatch, getState) => {
     const tempState = getState().microcastle.get('editor').get('tempState');
@@ -167,6 +175,11 @@ function reducer(state = initalState, action) {
       return state.mergeDeepIn(['data'], action.tree)
                   .setIn(['editor', 'tempState'], new Immutable.Map())
                   .setIn(['editor', 'newState'], new Immutable.List());
+    }
+
+    case MICROCASTLE_REMOVE_NEWSTATE: {
+      const index = state.getIn(['editor', 'newState']).findIndex(e => e.id == action.id); 
+      return state.deleteIn(['editor', 'newState', index]);
     }
 
     case MICROCASTLE_UPDATE_DATA: {

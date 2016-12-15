@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import EntryEditor from '../Editors/Entry';
 
 import Store from '../../Store/Store';
-import {changeView} from '../../Store/Store';
+import {changeView, removeNewState} from '../../Store/Store';
 import {getViewValue, getSchemaFromView, getNewViewEntry} from '../../Store/View';
 
 const style = {
@@ -140,6 +140,9 @@ class RelationEditor extends React.Component {
   }
 
   onReselect() {
+    if (I.Map.isMap(this.props.value)) {
+      this.props.dispatch(removeNewState(this.props.value.get('entry')));
+    };
     this.props.dispatch(changeView(this.props.view, null));
   }
 
