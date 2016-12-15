@@ -85,9 +85,9 @@ class RelationEditor extends React.Component {
 
   static beforeSave(microcastleState, view) {
     const val = getViewValue(microcastleState, view);
-    if (!val.get('changing')) return val;
+    if (!I.Map.isMap(val)) return val;
 
-    const newState = getViewValue(val.get('changing'));
+    const newState = getViewValue(microcastleState, val);
     return newState.get('entryID');
   }
 
@@ -151,7 +151,7 @@ class RelationEditor extends React.Component {
     if (typeof this.props.value == 'string') {
       return I.fromJS({
         state: 'change',
-        type: schema.relation,
+        type: schema.relative,
         entry: this.props.value,
       });
     } 
@@ -169,8 +169,7 @@ class RelationEditor extends React.Component {
 
         <div style={style.editor}>
           <EntryEditor schema={this.props.schema}
-                       view={childView}
-                       />
+                       view={childView} />
         </div>
       </div>
     );
