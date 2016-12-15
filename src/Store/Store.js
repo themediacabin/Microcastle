@@ -98,14 +98,6 @@ function insertData(schemaName, entryID, entryValue) {
   };
 }
 
-function deleteEntry(schemaName, entryID) {
-  return {
-    type: MICROCASTLE_DELETE_ENTRY,
-    schemaName,
-    entryID
-  };
-}
-
 function reportErrors(errors) {
   return {
     type: MICROCASTLE_REPORT_ERRORS,
@@ -160,7 +152,7 @@ export function save(schema) {
                                                  .setIn(['editor', 'newState'], savedNewState.newState);
     const savedTree = await saveChangeState(mergedNewState, schema);
     return dispatch(mergeTree(savedTree));
-  }
+  };
 }
 
 const initalState = Immutable.fromJS({
@@ -174,7 +166,7 @@ function reducer(state = initalState, action) {
     case MICROCASTLE_MERGE_TREE: {
       return state.mergeDeepIn(['data'], action.tree)
                   .setIn(['editor', 'tempState'], new Immutable.Map())
-                  .setIn(['editor', 'newState'], new Immutable.List())
+                  .setIn(['editor', 'newState'], new Immutable.List());
     }
 
     case MICROCASTLE_UPDATE_DATA: {
@@ -206,8 +198,6 @@ function reducer(state = initalState, action) {
     }
 
     case MICROCASTLE_EDITOR_EDIT_SINGLE: {
-      const currentState = state.get('data').get(action.schemaName)
-                                .get(action.entryID).get(action.attributeName);
       const newEditor = state.get('editor').set('open', true)
                                            .set('action', EDIT_SINGLE)
                                            .set('schema', action.schemaName)
@@ -225,7 +215,6 @@ function reducer(state = initalState, action) {
     }
 
     case MICROCASTLE_EDITOR_EDIT_PART: {
-      const currentState = state.get('data').get(action.schemaName).get(action.entryID).get(action.attributeName);
       const newEditor = state.get('editor').set('open', true)
                                            .set('action', EDIT_PART)
                                            .set('schema', action.schemaName)

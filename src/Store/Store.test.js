@@ -32,7 +32,7 @@ describe('Store', () => {
 
   const schema = {
     news: {
-      onEdit: sinon.spy(async (val, info) => {
+      onEdit: sinon.spy(async val => {
         return val;
       }),
       attributes: {
@@ -44,18 +44,18 @@ describe('Store', () => {
 
   afterEach(() => {
     dispatch.reset();
-  })
+  });
 
   describe('save', () => {
     it('dispatches a error report on validation fail', async () => {
-      const result = await save(schema)(dispatch, getState);
+      await save(schema)(dispatch, getState);
       return expect(dispatch).to.have.been.calledWith(sinon.match.has('type', 'MICROCASTLE_REPORT_ERRORS'));
     });
 
     it('dispatches a merge tree on validation succeed', async () => {
       const newSchema = {
         news: {
-          onEdit: sinon.spy(async (val, info) => {
+          onEdit: sinon.spy(async val => {
             return val;
           }),
           attributes: {
@@ -64,7 +64,7 @@ describe('Store', () => {
           },
         },
       };
-      const result = await save(newSchema)(dispatch, getState);
+      await save(newSchema)(dispatch, getState);
       return expect(dispatch).to.have.been.calledWith(sinon.match.has('type', 'MICROCASTLE_MERGE_TREE'));
     });
   });

@@ -16,12 +16,12 @@ const style = {
 };
 
 export class TextEditor extends React.Component {
-  static defaultValue(scheme) {
+  static defaultValue() {
     return '';
   }
   
-  static validate(scheme, attribute) {
-    if (scheme.required && (!attribute || attribute==''))
+  static validate(scheme, val) {
+    if (scheme.required && (!val || val==''))
       return ['required'];
     return [];
   }

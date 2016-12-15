@@ -1,5 +1,4 @@
 import React from 'react';
-import Immutable from 'immutable';
 import _ from 'lodash';
 import { getSchemaFromView } from '../../Store/View';
 

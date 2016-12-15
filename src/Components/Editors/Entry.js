@@ -1,7 +1,5 @@
 import React from 'react';
-import Immutable from 'immutable';
 import _ from 'lodash';
-import { connect } from 'react-redux';
 
 import Store from '../../Store/Store';
 import { getSchemaFromView } from '../../Store/View';
@@ -40,4 +38,4 @@ class EntryEditor extends React.Component {
   }
 }
 
-export default (EntryEditor);
+export default EntryEditor;

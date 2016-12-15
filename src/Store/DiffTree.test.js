@@ -5,18 +5,18 @@ describe('DiffTree', () => {
   
   const schema = {
     news: {
-      onEdit: sinon.spy(async (val, info) => {
+      onEdit: sinon.spy(async val => {
         return val;
       }),
       onNew: sinon.spy(async (val) => {
-        return {[val.title]: val}
+        return {[val.title]: val};
       }),
       attributes: {
         title: {type: 'text', required: true},
         content: {type: 'text', required: true},
       }
     }
-  }
+  };
 
   afterEach(function() {
     schema.news.onEdit.reset();

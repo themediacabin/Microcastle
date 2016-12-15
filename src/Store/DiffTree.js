@@ -1,5 +1,4 @@
 import I from 'immutable';
-import R from 'ramda';
 import {stringToComponent} from '../Components/DataTypes';
 
 function promiseProps(object) {
@@ -31,13 +30,13 @@ export const validateEntry = (entrySchema, entry) => {
   });
 
   return errors;
-}
+};
 
 export const validateTree = (schema, tree) => {
   let errors = [];
 
   tree.forEach((type, typeName) => {
-    type.forEach((entry, entryName) => {
+    type.forEach(entry => {
       const entrySchema = schema[typeName];
       const entryErrors = validateEntry(entrySchema, entry);
       errors = errors.concat(entryErrors);
@@ -45,7 +44,7 @@ export const validateTree = (schema, tree) => {
   });
 
   return errors;
-}
+};
 
 export const saveChangeState = async (microcastle, schema) => {
   const changeState = microcastle.getIn(['editor', 'tempState'], new I.Map());
@@ -71,7 +70,7 @@ export const saveChangeState = async (microcastle, schema) => {
     }))
   ));
   return originalState.mergeDeep(changed);
-}
+};
 
 export const saveIndividualNew = async (state, changeState, schema) => {
   const type = state.get('type');  
@@ -89,14 +88,14 @@ export const saveIndividualNew = async (state, changeState, schema) => {
     }),
     changeState: changeState.setIn([type, entryID], I.fromJS(value)),
   };
-}
+};
 
 export const saveNewState = async (newState, changeState, schema) => {
   if(newState == null) {
     return {
       newState: undefined,
       changeState: changeState
-    }
+    };
   }
   
   let newChangeState = changeState;
@@ -112,5 +111,5 @@ export const saveNewState = async (newState, changeState, schema) => {
     newState: newNewState,
     changeState: newChangeState 
   };
-}
+};
 

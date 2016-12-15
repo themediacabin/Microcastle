@@ -1,15 +1,13 @@
 import React from 'react';
 import I from 'immutable';
-import _ from 'lodash';
 
 import { connect } from 'react-redux';
 
 import EntryEditor from '../Editors/Entry';
-import NewEditor from '../Editors/New';
 
 import Store from '../../Store/Store';
 import {changeView} from '../../Store/Store';
-import {getViewValue, changeViewValue, getSchemaFromView, getNewViewEntry} from '../../Store/View';
+import {getViewValue, getSchemaFromView, getNewViewEntry} from '../../Store/View';
 
 const style = {
   base: {
@@ -75,11 +73,10 @@ const style = {
 
 const EDITING  = 'EDITING';
 const CHOSEN   = 'CHOSEN';
-const CREATING = 'CREATING';
 const CHOOSING = 'CHOOSING';
 
 class RelationEditor extends React.Component {
-  static defaultValue(schema) {
+  static defaultValue() {
     return null;
   }
 
@@ -91,7 +88,7 @@ class RelationEditor extends React.Component {
     return newState.get('entryID');
   }
 
-  static validate(scheme, val) {
+  static validate() {
     return [];
   }
 

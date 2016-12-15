@@ -1,5 +1,5 @@
 import I from 'immutable';
-import { getViewValue, changeViewValue } from './View'
+import { getViewValue, changeViewValue } from './View';
 
 describe('View', () => {
   describe('getViewValue', () => {

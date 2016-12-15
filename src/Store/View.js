@@ -1,5 +1,3 @@
-import Immutable from 'immutable';
-
 
 export const getViewValue = (microcastleState, view) => {
 
@@ -28,7 +26,7 @@ export const getNewViewEntry = (microcastleState, view) => {
   const newState = microcastleState.getIn(['editor', 'newState']);
   const entry = newState.find(v => v.get('id') == view.get('entry'));
   return entry;
-}
+};
 
 export const changeViewValue = (microcastleState, view, value) => {
 
@@ -46,7 +44,7 @@ export const changeViewValue = (microcastleState, view, value) => {
     return microcastleState.setIn(['editor', 'newState', index, 'data', view.get('attribute'), ...parts], value); 
   }
 
-}
+};
 
 export const getSchemaFromView = (schema, view) => {
 
@@ -57,5 +55,5 @@ export const getSchemaFromView = (schema, view) => {
   if (!attribute) return type;
   return attribute;
 
-}
+};
 
