@@ -1,26 +1,29 @@
 import React from 'react';
 
+import { connect } from 'react-redux';
+import { getViewValue, getSchemaFromView } from '../../Store/View';
+import { changeView } from '../../Store/Store';
+
 class SelectEditor extends React.Component {
   static defaultValue() {
     return '';
   }
 
-  onSave() {
-    return new Promise((resolve) => resolve());
+  static validate(scheme, val) {
+    if (scheme.required && (!val || val==''))
+      return ['required'];
+    return [];
   }
 
   onChange(event) {
-    this.props.onChange(event.target.value);
+    this.props.dispatch(changeView(this.props.view, event.target.value));
   }
 
   render() {
-
-    let options = [<span />];
-    if (this.props.options){
-      options = this.props.options.choices.map((name, i) => {
-        return <option key={i} value={name}>{name}</option>;
-      });
-    }
+    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const options = schema.choices.map((name, i) => {
+      return <option key={i} value={name}>{name}</option>;
+    });
 
     return (
       <select value={this.props.value} onChange={this.onChange.bind(this)}>
@@ -31,4 +34,10 @@ class SelectEditor extends React.Component {
   }
 }
 
-export default SelectEditor;
+const connectComponent = connect((state, props) => {
+  return {
+    value: getViewValue(state.microcastle, props.view),
+  };
+});
+
+export default connectComponent(SelectEditor);

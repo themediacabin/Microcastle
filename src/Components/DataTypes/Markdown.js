@@ -1,18 +1,22 @@
 import React from 'react';
-
+import { connect } from 'react-redux';
+import { getViewValue } from '../../Store/View';
+import { changeView } from '../../Store/Store';
 import MarkdownEditor from '../MarkdownEditor';
 
-class TextEditor extends React.Component {
+class Markdown extends React.Component {
   static defaultValue() {
     return '';
   }
 
-  onSave() {
-    return new Promise((resolve) => resolve());
+  static validate(scheme, val) {
+    if (scheme.required && (!val || val==''))
+      return ['required'];
+    return [];
   }
 
-  onChange(v) {
-    this.props.onChange(v);
+  onChange(value) {
+    this.props.dispatch(changeView(this.props.view, value));
   }
 
   render() {
@@ -22,4 +26,10 @@ class TextEditor extends React.Component {
   }
 }
 
-export default TextEditor;
+const connectComponent = connect((state, props) => {
+  return {
+    value: getViewValue(state.microcastle, props.view),
+  };
+});
+
+export default connectComponent(Markdown);

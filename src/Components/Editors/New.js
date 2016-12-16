@@ -18,6 +18,7 @@ class NewEditor extends React.Component {
 
     const editorComponents = _.values(_.mapValues(schema.attributes, (columnOptions, columnName) => {
       const ColumnComponent = DataTypes.stringToComponent(columnOptions.type);
+
       return (
         <ItemFrame title={columnOptions.name || columnName} key={columnName}>
           <ColumnComponent view={this.props.view.set('attribute', columnName)} 

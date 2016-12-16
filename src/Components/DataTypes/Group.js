@@ -20,12 +20,10 @@ const style = {
 /*
 {
   type: 'group',
-  options: {
-    members: {
-      image: {type: image},
-      something: {type: bob},
-    }    
-  }
+  members: {
+    image: {type: image},
+    something: {type: bob},
+  }    
 }
 
 {

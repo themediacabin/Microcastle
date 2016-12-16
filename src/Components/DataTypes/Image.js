@@ -1,5 +1,9 @@
 import React from 'react';
 
+import { connect } from 'react-redux';
+import { getViewValue } from '../../Store/View';
+import { changeView } from '../../Store/Store';
+
 const style = {
   image: {
     maxHeight: '300px', 
@@ -11,8 +15,8 @@ class ImageEditor extends React.Component {
     return '';
   }
 
-  onSave() {
-    return new Promise((resolve) => resolve());
+  static validate() {
+    return [];
   }
 
   onChange(event) {
@@ -21,20 +25,27 @@ class ImageEditor extends React.Component {
       let reader = new FileReader();
       reader.onload = function() {
           let dataURL = reader.result;
-          self.props.onChange({full: dataURL});
+          self.props.dispatch(changeView(self.props.view, {full: dataURL}));
       };
       reader.readAsDataURL(event.target.files[0]);
     }
   }
 
   render() {
+    const image = this.props.value && this.props.value.full;
     return (
       <span>
-        <img src={this.props.value.full} style={style.image}  />
+        {image ? <img src={image} style={style.image} /> : null}
         <input type="file" onChange={this.onChange.bind(this)} />
       </span>
     );
   }
 }
 
-export default ImageEditor;
+const connectComponent = connect((state, props) => {
+  return {
+    value: getViewValue(state.microcastle, props.view),
+  };
+});
+
+export default connectComponent(ImageEditor);

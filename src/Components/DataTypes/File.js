@@ -1,12 +1,16 @@
 import React from 'react';
 
+import { connect } from 'react-redux';
+import { getViewValue } from '../../Store/View';
+import { changeView } from '../../Store/Store';
+
 class FileEditor extends React.Component {
   static defaultValue() {
     return '';
   }
 
-  onSave() {
-    return new Promise((resolve) => resolve());
+  static validate() {
+    return [];
   }
 
   onChange(event) {
@@ -14,7 +18,7 @@ class FileEditor extends React.Component {
     let reader = new FileReader();
     reader.onload = function() {
         let dataURL = reader.result;
-        self.props.onChange(dataURL);
+        self.props.dispatch(changeView(self.props.view, dataURL));
     };
     reader.readAsDataURL(event.target.files[0]);
   }
@@ -28,4 +32,4 @@ class FileEditor extends React.Component {
   }
 }
 
-export default FileEditor;
+export default connect()(FileEditor);
