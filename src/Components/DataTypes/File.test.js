@@ -36,7 +36,6 @@ describe('Datatype File', () => {
     }, applyMiddleware(thunk));
 
     it('Can Edit File', async () => {
-
         const mockFileReader = sinon.stub(global, 'FileReader').returns({
           readAsDataURL: function(){this.result = 'someOtherB64'; this.onload()}
         });
