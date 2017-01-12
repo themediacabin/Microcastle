@@ -2,12 +2,15 @@ import React from 'react';
 import { findDOMNode } from 'react-dom';
 import Immutable from 'immutable';
 import _ from 'lodash';
+import R from 'ramda';
 import { DragSource, DropTarget } from 'react-dnd';
+import { connect } from 'react-redux';
 
 import TimesIcon from 'react-icons/lib/md/clear';
 import BarsIcon from 'react-icons/lib/md/reorder';
 
 import DataTypes from '../DataTypes';
+import { getViewValue, getSchemaFromView } from '../../Store/View';
 
 const style = {
   header: {
@@ -53,8 +56,7 @@ const style = {
     border: 'none',
     cursor: 'pointer',
     margin: 2,
-  }
-
+  },
 };
 
 const dragSource = {
@@ -89,41 +91,7 @@ const dragTarget = {
   }
 };
 
-class ArrayItem extends React.Component {
-  onSave() {
-    if (this._editor != null) {
-      return this._editor.onSave();
-    }
-    return new Promise((resolve) => resolve());
-  }
-
-  render() {
-    this._editor = null;
-    const index = this.props.index;
-    const onDelete = this.props.onDelete;
-
-    return this.props.connectDragPreview(this.props.connectDropTarget(
-      <div key={index} style={style.item(this.props.draggingIndex !== index)}>
-        <div style={style.header}> 
-          {this.props.connectDragSource(<div><BarsIcon style={style.dragIcon} /></div>)}
-          <TimesIcon style={style.closeIcon} onClick={onDelete} />
-        </div>
-        <div style={style.content}>
-          <this.props.SubType
-                ref={(r) => {this._editor = r;}}
-                onChange={this.props.individualChange.bind(this, index)}
-                value={this.props.individualValue}
-                options={this.props.options}
-                microcastleStore={this.props.microcastleStore}
-                microcastleSchema={this.props.microcastleSchema}
-                dispatch={this.props.dispatch} />
-        </div>
-      </div>
-    ));
-  }
-}
-
-const connectFn = (connect, monitor) => {
+const connectItemDrag = (connect, monitor) => {
   return {
     connectDragSource: connect.dragSource(),
     connectDragPreview: connect.dragPreview(),
@@ -131,18 +99,53 @@ const connectFn = (connect, monitor) => {
   };
 };
 
-const WrappedArrayItem = DropTarget('card', dragTarget, connect => ({connectDropTarget: connect.dropTarget()}))((DragSource('card', dragSource, connectFn))(ArrayItem));
+const WrapArrayItem = R.pipe(
+  DragSource('card', dragSource, connectItemDrag),
+  DropTarget('card', dragTarget, connect => ({connectDropTarget: connect.dropTarget()})),
+);
+
+const ArrayItem = (props) => {
+  const schema = getSchemaFromView(props.schema, props.view);
+  const Type = DataTypes.stringToComponent(schema.type);
+  const index = props.index;
+  const onDelete = props.onDelete;
+
+  return props.connectDragPreview(props.connectDropTarget(
+    <div key={index} style={style.item(props.draggingIndex !== index)}>
+      <div style={style.header}> 
+        {props.connectDragSource(<div><BarsIcon style={style.dragIcon} /></div>)}
+        <TimesIcon style={style.closeIcon} onClick={onDelete} />
+      </div>
+      <div style={style.content}>
+        <Type schema={props.schema}
+              view={props.view} />
+      </div>
+    </div>
+  ));
+};
+
+const WrappedArrayItem = WrapArrayItem(ArrayItem);
+
+const NewItemButton = ({style, onClick, singularName}) => {
+  return <button style={style} onClick={onClick}>Add {singularName}</button>;
+};
 
 class ArrayEditor extends React.Component {
+  static defaultValue() {
+    return [];
+  }
+
+  static validate(scheme, val) {
+    if (scheme.required && (val.length == 0))
+      return ['required'];
+    return [];
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       draggingIndex: null,
     };
-  }
-
-  onSave() {
-    return Promise.all(_.map(this._items, (e) => e == null ? true : e.decoratedComponentInstance.decoratedComponentInstance.onSave()));
   }
 
   setDraggingIndex(i) {
@@ -151,21 +154,15 @@ class ArrayEditor extends React.Component {
     });
   }
 
-
-  static defaultValue() {
-    return new Immutable.List([]);
-  }
-
   onAdd() {
-
-    let val = this.props.value;
-    if (this.props.value == null || this.props.value === '') {
-      val = Immutable.List();
-    }
-
-    this.props.onChange(val.insert(0,
-      DataTypes.stringToComponent(this.props.options.subtype.type).defaultValue()
-    ));
+//    let val = this.props.value;
+//    if (this.props.value == null || this.props.value === '') {
+//      val = Immutable.List();
+//    }
+//
+//    this.props.onChange(val.insert(0,
+//      DataTypes.stringToComponent(this.props.options.subtype.type).defaultValue()
+ //   ));
   }
 
   onDelete(index) {
@@ -179,16 +176,9 @@ class ArrayEditor extends React.Component {
     this.props.onChange(Immutable.fromJS(inserted));
   }
 
-  individualChange(index, value) {
-    this.props.onChange(this.props.value.set(index, value));
-  }
-
   render() {
-
-    const singularName = this.props.options.singularName || 'Item';
-
-    this._items = [];
-    const SubType = DataTypes.stringToComponent(this.props.options.subtype.type);
+    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const singularName = schema.singularName || 'Item';
 
     let val = this.props.value;
     if (this.props.value == null || this.props.value === '') {
@@ -196,27 +186,22 @@ class ArrayEditor extends React.Component {
     }
 
     const components = val.map((individualValue, index) => {
-      return <WrappedArrayItem  ref={(r) => this._items.push(r)}
-                                key={index}
-                                index={index}
-                                setDraggingIndex={this.setDraggingIndex.bind(this)}
-                                draggingIndex={this.state.draggingIndex}
-                                size={val.size}
-                                onMove={this.onMove.bind(this)}
-                                onDelete={this.onDelete.bind(this, index)}
-                                individualChange={this.individualChange.bind(this)}
-                                individualValue={individualValue}
-                                SubType={SubType}
-                                options={this.props.options.subtype}
-                                microcastleStore={this.props.microcastleStore}
-                                microcastleSchema={this.props.microcastleSchema}
-                                dispatch={this.props.dispatch} 
-                                parent={this}/>;
+      return <WrappedArrayItem key={index}
+                               index={index}
+                               setDraggingIndex={this.setDraggingIndex.bind(this)}
+                               draggingIndex={this.state.draggingIndex}
+                               size={val.size}
+                               onMove={this.onMove.bind(this)}
+                               onDelete={this.onDelete.bind(this, index)}
+                               schema={this.props.schema}
+                               parent={this}
+                               view={this.props.view.update('parts', (l = new Immutable.List()) => l.push(index))}
+      />;
     });
 
     return (
       <div style={style.base}>
-        <button style={style.button} onClick={this.onAdd.bind(this)}>Add {singularName}</button>
+        <NewItemButton style={style.button} onClick={this.onAdd.bind(this)} singularName={singularName} />
         <div>
           {components}
         </div>
@@ -225,9 +210,17 @@ class ArrayEditor extends React.Component {
   }
 }
 
-export default (ArrayEditor);
+const connectArrayEditor = connect((state, props) => {
+  return {
+    value: getViewValue(state.microcastle, props.view),
+  };
+});
+
+
+export default connectArrayEditor(ArrayEditor);
 
 export {
   ArrayEditor as ArrayEditor,
   ArrayItem as WrappedArrayItem,
+  NewItemButton as NewItemButton,
 };
