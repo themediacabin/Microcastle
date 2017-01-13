@@ -3,6 +3,11 @@ import Immutable from 'immutable';
 import _ from 'lodash';
 import DataTypes from '../DataTypes';
 
+import { connect } from 'react-redux';
+
+import { getViewValue, getSchemaFromView } from '../../Store/View';
+import { changeView } from '../../Store/Store';
+
 const style = {
   base: {
     boxSizing: 'border-box',
@@ -26,35 +31,32 @@ class FlexEditor extends React.Component {
     return new Immutable.fromJS({_flex_type: undefined});
   }
 
-  onSave() {
-    return Promise.all(_.map(this._editors, (e) => e == null ? true : e.onSave()));
+  static validate(scheme, val) {
+    if (scheme.required && (!val || val.get('_flex_type') == undefined))
+      return ['required'];
+    return [];
   }
 
   onChangeFlexType(event) {
     const result = event.target.value === 'Select One' ? undefined : event.target.value; 
-    this.props.onChange(new Immutable.fromJS({_flex_type: result}));
-  }
-  
-  onChangeField(key, val) {
-    this.props.onChange(this.props.value.set(key, val));
+    this.props.dispatch(changeView(this.props.view, new Immutable.fromJS({_flex_type: result})));
   }
   
   renderFields() {
-    const flexTypes = this.props.options.flexes[this.props.value.get('_flex_type')];
-    const fields = _.map(flexTypes, (val, key) => {
+    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const scheme = schema['flexes'][this.props.value.get('_flex_type')];
+
+    const fields = _.map(scheme, (val, key) => {
       const FieldComponent = DataTypes.stringToComponent(val.type);
+      const childView = this.props.view.update('part', (l = new Immutable.List()) => l.push(key));
 
       return <div key={key}>
         <h4 style={style.title}>{key}</h4>
         <div>
           <FieldComponent
-                ref={(r) => this._editors.push(r)}
-                onChange={this.onChangeField.bind(this, key)}
-                value={this.props.value.get(key)}
-                options={val}
-                microcastleStore={this.props.microcastleStore}
-                microcastleSchema={this.props.microcastleSchema}
-                dispatch={this.props.dispatch} />
+                view={childView}
+                schema={this.props.schema}
+                />
         </div>
       </div>;
     });
@@ -65,19 +67,30 @@ class FlexEditor extends React.Component {
   }
 
   render() {
-    this._editors = [];
-    const flexTypes = _.map(_.concat(['Select One'], _.keys(this.props.options.flexes)), (title) => {
+    const schema = getSchemaFromView(this.props.schema, this.props.view);
+
+    const flexTypes = _.map(_.concat(['Select One'], _.keys(schema.flexes)), (title) => {
       return <option key={title} value={title}>{title}</option>;
     });
     
     return <div>
-      <div><select value={this.props.value.get('_flex_type')} onChange={this.onChangeFlexType.bind(this)}>{flexTypes}</select></div>
+      <div>
+        <select value={this.props.value.get('_flex_type')} onChange={this.onChangeFlexType.bind(this)}>{flexTypes}</select>
+      </div>
       {this.props.value.get('_flex_type') == undefined ? null : this.renderFields()}
     </div>;
   }
 }
 
-export default FlexEditor;
+const connectFlexEditor = connect((state, props) => {
+  return {
+    value: getViewValue(state.microcastle, props.view),
+  };
+});
+
+
+export default connectFlexEditor(FlexEditor);
+
 
 /*
   type: Flex

@@ -24,9 +24,10 @@ const style = {
 
 class GroupEditor extends React.Component {
   static defaultValue(schema) {
-    return R.mapObjIndexed((v) => {
-      return stringToComponent(v.type).defaultValue(v);
-    })(schema.members);
+    return R.pipe(
+      R.mapObjIndexed(v => stringToComponent(v.type).defaultValue(v)),
+      I.fromJS
+    )(schema.members);
   }
 
   static validate() {

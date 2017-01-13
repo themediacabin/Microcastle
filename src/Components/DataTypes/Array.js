@@ -132,7 +132,7 @@ const NewItemButton = ({style, onClick, singularName}) => {
 
 class ArrayEditor extends React.Component {
   static defaultValue() {
-    return [];
+    return Immutable.fromJS([]);
   }
 
   static validate(scheme, val) {

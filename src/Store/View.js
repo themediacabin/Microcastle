@@ -67,6 +67,7 @@ export const getSchemaFromView = (schema, view) => {
   if (!view.has('part')) return attribute;
   return R.reduce((a, l) => {
     if (a['type'] == 'array') return a['subtype'];
+    if (a['type'] == 'flex') return a['flexes'][l];
     return l.get(a);
   }, attribute, view.get('part'));
 

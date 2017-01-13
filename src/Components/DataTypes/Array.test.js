@@ -9,27 +9,28 @@ import { ArrayEditor, NewItemButton } from "./Array";
 
 describe("Datatype Array", () => {
   describe("Should Integrate", () => {
-    it("Can Edit Array", async () => {
-      const reducer = combineReducers({
-        microcastle: Microcastle.MicrocastleStore.reducer
-      });
 
-      const schema = {
-        person: {
-          onNew: sinon.spy(v => Promise.resolve({ [v.name]: v })),
-          onEdit: sinon.spy(v => Promise.resolve(v)),
-          attributes: {
-            friends: {
-              onChange: sinon.spy(v => {
-                return Promise.resolve(v);
-              }),
-              type: "array",
-              subtype: { type: "text" }
-            }
+    const reducer = combineReducers({
+      microcastle: Microcastle.MicrocastleStore.reducer
+    });
+
+    const schema = {
+      person: {
+        onNew: sinon.spy(v => Promise.resolve({ new: v })),
+        onEdit: sinon.spy(v => Promise.resolve(v)),
+        attributes: {
+          friends: {
+            onChange: sinon.spy(v => {
+              return Promise.resolve(v);
+            }),
+            type: "array",
+            subtype: { type: "text" }
           }
         }
-      };
+      }
+    };
 
+    it("Can Edit Array", async () => {
       const store = createStore(
         reducer,
         {
@@ -71,17 +72,63 @@ describe("Datatype Array", () => {
         ])
       ).to.equal(new I.List([ "fred", "mary", "bob" ]));
     });
+
+    it("Can Create New Array", async () => {
+      const store = createStore(
+        reducer,
+        {
+          microcastle: I.fromJS({
+            data: { person: {} },
+            editor: {}
+          })
+        },
+        applyMiddleware(thunk)
+      );
+
+      const rendered = mount(
+        <Provider store={store}>
+          <div>
+            <Microcastle.MicrocastleEditor schemas={schema} />
+            <Microcastle.Button.Create visible={true} schema="person" />
+          </div>
+        </Provider>
+      );
+
+      rendered.find(Microcastle.Button.Create).simulate("click");
+      rendered.find(NewItemButton).find("button").simulate("click");
+      rendered
+        .find("textarea")
+        .at(0)
+        .simulate("change", { target: { value: "fred" } });
+      rendered.find(NewItemButton).find("button").simulate("click");
+      rendered
+        .find("textarea")
+        .at(0)
+        .simulate("change", { target: { value: "bob" } });
+      rendered.find(".microcastle-editor-save").at(0).simulate("click");
+
+      await new Promise(r => setImmediate(r));
+
+      await expect(
+        store.getState().microcastle.getIn([
+          "data",
+          "person",
+          "new",
+          "friends"
+        ])
+      ).to.equal(new I.List([ "bob", "fred" ]));
+    });
   });
 
   describe("#defaultValue", () => {
     it("should return empty array", () => {
-      expect(ArrayEditor.defaultValue()).to.deep.equal([]);
+      expect(ArrayEditor.defaultValue()).to.deep.equal(I.fromJS([]));
     });
   });
 
   describe("#validate", () => {
     it("should return empty array on pass", () => {
-      expect(ArrayEditor.validate({}, [])).to.deep.equal([]);
+      expect(ArrayEditor.validate({}, I.fromJS([]))).to.deep.equal([]);
     });
 
     it("should return array of required if required is set & no value", () => {
