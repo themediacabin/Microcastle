@@ -41,7 +41,9 @@ export const changeViewValue = (microcastleState, view, value) => {
 
     if (!microcastleState.getIn(['editor', 'tempState', ...pathBase])) {
       const before = microcastleState.getIn(['data', ...pathBase]);
-      ret = ret.setIn(['editor', 'tempState', ...pathBase], before);
+      if (before) {
+        ret = ret.setIn(['editor', 'tempState', ...pathBase], before);
+      }
     }
 
     return ret.setIn(['editor', 'tempState', ...path], value);
