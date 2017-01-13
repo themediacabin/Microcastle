@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
-import { getViewValue } from '../../Store/View';
 import { changeView } from '../../Store/Store';
 
 class FileEditor extends React.Component {

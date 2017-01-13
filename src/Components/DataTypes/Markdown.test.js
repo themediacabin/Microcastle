@@ -1,9 +1,4 @@
-import Microcastle from '../../index.js';
-
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
 import I from 'immutable';
-import thunk from 'redux-thunk';
 
 import MarkdownEditor from './Markdown';
 

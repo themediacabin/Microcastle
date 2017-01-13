@@ -1,7 +1,6 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import Immutable from 'immutable';
-import _ from 'lodash';
 import R from 'ramda';
 import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux';

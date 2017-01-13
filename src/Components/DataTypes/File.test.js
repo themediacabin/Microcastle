@@ -37,7 +37,10 @@ describe('Datatype File', () => {
 
     it('Can Edit File', async () => {
         const mockFileReader = sinon.stub(global, 'FileReader').returns({
-          readAsDataURL: function(){this.result = 'someOtherB64'; this.onload()}
+          readAsDataURL: function() {
+            this.result = 'someOtherB64';
+            this.onload();
+          }
         });
 
         const rendered = mount(
