@@ -2,7 +2,7 @@ import R from 'ramda';
 
 export const getViewValue = (microcastleState, view) => {
 
-  const parts = view.get('parts') || [];
+  const parts = view.get('part') || [];
 
   if (view.get('state') == 'change') {
     const path = [view.get('type'), view.get('entry'), view.get('attribute'), ...parts];
@@ -31,7 +31,7 @@ export const getNewViewEntry = (microcastleState, view) => {
 
 export const changeViewValue = (microcastleState, view, value) => {
 
-  const parts = view.get('parts') || [];
+  const parts = view.get('part') || [];
 
   if (view.get('state') == 'change') {
     const pathBase = [view.get('type'), view.get('entry'), view.get('attribute')];
@@ -62,11 +62,11 @@ export const getSchemaFromView = (schema, view) => {
   if (!attributes) return type;
   const attribute = attributes[view.get('attribute')]; 
   if (!attribute) return type;
-  if (!view.has('parts')) return attribute;
+  if (!view.has('part')) return attribute;
   return R.reduce((a, l) => {
     if (a['type'] == 'array') return a['subtype'];
     return l.get(a);
-  }, attribute, view.get('parts'));
+  }, attribute, view.get('part'));
 
 };
 

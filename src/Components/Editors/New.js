@@ -11,6 +11,7 @@ import DataTypes from '../DataTypes';
 class NewEditor extends React.Component {
   onSubmit() {
     this.props.dispatch(Store.actions.save(this.props.schema));
+    this.props.dispatch(Store.actions.close());
   }
 
   render() {

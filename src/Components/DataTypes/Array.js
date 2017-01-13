@@ -11,6 +11,7 @@ import BarsIcon from 'react-icons/lib/md/reorder';
 
 import DataTypes from '../DataTypes';
 import { getViewValue, getSchemaFromView } from '../../Store/View';
+import { changeView } from '../../Store/Store';
 
 const style = {
   header: {
@@ -155,25 +156,31 @@ class ArrayEditor extends React.Component {
   }
 
   onAdd() {
-//    let val = this.props.value;
-//    if (this.props.value == null || this.props.value === '') {
-//      val = Immutable.List();
-//    }
-//
-//    this.props.onChange(val.insert(0,
-//      DataTypes.stringToComponent(this.props.options.subtype.type).defaultValue()
- //   ));
+    let val = this.props.value;
+    if (this.props.value == null || this.props.value === '') {
+      val = Immutable.List();
+    }
+
+    const schema = getSchemaFromView(this.props.schema, this.props.view);
+
+    const newVal = val.insert(
+      0, 
+      DataTypes.stringToComponent(schema.subtype.type).defaultValue()
+    );
+
+    this.props.dispatch(changeView(this.props.view, newVal));
   }
 
   onDelete(index) {
-    this.props.onChange(this.props.value.delete(index));
+    const newVal = this.props.value.delete(index);
+    this.props.dispatch(changeView(this.props.view, newVal));
   }
 
   onMove(prevIndex, newIndex) {
     const value = this.props.value.get(prevIndex);
     const removed = this.props.value.delete(prevIndex);
     const inserted = removed.insert(newIndex, value);
-    this.props.onChange(Immutable.fromJS(inserted));
+    this.props.dispatch(changeView(this.props.view, inserted));
   }
 
   render() {
@@ -195,7 +202,7 @@ class ArrayEditor extends React.Component {
                                onDelete={this.onDelete.bind(this, index)}
                                schema={this.props.schema}
                                parent={this}
-                               view={this.props.view.update('parts', (l = new Immutable.List()) => l.push(index))}
+                               view={this.props.view.update('part', (l = new Immutable.List()) => l.push(index))}
       />;
     });
 

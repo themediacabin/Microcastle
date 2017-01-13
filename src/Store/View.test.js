@@ -158,6 +158,33 @@ describe('View', () => {
       const newState = changeViewValue(microcastleState, view, 'woo');
       expect(getViewValue(newState, view)).to.equal('woo');
     });
+
+    it('can set an array item from change state in new tempState', () => {
+      const microcastleState = I.fromJS({
+        data: {
+          news: {
+            one: {
+              tags: ['hello', 'world'],
+            },
+          },
+        },
+        editor: {
+          tempState: {}
+        }
+      });
+
+      const view = I.fromJS({
+        type: 'news',
+        state: 'change',
+        entry: 'one',
+        attribute: 'tags',
+        part: [0]
+      });
+
+      const newState = changeViewValue(microcastleState, view, 'new');
+      expect(getViewValue(newState, view)).to.equal('new');
+    });
+
   });
 });
 

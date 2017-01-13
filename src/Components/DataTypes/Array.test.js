@@ -10,7 +10,7 @@ import { ArrayEditor, NewItemButton } from './Array';
 
 describe('Datatype Array', () => {
   describe('Should Integrate', () => {
-    it.only('Can Edit Array', async () => {
+    it('Can Edit Array', async () => {
       const reducer = combineReducers({
         microcastle: Microcastle.MicrocastleStore.reducer,
       });
@@ -48,17 +48,13 @@ describe('Datatype Array', () => {
       );
 
       rendered.find(Microcastle.Button.EditEntry).simulate('click');
-      console.log(12);
       rendered.find(NewItemButton).find('button').simulate('click');
-      console.log(13);
       rendered.find('textarea').at(0).simulate('change', {target: {value: 'fred'}});
-      console.log(14);
       rendered.find('.microcastle-editor-save').at(0).simulate('click');
-      console.log(15);
 
       await new Promise(r => setImmediate(r));
 
-      await expect(store.getState().microcastle.getIn(['data', 'person', 'bob', 'friends'])).to.deep.equal(['fred', 'mary', 'bob']);
+      await expect(store.getState().microcastle.getIn(['data', 'person', 'bob', 'friends'])).to.equal(new I.List(['fred', 'mary', 'bob']));
     });
   });
 
