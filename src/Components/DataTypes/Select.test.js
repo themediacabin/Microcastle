@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import I from 'immutable';
 import thunk from 'redux-thunk';
 
-import SelectEditor from './select';
+import SelectEditor from './Select';
 
 const schema = {
     person: {
