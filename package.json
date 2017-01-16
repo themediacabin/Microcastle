@@ -7,6 +7,7 @@
     "build": "babel -d lib/ src/",
     "watch": "babel -d lib/ src/ -w --source-maps",
     "test": "mocha --opts mocha.opts",
+    "cover": "nyc --reporter=html --reporter=text mocha --opts mocha.opts",
     "clean": "rm -r lib/",
     "lint": "eslint src/",
     "all": "npm run-script lint && npm run-script build && npm run-script test"
@@ -26,6 +27,7 @@
   "license": "GPL-3.0",
   "homepage": "https://bitbucket.org/mediacabin/microcastle",
   "dependencies": {
+    "babel-runtime": "^6.20.0",
     "codemirror": "^5.20.2",
     "immutable": "^3.8.1",
     "lodash": "^4.17.2",
@@ -39,7 +41,6 @@
     "react-redux": "^5.0.2",
     "react-textarea-autosize": "^4.0.5",
     "redux": "^3.6.0",
-    "redux-logger": "^2.7.4",
     "redux-thunk": "^2.1.0",
     "simplemde": "^1.11.2"
   },
@@ -55,8 +56,10 @@
     "enzyme": "^2.6.0",
     "eslint": "^3.10.2",
     "eslint-plugin-react": "^6.7.1",
+    "istanbul": "^0.4.5",
     "jsdom": "^9.8.3",
     "mocha": "^3.1.2",
+    "nyc": "^10.0.0",
     "react-addons-test-utils": "^15.4.0",
     "sinon": "2.0.0-pre.4",
     "sinon-chai": "^2.8.0",
