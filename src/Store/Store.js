@@ -22,7 +22,7 @@ const EDIT_PART = 'EDIT_PART';
 const EDIT_ENTRY = 'EDIT_ENTRY';
 const CREATE_NEW = 'CREATE_NEW';
 
-function editSingle(schemaName, entryID, attributeName) {
+export function editSingle(schemaName, entryID, attributeName) {
   return {
     type: MICROCASTLE_EDITOR_EDIT_SINGLE,
     schemaName,
@@ -31,7 +31,7 @@ function editSingle(schemaName, entryID, attributeName) {
   };
 }
 
-function editPart(schemaName, entryID, attributeName, part) {
+export function editPart(schemaName, entryID, attributeName, part) {
   return {
     type: MICROCASTLE_EDITOR_EDIT_PART,
     schemaName,
@@ -41,7 +41,7 @@ function editPart(schemaName, entryID, attributeName, part) {
   };
 }
 
-function editEntry(schemaName, entryID) {
+export function editEntry(schemaName, entryID) {
   return {
     type: MICROCASTLE_EDITOR_EDIT_ENTRY,
     schemaName,
@@ -49,75 +49,30 @@ function editEntry(schemaName, entryID) {
   };
 }
 
-function createNew(schemaName) {
+export function createNew(schemaName) {
   return {
     type: MICROCASTLE_EDITOR_CREATE_NEW,
     schemaName,
   };
 }
 
-function edit(schemaName, entryID, attributeName) {
-  if (entryID == null) {
-    createNew(schemaName);
-  } else if (attributeName == null) {
-    editEntry(schemaName, entryID);
-  } else {
-    editSingle(schemaName, entryID, attributeName);
-  }
-}
-
-function close() {
+export function close() {
   return {
     type: MICROCASTLE_EDITOR_CLOSE,
   };
 }
 
-
-function setTempState(state) {
-  return {
-    type: MICROCASTLE_EDITOR_SET_TEMP_STATE,
-    state
-  };
-}
-
-function updateData(schemaName, entryID, attributeName, value) {
-  return {
-    type: MICROCASTLE_UPDATE_DATA,
-    schemaName,
-    entryID,
-    attributeName,
-    value
-  };
-}
-
-function insertData(schemaName, entryID, entryValue) {
-  return {
-    type: MICROCASTLE_INSERT_DATA,
-    schemaName,
-    entryID,
-    entryValue
-  };
-}
-
-function reportErrors(errors) {
+export function reportErrors(errors) {
   return {
     type: MICROCASTLE_REPORT_ERRORS,
     errors
   };
 }
 
-function mergeTree(tree) {
+export function mergeTree(tree) {
   return {
     type: MICROCASTLE_MERGE_TREE,
     tree
-  };
-}
-
-function deleteEntry(schemaName, entryID) {
-  return {
-    type: MICROCASTLE_DELETE_ENTRY,
-    schemaName,
-    entryID
   };
 }
 
@@ -127,9 +82,6 @@ export function changeView(view, value) {
     view,
     value,
   };
-}
-export function saveNew() {
-
 }
 
 export function addNewState(id, createdType) {
@@ -168,7 +120,7 @@ const initalState = Immutable.fromJS({
   editor: {},
 });
 
-function reducer(state = initalState, action) {
+export function reducer(state = initalState, action) {
   switch (action.type) {
 
     case MICROCASTLE_MERGE_TREE: {
@@ -180,26 +132,6 @@ function reducer(state = initalState, action) {
     case MICROCASTLE_REMOVE_NEWSTATE: {
       const index = state.getIn(['editor', 'newState']).findIndex(e => e.id == action.id); 
       return state.deleteIn(['editor', 'newState', index]);
-    }
-
-    case MICROCASTLE_UPDATE_DATA: {
-      let {schemaName, entryID, attributeName, value} = action;
-      const newValue = {[schemaName]: {[entryID]: {[attributeName]: value}}};
-      const newData = state.get('data').mergeDeep(newValue)
-                                       .setIn([schemaName, entryID, attributeName], value);
-      return state.set('data', newData);
-    }
-
-    case MICROCASTLE_INSERT_DATA: {
-      let {schemaName, entryID, entryValue} = action;
-      const newValue = {[schemaName]: {[entryID]: entryValue}};
-      const newData = state.get('data').mergeDeep(newValue);
-      return state.set('data', newData);
-    }
-
-    case MICROCASTLE_DELETE_ENTRY: {
-      let {schemaName, entryID} = action;
-      return state.deleteIn(['data', schemaName, entryID]);
     }
 
     case MICROCASTLE_CREATE_ADD_NEWSTATE: {
@@ -234,6 +166,13 @@ function reducer(state = initalState, action) {
                                            .set('entry', action.entryID)
                                            .set('attribute', action.attributeName)
                                            .set('part', action.part)
+                                           .set('view', Immutable.fromJS({
+                                             state: 'change',
+                                             type: action.schemaName,
+                                             entry: action.entryID,
+                                             attribute: action.attributeName,
+                                             part: action.part,
+                                           }))
                                            .set('newState', new Immutable.List())
                                            .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
@@ -277,17 +216,6 @@ function reducer(state = initalState, action) {
       return changeViewValue(state, action.view, action.value);
     }
 
-    case MICROCASTLE_EDITOR_SET_TEMP_STATE: {
-      const editor = state.get('editor');
-      const editorAction = editor.get('action');
-      if (editorAction == EDIT_ENTRY)
-        return state.setIn(['editor', 'tempState', editor.get('schema'), editor.get('entry')], action.state);
-      if (editorAction == EDIT_SINGLE) {
-        return state.setIn(['editor', 'tempState', editor.get('schema'), editor.get('entry'), editor.get('attribute')], action.state);
-      }
-      return state;
-    }
-
     default:
       return state;
   }
@@ -296,29 +224,13 @@ function reducer(state = initalState, action) {
 export default {
   reducer: reducer,
   actions: {
-    updateData,
-    insertData,
     editSingle,
     editEntry,
     editPart,
     createNew,
     close,
-    edit,
-    setTempState,
-    deleteEntry,
     save,
     changeView,
     addNewState,
-  },
-  constants: {
-    MICROCASTLE_UPDATE_DATA,
-    MICROCASTLE_INSERT_DATA,
-    MICROCASTLE_EDITOR_EDIT_SINGLE,
-    MICROCASTLE_EDITOR_EDIT_PART,
-    MICROCASTLE_EDITOR_CREATE_NEW,
-    MICROCASTLE_EDITOR_CLOSE,
-    MICROCASTLE_EDITOR_SET_TEMP_STATE,
-    EDIT_SINGLE,
-    CREATE_NEW,
   },
 };

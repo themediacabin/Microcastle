@@ -42,17 +42,22 @@ describe('Datatype Relation', () => {
         microcastle: Microcastle.MicrocastleStore.reducer,
     });
 
-    const store = createStore(reducer, {
-        microcastle: I.fromJS({
-            data: {
-                person: {'1': {name: 'bob', team: 'bobsteam'}},
-                team: {'bobsteam': {title: 'bobsteam'}},
-            },
-            editor: {},
-        }),
-    }, applyMiddleware(thunk));
+    afterEach(() => {
+      schema.team.onNew.reset();
+    });
+
 
     it('Can Create New Entry From Relation Field', async () => {
+        const store = createStore(reducer, {
+            microcastle: I.fromJS({
+                data: {
+                    person: {'1': {name: 'bob', team: 'bobsteam'}},
+                    team: {'bobsteam': {title: 'bobsteam'}},
+                },
+                editor: {},
+            }),
+        }, applyMiddleware(thunk));
+
         const rendered = mount(
             <Provider store={store}>
               <div>
@@ -73,6 +78,40 @@ describe('Datatype Relation', () => {
         await expect(schema.team.onNew).to.have.been.calledOnce;
         await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(2);
     });
+
+    it('When You Go To Create A New Entry But Then Reselect It Should Not Save New Entry', async () => {
+        const store = createStore(reducer, {
+            microcastle: I.fromJS({
+                data: {
+                    person: {'1': {name: 'bob', team: 'bobsteam'}},
+                    team: {'bobsteam': {title: 'bobsteam'}},
+                },
+                editor: {},
+            }),
+        }, applyMiddleware(thunk));
+
+        const rendered = mount(
+            <Provider store={store}>
+              <div>
+                <Microcastle.MicrocastleEditor schemas={schema} />
+                <Microcastle.Button.EditEntry visible={true} schema='person' entry={'1'} />
+              </div>
+            </Provider>
+        );
+
+        rendered.find(Microcastle.Button.EditEntry).simulate('click');
+        rendered.find('.microcastle-relation-reselect').simulate('click');
+        rendered.find('.microcastle-relation-create').simulate('click');
+        rendered.find('textarea').at(1).simulate('change', {target: {value: 'fredsteam'}});
+        rendered.find('.microcastle-relation-reselect').simulate('click');
+        rendered.find('.microcastle-relation-option').simulate('click');
+        rendered.find('.microcastle-editor-save').at(0).simulate('click');
+
+        await new Promise(r => setImmediate(r));
+
+        await expect(schema.team.onNew).to.not.have.been.called;
+        await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(1);
+    })
   });
 
   describe('#defaultValue', () => {

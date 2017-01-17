@@ -222,7 +222,7 @@ class RelationEditor extends React.Component {
       i++;
 
       if (currentSchema.display == null) {
-        return <div key={name} style={style.defaultOption}>
+        return <div key={name} className="microcastle-relation-option" style={style.defaultOption}>
           <span onClick={this.onChoose.bind(this, name)}>{name}</span>
           {currentSchema.onDelete == null ? null : <span style={style.deleteButton} onClick={()=>{}}>x</span>}
         </div>;
