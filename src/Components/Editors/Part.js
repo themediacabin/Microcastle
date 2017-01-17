@@ -1,18 +1,10 @@
 import React from 'react';
-import _ from 'lodash';
 
 import Store from '../../Store/Store';
 import { getSchemaFromView } from '../../Store/View';
 import ItemFrame from '../ItemFrame';
 
 import DataTypes from '../DataTypes';
-
-const style = {
-  base: {
-    background: 'white',
-    flexDirection: 'column',
-  }
-};
 
 class PartEditor extends React.Component {
   onSubmit() {

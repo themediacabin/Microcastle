@@ -111,7 +111,7 @@ describe('Datatype Relation', () => {
 
         await expect(schema.team.onNew).to.not.have.been.called;
         await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(1);
-    })
+    });
   });
 
   describe('#defaultValue', () => {
