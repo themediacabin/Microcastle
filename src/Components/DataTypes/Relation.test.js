@@ -125,6 +125,7 @@ describe('Datatype Relation', () => {
                 }
             },
             person: {
+                onEdit: sinon.spy((v) => Promise.resolve(v)),
                 attributes: {
                     name: {
                         type: 'text',

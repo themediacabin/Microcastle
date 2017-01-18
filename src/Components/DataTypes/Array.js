@@ -10,6 +10,7 @@ import BarsIcon from 'react-icons/lib/md/reorder';
 
 import DataTypes from '../DataTypes';
 import { getViewValue, getSchemaFromView } from '../../Store/View';
+import { removeNested } from '../../Store/DiffTree';
 import { changeView } from '../../Store/Store';
 
 const style = {
@@ -179,6 +180,7 @@ class ArrayEditor extends React.Component {
   onDelete(index) {
     const newVal = this.props.value.delete(index);
     this.props.dispatch(changeView(this.props.view, newVal));
+    removeNested(this.props.dispatch, this.props.schema, this.props.microcastleState, this.props.view);
   }
 
   onMove(prevIndex, newIndex) {
@@ -225,6 +227,7 @@ class ArrayEditor extends React.Component {
 const connectArrayEditor = connect((state, props) => {
   return {
     value: getViewValue(state.microcastle, props.view),
+    microcastleState: state.microcastle
   };
 });
 

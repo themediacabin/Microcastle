@@ -116,8 +116,11 @@ class RelationEditor extends React.Component {
     return [];
   }
 
-  static onRemoved(microcastleState, view) {
-  
+  static onRemoved(dispatch, microcastleState, view) {
+    const value = getViewValue(microcastleState, view);
+    if (I.Map.isMap(value)) {
+      dispatch(removeNewState(value.get('entry')));
+    }
   }
 
   static getChildren(schema, view, value) {

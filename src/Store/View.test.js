@@ -184,7 +184,6 @@ describe('View', () => {
       const newState = changeViewValue(microcastleState, view, 'new');
       expect(getViewValue(newState, view)).to.equal('new');
     });
-
   });
 });
 

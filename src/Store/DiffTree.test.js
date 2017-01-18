@@ -1,5 +1,5 @@
 import I from 'immutable';
-import { validateTree, validateEntry, saveChangeState, saveIndividualNew, saveNewState } from './DiffTree';
+import { validateTree, validateEntry, saveChangeState, saveIndividualNew, saveNewState, getAllNested } from './DiffTree';
 
 describe('DiffTree', () => {
   
@@ -359,5 +359,40 @@ describe('DiffTree', () => {
     });
   });
 
+  describe('getAllNested', () => {
+    it('Returns All Sub Views, Including Intermidate', () => {
+      const schema = {
+        people: {
+          attributes: {
+            teams: {type: 'array', subtype: {type: 'array', subtype: {type: 'text'}}}
+          }
+        }
+      };
+      const view = I.fromJS({state: 'change', type: 'people', entry: 'bob', attribute: 'teams'});
+      const microcastle = I.fromJS({
+        data: {
+          people: {
+            bob: {
+              teams: [[1, 2], [3, 4]]
+            }
+          }
+        }      
+      });
+
+      const expected = I.fromJS([
+        {state: 'change', type: 'people', entry: 'bob', attribute: 'teams'},
+        {state: 'change', type: 'people', entry: 'bob', attribute: 'teams', part: [0]},
+        {state: 'change', type: 'people', entry: 'bob', attribute: 'teams', part: [0, 0]},
+        {state: 'change', type: 'people', entry: 'bob', attribute: 'teams', part: [0, 1]},
+        {state: 'change', type: 'people', entry: 'bob', attribute: 'teams', part: [1]},
+        {state: 'change', type: 'people', entry: 'bob', attribute: 'teams', part: [1, 0]},
+        {state: 'change', type: 'people', entry: 'bob', attribute: 'teams', part: [1, 1]},
+      ]);
+
+      expect(
+        I.fromJS(getAllNested(schema, microcastle, view))
+      ).to.equal(expected);
+    });
+  });
 });
 
