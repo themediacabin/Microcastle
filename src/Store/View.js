@@ -73,3 +73,10 @@ export const getSchemaFromView = (schema, view) => {
 
 };
 
+export const getAllAttributesForEntry = (schema, view) => {
+  const scheme = getSchemaFromView(schema, view);
+  return R.pipe(
+    R.keys,
+    R.map(key => view.set('attribute', key))
+  )(scheme.attributes);
+}

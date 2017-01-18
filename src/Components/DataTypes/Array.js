@@ -114,7 +114,7 @@ const ArrayItem = (props) => {
     <div key={index} style={style.item(props.draggingIndex !== index)}>
       <div style={style.header}> 
         {props.connectDragSource(<div><BarsIcon style={style.dragIcon} /></div>)}
-        <TimesIcon style={style.closeIcon} onClick={onDelete} />
+        <TimesIcon className="microcastle-array-remove" style={style.closeIcon} onClick={onDelete} />
       </div>
       <div style={style.content}>
         <Type schema={props.schema}
@@ -139,6 +139,12 @@ class ArrayEditor extends React.Component {
     if (scheme.required && (val.length == 0))
       return ['required'];
     return [];
+  }
+
+  static getChildren(schema, view, value) {
+      return R.map(index =>
+          view.update('part', (part = new Immutable.List()) => part.push(index))
+      )(R.range(0, value.size));
   }
 
   constructor(props) {

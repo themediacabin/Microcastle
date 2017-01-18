@@ -31,12 +31,11 @@ export class TextEditor extends React.Component {
   }
 
   render() {
-    return <Textarea
-      minRows={1}
-      maxRows={12}
-      value={this.props.value}
-      onChange={this.onChange.bind(this)}
-      style={style.base} />;
+    return <Textarea minRows={1}
+                     maxRows={12}
+                     value={this.props.value}
+                     onChange={this.onChange.bind(this)}
+                     style={style.base} />;
   }
 }
 

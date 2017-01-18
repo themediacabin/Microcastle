@@ -112,6 +112,62 @@ describe('Datatype Relation', () => {
         await expect(schema.team.onNew).to.not.have.been.called;
         await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(1);
     });
+
+    it('When You Go To Create A New Entry In An Array But Then Delete The Item, It Should Not Save New Entry', async () => {
+        const schema = {
+            team: {
+                onNew:  sinon.spy((v) => Promise.resolve({[v.title]: v})),
+                onEdit: sinon.spy((v) => Promise.resolve(v)),
+                attributes: {
+                    title: {
+                        type: 'text',
+                    },
+                }
+            },
+            person: {
+                attributes: {
+                    name: {
+                        type: 'text',
+                    },
+                    teams: { type: 'array', subtype: { 
+                          type: 'relation',
+                          relative: 'team'
+                    } },
+                }
+            } 
+        };
+
+        const store = createStore(reducer, {
+            microcastle: I.fromJS({
+                data: {
+                    person: {'1': {name: 'bob', teams: ['bobsteam']}},
+                    team: {'bobsteam': {title: 'bobsteam'}},
+                },
+                editor: {},
+            }),
+        }, applyMiddleware(thunk));
+
+        const rendered = mount(
+            <Provider store={store}>
+              <div>
+                <Microcastle.MicrocastleEditor schemas={schema} />
+                <Microcastle.Button.EditEntry visible={true} schema='person' entry={'1'} />
+              </div>
+            </Provider>
+        );
+
+        rendered.find(Microcastle.Button.EditEntry).simulate('click');
+        rendered.find('.microcastle-relation-reselect').simulate('click');
+        rendered.find('.microcastle-relation-create').simulate('click');
+        rendered.find('textarea').at(1).simulate('change', {target: {value: 'fredsteam'}});
+        rendered.find('.microcastle-array-remove').simulate('click');
+        rendered.find('.microcastle-editor-save').at(0).simulate('click');
+
+        await new Promise(r => setImmediate(r));
+
+        await expect(schema.team.onNew).to.not.have.been.called;
+        await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(1);
+    });
   });
 
   describe('#defaultValue', () => {
@@ -124,6 +180,30 @@ describe('Datatype Relation', () => {
     it('should return empty array on pass', () => {
       expect(RelationEditor.validate(new I.Map(), new I.Map())).to.be.a('array');    
       expect(RelationEditor.validate(new I.Map(), new I.Map())).to.have.length(0);    
+    });  
+  });
+
+  describe('#getChildren', () => {
+    
+    const schema = {
+      person: {attributes: {team: {type: 'relation', relative: 'team'}}},
+      team: {attributes: {name: {type: 'string'}}}
+    };
+
+    it('should return array of child views attributes when changing state', () => {
+      const view = I.fromJS({state: 'change', type: 'person', entry: 'bob', attribute: 'team'});
+      const value = 'bobsteam';
+      const expected = [I.fromJS({state: 'change', type: 'team', entry: 'bobsteam', attribute: 'name'})];
+      
+      expect(I.fromJS(RelationEditor.getChildren(schema, view, value))).to.equal(I.fromJS(expected));
+    });  
+
+    it('should return array of child views attributes when creating state', () => {
+      const view = I.fromJS({state: 'change', type: 'person', entry: 'bob', attribute: 'team'});
+      const value = I.fromJS({state: 'new', type: 'team', entry: '1234'});
+      const expected = [I.fromJS({state: 'new', type: 'team', entry: '1234', attribute: 'name'})];
+      
+      expect(I.fromJS(RelationEditor.getChildren(schema, view, value))).to.equal(I.fromJS(expected));
     });  
   });
 

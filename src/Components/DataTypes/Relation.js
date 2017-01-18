@@ -7,7 +7,7 @@ import EntryEditor from '../Editors/Entry';
 
 import Store from '../../Store/Store';
 import {changeView, removeNewState} from '../../Store/Store';
-import {getViewValue, getSchemaFromView, getNewViewEntry} from '../../Store/View';
+import {getViewValue, getSchemaFromView, getNewViewEntry, getAllAttributesForEntry} from '../../Store/View';
 
 const style = {
   base: {
@@ -75,6 +75,30 @@ const EDITING  = 'EDITING';
 const CHOSEN   = 'CHOSEN';
 const CHOOSING = 'CHOOSING';
 
+
+const getChildView = (schema, view, value) => {
+  const currentSchema = getSchemaFromView(schema, view);
+  
+  if (typeof value == 'string') {
+    return I.fromJS({
+      state: 'change',
+      type: currentSchema.relative,
+      entry: value,
+    });
+  } 
+
+  return value;  
+}
+
+const getDisplayState = (value, editing = false) => {
+  if (value && (editing || typeof value != 'string'))
+    return EDITING;
+  if (value && typeof value == 'string' && value != "")
+    return CHOSEN;
+  return CHOOSING;
+}
+
+
 class RelationEditor extends React.Component {
   static defaultValue() {
     return null;
@@ -92,20 +116,22 @@ class RelationEditor extends React.Component {
     return [];
   }
 
+  static onRemoved(microcastleState, view) {
+  
+  }
+
+  static getChildren(schema, view, value) {
+    if (getDisplayState(value) == CHOOSING) return [];
+    const childView = getChildView(schema, view, value);
+    return getAllAttributesForEntry(schema, childView);
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       page: 0,
       editing: false,
     };
-  }
-
-  getDisplayState() {
-    if (!!this.props.value && (this.state.editing || typeof this.props.value != 'string'))
-      return EDITING;
-    if (!!this.props.value && typeof this.props.value == 'string' && this.props.value != "")
-      return CHOSEN;
-    return CHOOSING;
   }
 
   onChoose(chosen) {
@@ -146,20 +172,8 @@ class RelationEditor extends React.Component {
     this.props.dispatch(changeView(this.props.view, null));
   }
 
-  getChildView() {
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
-    if (typeof this.props.value == 'string') {
-      return I.fromJS({
-        state: 'change',
-        type: schema.relative,
-        entry: this.props.value,
-      });
-    } 
-    return this.props.value;  
-  }
-
   getEditingView() {
-    const childView = this.getChildView();
+    const childView = getChildView(this.props.schema, this.props.view, this.props.value);
     return (
       <div>
         <div style={style.header}>
@@ -176,7 +190,7 @@ class RelationEditor extends React.Component {
   }
 
   getChosenView() {
-    const childView = this.getChildView();
+    const childView = getChildView(this.props.schema, this.props.view, this.props.value);
     const childVal = getViewValue(this.props.microcastle, childView);
     const currentSchema = getSchemaFromView(this.props.schema, this.props.view);
     const view = currentSchema.display == null ? null
@@ -251,7 +265,7 @@ class RelationEditor extends React.Component {
   }
 
   getView() {
-    switch (this.getDisplayState()) {
+    switch (getDisplayState(this.props.value, this.state.editing)) {
       case EDITING:
         return this.getEditingView();
       case CHOSEN:
