@@ -113,61 +113,81 @@ describe('Datatype Relation', () => {
         await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(1);
     });
 
-    it('When You Go To Create A New Entry In An Array But Then Delete The Item, It Should Not Save New Entry', async () => {
-        const schema = {
-            team: {
-                onNew:  sinon.spy((v) => Promise.resolve({[v.title]: v})),
-                onEdit: sinon.spy((v) => Promise.resolve(v)),
-                attributes: {
-                    title: {
-                        type: 'text',
-                    },
-                }
-            },
-            person: {
-                onEdit: sinon.spy((v) => Promise.resolve(v)),
-                attributes: {
-                    name: {
-                        type: 'text',
-                    },
-                    teams: { type: 'array', subtype: { 
-                          type: 'relation',
-                          relative: 'team'
-                    } },
-                }
-            } 
-        };
+    describe('When In An Array', () => {
 
-        const store = createStore(reducer, {
-            microcastle: I.fromJS({
-                data: {
-                    person: {'1': {name: 'bob', teams: ['bobsteam']}},
-                    team: {'bobsteam': {title: 'bobsteam'}},
-                },
-                editor: {},
-            }),
-        }, applyMiddleware(thunk));
+      const schema = {
+          team: {
+              onNew:  sinon.spy((v) => Promise.resolve({[v.title]: v})),
+              onEdit: sinon.spy((v) => Promise.resolve(v)),
+              attributes: {
+                  title: {
+                      type: 'text',
+                  },
+              }
+          },
+          person: {
+              onEdit: sinon.spy((v) => Promise.resolve(v)),
+              attributes: {
+                  name: {
+                      type: 'text',
+                  },
+                  teams: { type: 'array', subtype: { 
+                        type: 'relation',
+                        relative: 'team'
+                  } },
+              }
+          } 
+      };
 
-        const rendered = mount(
-            <Provider store={store}>
-              <div>
-                <Microcastle.MicrocastleEditor schemas={schema} />
-                <Microcastle.Button.EditEntry visible={true} schema='person' entry={'1'} />
-              </div>
-            </Provider>
-        );
+      const store = createStore(reducer, {
+          microcastle: I.fromJS({
+              data: {
+                  person: {'1': {name: 'bob', teams: ['bobsteam']}},
+                  team: {'bobsteam': {title: 'bobsteam'}},
+              },
+              editor: {},
+          }),
+      }, applyMiddleware(thunk));
 
-        rendered.find(Microcastle.Button.EditEntry).simulate('click');
-        rendered.find('.microcastle-relation-reselect').simulate('click');
-        rendered.find('.microcastle-relation-create').simulate('click');
-        rendered.find('textarea').at(1).simulate('change', {target: {value: 'fredsteam'}});
-        rendered.find('.microcastle-array-remove').simulate('click');
-        rendered.find('.microcastle-editor-save').at(0).simulate('click');
+      const rendered = mount(
+          <Provider store={store}>
+            <div>
+              <Microcastle.MicrocastleEditor schemas={schema} />
+              <Microcastle.Button.EditEntry visible={true} schema='person' entry={'1'} />
+            </div>
+          </Provider>
+      );
 
-        await new Promise(r => setImmediate(r));
+      afterEach(() => {
+        schema.team.onNew.reset();
+      })
 
-        await expect(schema.team.onNew).to.not.have.been.called;
-        await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(1);
+      it('When You Go To Create A New Entry In An Array But Then Delete The Item, It Should Not Save New Entry', async () => {
+          rendered.find(Microcastle.Button.EditEntry).simulate('click');
+          rendered.find('.microcastle-relation-reselect').simulate('click');
+          rendered.find('.microcastle-relation-create').simulate('click');
+          rendered.find('textarea').at(1).simulate('change', {target: {value: 'fredsteam'}});
+          rendered.find('.microcastle-array-remove').simulate('click');
+          rendered.find('.microcastle-editor-save').at(0).simulate('click');
+
+          await new Promise(r => setImmediate(r));
+
+          await expect(schema.team.onNew).to.not.have.been.called;
+          await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(1);
+      });
+
+      it('When You Go To Create A New Entry In An Array When You Save, Save New Entry', async () => {
+          rendered.find(Microcastle.Button.EditEntry).simulate('click');
+          rendered.find('.microcastle-relation-reselect').simulate('click');
+          rendered.find('.microcastle-relation-create').simulate('click');
+          rendered.find('textarea').at(1).simulate('change', {target: {value: 'fredsteam'}});
+          rendered.find('.microcastle-editor-save').at(0).simulate('click');
+
+          await new Promise(r => setImmediate(r));
+
+          await expect(schema.team.onNew).to.have.been.called;
+          await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(2);
+      });
     });
   });
 
