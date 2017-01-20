@@ -79,4 +79,5 @@ export const getAllAttributesForEntry = (schema, view) => {
     R.keys,
     R.map(key => view.set('attribute', key))
   )(scheme.attributes);
-}
+};
+

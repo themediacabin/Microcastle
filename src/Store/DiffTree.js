@@ -56,15 +56,14 @@ const mapEachEntry = async (state, fn) => {
       return await fn(typeName, entryName, entry);
     }));
   }));
-}
+};
 
 export const saveChangeState = async (microcastle, schema) => {
   const changeState = microcastle.getIn([ "editor", "tempState" ], new I.Map());
   const originalState = microcastle.get("data", new I.Map());
 
-  const beforeSaved = await mapEachEntry(changeState, async (typeName, entryName, entry) => {
+  const beforeSaved = await mapEachEntry(changeState, async (typeName, entryName) => {
     const changedFixed = changeState.getIn([ typeName, entryName ]).map((v, k) => {
-      const attrType = schema[typeName]["attributes"][k]["type"];
       const view = I.fromJS({
         state: "change",
         type: typeName,
@@ -87,7 +86,7 @@ export const saveChangeState = async (microcastle, schema) => {
         .merge(
           savedMC.getIn(["editor", "tempState", typeName, entryName])
         ).get(k);
-    })
+    });
     return changedFixed;
   });
 
@@ -156,7 +155,7 @@ export const removeNested = (dispatch, schema, microcastle, view) => {
     const dataType = getSchemaFromView(schema, child).type;
     const DataComponent = stringToComponent(dataType);
     if (DataComponent.onRemoved)
-      DataComponent.onRemoved(dispatch, microcastle, child)
-  }, allChildren)
+      DataComponent.onRemoved(dispatch, microcastle, child);
+  }, allChildren);
 };
 

@@ -160,7 +160,7 @@ describe('Datatype Relation', () => {
 
       afterEach(() => {
         schema.team.onNew.reset();
-      })
+      });
 
       it('When You Go To Create A New Entry In An Array But Then Delete The Item, It Should Not Save New Entry', async () => {
           rendered.find(Microcastle.Button.EditEntry).simulate('click');

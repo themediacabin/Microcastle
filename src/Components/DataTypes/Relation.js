@@ -88,7 +88,7 @@ const getChildView = (schema, view, value) => {
   } 
 
   return value;  
-}
+};
 
 const getDisplayState = (value, editing = false) => {
   if (value && (editing || typeof value != 'string'))
@@ -96,7 +96,7 @@ const getDisplayState = (value, editing = false) => {
   if (value && typeof value == 'string' && value != "")
     return CHOSEN;
   return CHOOSING;
-}
+};
 
 
 class RelationEditor extends React.Component {
