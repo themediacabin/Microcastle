@@ -163,7 +163,7 @@ export const callOnDelete = async (schema, deleteList) => {
   await Promise.all(deleteList.map(async (deleteItem) => {
     await schema[deleteItem.get('type')]['onDelete']({}, {id: deleteItem.entry});
   }).toJS());
-}
+};
 
 
 export const deleteState = (originalState, deleteList) => {
@@ -172,7 +172,6 @@ export const deleteState = (originalState, deleteList) => {
       return !deleteList.contains(I.fromJS({type: typeName, entry: entryName}));
     });
   });
-
-}
+};
 
 

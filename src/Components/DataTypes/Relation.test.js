@@ -117,7 +117,7 @@ describe('Datatype Relation', () => {
       const schema = {
           team: {
               onNew:    sinon.spy((v) => Promise.resolve({[v.title]: v})),
-              onDelete: sinon.spy((v) => Promise.resolve()),
+              onDelete: sinon.spy(() => Promise.resolve()),
               onEdit:   sinon.spy((v) => Promise.resolve(v)),
               attributes: {
                   title: {
@@ -164,7 +164,7 @@ describe('Datatype Relation', () => {
 
       await expect(schema.team.onDelete).to.have.been.called;
       await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(0);
-    })
+    });
 
     describe('When In An Array', async () => {
 

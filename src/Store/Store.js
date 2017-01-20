@@ -33,7 +33,7 @@ export function deleteEntry(schemaName, entryID) {
     type: MICROCASTLE_EDITOR_DELETE_ENTRY,
     schema: schemaName,
     entry: entryID
-  }
+  };
 }
 
 export function editPart(schemaName, entryID, attributeName, part) {
@@ -142,8 +142,8 @@ export function reducer(state = initalState, action) {
 
     case MICROCASTLE_EDITOR_DELETE_ENTRY: {
       return state.updateIn(['editor', 'deleteState'], (m = new Immutable.List()) => {
-        return m.push(Immutable.fromJS({entry: action.entry, type: action.schema}))
-      }) 
+        return m.push(Immutable.fromJS({entry: action.entry, type: action.schema}));
+      }); 
     }
 
     case MICROCASTLE_REMOVE_NEWSTATE: {
