@@ -113,7 +113,60 @@ describe('Datatype Relation', () => {
         await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(1);
     });
 
-    describe('When In An Array', () => {
+    it('Can Delete Entry', async () => {
+      const schema = {
+          team: {
+              onNew:    sinon.spy((v) => Promise.resolve({[v.title]: v})),
+              onDelete: sinon.spy((v) => Promise.resolve()),
+              onEdit:   sinon.spy((v) => Promise.resolve(v)),
+              attributes: {
+                  title: {
+                      type: 'text',
+                  },
+              }
+          },
+          person: {
+              onEdit: sinon.spy((v) => Promise.resolve(v)),
+              attributes: {
+                  teams: { type: 'array', subtype: { 
+                        type: 'relation',
+                        relative: 'team'
+                  } },
+              }
+          } 
+      };
+
+      const store = createStore(reducer, {
+          microcastle: I.fromJS({
+              data: {
+                  person: {'1': {name: 'bob', teams: ['bobsteam']}},
+                  team: {'bobsteam': {title: 'bobsteam'}},
+              },
+              editor: {},
+          }),
+      }, applyMiddleware(thunk));
+
+      const rendered = mount(
+          <Provider store={store}>
+            <div>
+              <Microcastle.MicrocastleEditor schemas={schema} />
+              <Microcastle.Button.EditEntry visible={true} schema='person' entry={'1'} />
+            </div>
+          </Provider>
+      );
+
+      rendered.find(Microcastle.Button.EditEntry).simulate('click');
+      rendered.find('.microcastle-relation-reselect').simulate('click');
+      rendered.find('.microcastle-relation-delete').simulate('click');
+      rendered.find('.microcastle-editor-save').at(0).simulate('click');
+
+      await new Promise(r => setImmediate(r));
+
+      await expect(schema.team.onDelete).to.have.been.called;
+      await expect(store.getState().microcastle.getIn(['data', 'team']).size).to.equal(0);
+    })
+
+    describe('When In An Array', async () => {
 
       const schema = {
           team: {

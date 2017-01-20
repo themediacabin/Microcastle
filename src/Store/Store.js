@@ -1,5 +1,5 @@
 import Immutable from 'immutable';
-import {saveChangeState, validateTree, saveNewState} from './DiffTree';
+import {saveChangeState, deleteState, callOnDelete, validateTree, saveNewState} from './DiffTree';
 import {changeViewValue} from './View';
 
 const MICROCASTLE_CREATE_ADD_NEWSTATE = 'MICROCASTLE_CREATE_ADD_NEWSTATE';
@@ -12,6 +12,7 @@ const MICROCASTLE_EDITOR_CLOSE = 'MICROCASTLE_EDITOR_CLOSE';
 const MICROCASTLE_REPORT_ERRORS = 'MICROCASTLE_REPORT_ERRORS';
 const MICROCASTLE_REMOVE_NEWSTATE = 'MICROCASTLE_REMOVE_NEWSTATE';
 const MICROCASTLE_EDITOR_CHANGE_VIEW = 'MICROCASTLE_EDITOR_CHANGE_VIEW';
+const MICROCASTLE_EDITOR_DELETE_ENTRY = 'MICROCASTLE_EDITOR_DELETE_ENTRY';
 
 const EDIT_SINGLE = 'EDIT_SINGLE';
 const EDIT_PART = 'EDIT_PART';
@@ -25,6 +26,14 @@ export function editSingle(schemaName, entryID, attributeName) {
     entryID,
     attributeName,
   };
+}
+
+export function deleteEntry(schemaName, entryID) {
+  return {
+    type: MICROCASTLE_EDITOR_DELETE_ENTRY,
+    schema: schemaName,
+    entry: entryID
+  }
 }
 
 export function editPart(schemaName, entryID, attributeName, part) {
@@ -65,9 +74,10 @@ export function reportErrors(errors) {
   };
 }
 
-export function mergeTree(tree) {
+export function mergeTree(tree, deleteList) {
   return {
     type: MICROCASTLE_MERGE_TREE,
+    deleteList,
     tree
   };
 }
@@ -107,7 +117,9 @@ export function save(schema) {
     const mergedNewState = getState().microcastle.setIn(['editor', 'tempState'], savedNewState.changeState)
                                                  .setIn(['editor', 'newState'], savedNewState.newState);
     const savedTree = await saveChangeState(mergedNewState, schema);
-    return dispatch(mergeTree(savedTree));
+    const deleteList = getState().microcastle.getIn(['editor', 'deleteState'], new Immutable.List());
+    await callOnDelete(schema, deleteList);
+    return dispatch(mergeTree(savedTree, deleteList));
   };
 }
 
@@ -120,9 +132,18 @@ export function reducer(state = initalState, action) {
   switch (action.type) {
 
     case MICROCASTLE_MERGE_TREE: {
-      return state.mergeDeepIn(['data'], action.tree)
+      const newTree = state.get('data').mergeDeep(action.tree);
+      const finishedTree = deleteState(newTree, action.deleteList);
+      return state.set('data', finishedTree)
                   .setIn(['editor', 'tempState'], new Immutable.Map())
-                  .setIn(['editor', 'newState'], new Immutable.List());
+                  .setIn(['editor', 'newState'], new Immutable.List())
+                  .setIn(['editor', 'deleteState'], new Immutable.List());
+    }
+
+    case MICROCASTLE_EDITOR_DELETE_ENTRY: {
+      return state.updateIn(['editor', 'deleteState'], (m = new Immutable.List()) => {
+        return m.push(Immutable.fromJS({entry: action.entry, type: action.schema}))
+      }) 
     }
 
     case MICROCASTLE_REMOVE_NEWSTATE: {
@@ -151,7 +172,8 @@ export function reducer(state = initalState, action) {
                                            }))
                                            .set('attribute', action.attributeName)
                                            .set('tempState', new Immutable.Map())
-                                           .set('newState', new Immutable.List());
+                                           .set('newState', new Immutable.List())
+                                           .set('deleteState', new Immutable.List());
       return state.set('editor', newEditor);
     }
 
@@ -170,6 +192,7 @@ export function reducer(state = initalState, action) {
                                              part: action.part,
                                            }))
                                            .set('newState', new Immutable.List())
+                                           .set('deleteState', new Immutable.List())
                                            .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
     }
@@ -184,6 +207,7 @@ export function reducer(state = initalState, action) {
                                            .set('action', EDIT_ENTRY)
                                            .set('schema', action.schemaName)
                                            .set('newState', new Immutable.List())
+                                           .set('deleteState', new Immutable.List())
                                            .set('entry', action.entryID)
                                            .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
@@ -200,6 +224,7 @@ export function reducer(state = initalState, action) {
                                            }))
                                            .set('newState', new Immutable.fromJS([{id: 1, type: action.schemaName}]))
                                            .set('schema', action.schemaName)
+                                           .set('deleteState', new Immutable.List())
                                            .set('tempState', new Immutable.Map());
       return state.set('editor', newEditor);
     }
@@ -223,6 +248,7 @@ export default {
     editSingle,
     editEntry,
     editPart,
+    deleteEntry,
     createNew,
     close,
     save,

@@ -141,15 +141,27 @@ class RelationEditor extends React.Component {
     this.props.dispatch(changeView(this.props.view, chosen));
   }
 
-  //onDelete(val, info) {
-  //  return this.getCurrentSchema().onDelete(val, info).then(
-  //    () => {
-  //      this.props.dispatch(
-  //        Store.actions.deleteEntry(this.props.options.relative, info.id)
-  //      );
-  //    }
-  //  );
-  //}
+  onDelete(val, info) {
+    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    this.props.dispatch(
+      Store.actions.deleteEntry(schema.relative, info.id)
+    );
+/*
+    const view = I.fromJS({
+      state: 'change',
+      type: schema.relative,
+      entry: info.id,
+    });
+    const itemSchema = getSchemaFromView(this.props.schema, view);
+    return itemSchema.onDelete(val, info).then(
+      () => {
+        this.props.dispatch(
+          Store.actions.deleteEntry(schema.relative, info.id)
+        );
+      }
+    );
+    */
+  }
 
   setEditing() {
     this.setState({editing: true});
@@ -223,6 +235,7 @@ class RelationEditor extends React.Component {
     const currentSchema = getSchemaFromView(this.props.schema, this.props.view);
     const relationName = currentSchema.relative;
     const relation = this.props.microcastle.get('data').get(relationName);
+    const relativeSchema = getSchemaFromView(this.props.schema, I.fromJS({type: relationName}));
 
     const pageSize = 15;
 
@@ -238,13 +251,13 @@ class RelationEditor extends React.Component {
       }
       i++;
 
-      if (currentSchema.display == null) {
+      if (relativeSchema.display == null) {
         return <div key={name} className="microcastle-relation-option" style={style.defaultOption}>
           <span onClick={this.onChoose.bind(this, name)}>{name}</span>
-          {currentSchema.onDelete == null ? null : <span style={style.deleteButton} onClick={()=>{}}>x</span>}
+          {relativeSchema.onDelete == null ? null : <span style={style.deleteButton} className="microcastle-relation-delete" onClick={this.onDelete.bind(this, value, {id: name})}>x</span>}
         </div>;
       } else {
-        return <currentSchema.display key={name} onChoose={this.onChoose.bind(this, name)} onDelete={()=>{}} name={name} value={value} />;
+        return <relativeSchema.display key={name} onChoose={this.onChoose.bind(this, name)} onDelete={this.onDelete.bind(this, value, {id: name})} name={name} value={value} />;
       }
 
     }).toArray();

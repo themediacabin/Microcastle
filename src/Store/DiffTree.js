@@ -159,3 +159,20 @@ export const removeNested = (dispatch, schema, microcastle, view) => {
   }, allChildren);
 };
 
+export const callOnDelete = async (schema, deleteList) => {
+  await Promise.all(deleteList.map(async (deleteItem) => {
+    await schema[deleteItem.get('type')]['onDelete']({}, {id: deleteItem.entry});
+  }).toJS());
+}
+
+
+export const deleteState = (originalState, deleteList) => {
+  return originalState.map((type, typeName) => {
+    return type.filter((entry, entryName) => {
+      return !deleteList.contains(I.fromJS({type: typeName, entry: entryName}));
+    });
+  });
+
+}
+
+
