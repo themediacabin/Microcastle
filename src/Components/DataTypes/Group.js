@@ -39,7 +39,7 @@ class GroupEditor extends React.Component {
   }
 
   render() {
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const schema = this.props.currentSchema;
     const editors = _.map(schema.members, (val, key) => {
       const TypeEditor = DataTypes.stringToComponent(val.type);
       const view = this.props.view.update('part', (part = new I.List()) => {
@@ -64,6 +64,7 @@ class GroupEditor extends React.Component {
 const connectGroupEditor = connect((state, props) => {
   return {
     value: getViewValue(state.microcastle, props.view),
+    currentSchema: getSchemaFromView(props.schema, state.microcastle, props.view)
   };
 });
 

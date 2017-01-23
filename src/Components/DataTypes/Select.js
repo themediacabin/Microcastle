@@ -20,7 +20,7 @@ class SelectEditor extends React.Component {
   }
 
   render() {
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const schema = this.props.currentSchema;
     const options = schema.choices.map((name, i) => {
       return <option key={i} value={name}>{name}</option>;
     });
@@ -37,6 +37,7 @@ class SelectEditor extends React.Component {
 const connectComponent = connect((state, props) => {
   return {
     value: getViewValue(state.microcastle, props.view),
+    currentSchema: getSchemaFromView(props.schema, state.microcastle, props.view)
   };
 });
 

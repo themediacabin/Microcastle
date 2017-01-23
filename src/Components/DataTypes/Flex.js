@@ -43,7 +43,7 @@ class FlexEditor extends React.Component {
   }
   
   renderFields() {
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const schema = this.props.currentSchema;
     const scheme = schema['flexes'][this.props.value.get('_flex_type')];
 
     const fields = _.map(scheme, (val, key) => {
@@ -67,7 +67,7 @@ class FlexEditor extends React.Component {
   }
 
   render() {
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const schema = this.props.currentSchema;
 
     const flexTypes = _.map(_.concat(['Select One'], _.keys(schema.flexes)), (title) => {
       return <option key={title} value={title}>{title}</option>;
@@ -85,6 +85,7 @@ class FlexEditor extends React.Component {
 const connectFlexEditor = connect((state, props) => {
   return {
     value: getViewValue(state.microcastle, props.view),
+    currentSchema: getSchemaFromView(props.schema, state.microcastle, props.view)
   };
 });
 

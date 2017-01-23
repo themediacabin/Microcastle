@@ -106,7 +106,7 @@ const WrapArrayItem = R.pipe(
 );
 
 const ArrayItem = (props) => {
-  const schema = getSchemaFromView(props.schema, props.view);
+  const schema = props.currentSchema;
   const Type = DataTypes.stringToComponent(schema.type);
   const index = props.index;
   const onDelete = props.onDelete;
@@ -167,7 +167,7 @@ class ArrayEditor extends React.Component {
       val = Immutable.List();
     }
 
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const schema = this.props.currentSchema;
 
     const newVal = val.insert(
       0, 
@@ -191,7 +191,7 @@ class ArrayEditor extends React.Component {
   }
 
   render() {
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const schema = this.props.currentSchema;
     const singularName = schema.singularName || 'Item';
 
     let val = this.props.value;
@@ -202,6 +202,7 @@ class ArrayEditor extends React.Component {
     const components = val.map((individualValue, index) => {
       return <WrappedArrayItem key={index}
                                index={index}
+                               currentSchema={schema['subtype']}
                                setDraggingIndex={this.setDraggingIndex.bind(this)}
                                draggingIndex={this.state.draggingIndex}
                                size={val.size}
@@ -227,7 +228,8 @@ class ArrayEditor extends React.Component {
 const connectArrayEditor = connect((state, props) => {
   return {
     value: getViewValue(state.microcastle, props.view),
-    microcastleState: state.microcastle
+    microcastleState: state.microcastle,
+    currentSchema: getSchemaFromView(props.schema, state.microcastle, props.view)
   };
 });
 

@@ -77,7 +77,8 @@ const CHOOSING = 'CHOOSING';
 
 
 const getChildView = (schema, view, value) => {
-  const currentSchema = getSchemaFromView(schema, view);
+  const currentSchema = getSchemaFromView(schema, I.fromJS({}), view);
+  // pretend microcastle dosent exist, a bad hack because its not neccisery
   
   if (typeof value == 'string') {
     return I.fromJS({
@@ -126,7 +127,7 @@ class RelationEditor extends React.Component {
   static getChildren(schema, view, value) {
     if (getDisplayState(value) == CHOOSING) return [];
     const childView = getChildView(schema, view, value);
-    return getAllAttributesForEntry(schema, childView);
+    return getAllAttributesForEntry(schema, I.fromJS({}), childView);
   }
 
   constructor(props) {
@@ -141,15 +142,12 @@ class RelationEditor extends React.Component {
     this.props.dispatch(changeView(this.props.view, chosen));
   }
 
-  //onDelete(val, info) {
-  //  return this.getCurrentSchema().onDelete(val, info).then(
-  //    () => {
-  //      this.props.dispatch(
-  //        Store.actions.deleteEntry(this.props.options.relative, info.id)
-  //      );
-  //    }
-  //  );
-  //}
+  onDelete(val, info) {
+    const schema = this.props.currentSchema;
+    this.props.dispatch(
+      Store.actions.deleteEntry(schema.relative, info.id)
+    );
+  }
 
   setEditing() {
     this.setState({editing: true});
@@ -157,7 +155,7 @@ class RelationEditor extends React.Component {
 
   onCreate() {
     const newID = Math.random();
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const schema = this.props.currentSchema;
     const newValue = I.fromJS({
       state: 'new',
       type: schema.relative,
@@ -195,7 +193,7 @@ class RelationEditor extends React.Component {
   getChosenView() {
     const childView = getChildView(this.props.schema, this.props.view, this.props.value);
     const childVal = getViewValue(this.props.microcastle, childView);
-    const currentSchema = getSchemaFromView(this.props.schema, this.props.view);
+    const currentSchema = this.props.currentSchema;
     const view = currentSchema.display == null ? null
                                                : <currentSchema.display onClick={() => {}} name={childView.get('entry')} value={childVal} />;
     
@@ -220,9 +218,10 @@ class RelationEditor extends React.Component {
   }
 
   getChoosingView() {
-    const currentSchema = getSchemaFromView(this.props.schema, this.props.view);
+    const currentSchema = this.props.currentSchema;
     const relationName = currentSchema.relative;
     const relation = this.props.microcastle.get('data').get(relationName);
+    const relativeSchema = getSchemaFromView(this.props.schema, this.props.microcastle, I.fromJS({type: relationName}));
 
     const pageSize = 15;
 
@@ -238,13 +237,17 @@ class RelationEditor extends React.Component {
       }
       i++;
 
-      if (currentSchema.display == null) {
+      if (relativeSchema.display == null) {
         return <div key={name} className="microcastle-relation-option" style={style.defaultOption}>
           <span onClick={this.onChoose.bind(this, name)}>{name}</span>
-          {currentSchema.onDelete == null ? null : <span style={style.deleteButton} onClick={()=>{}}>x</span>}
+          {relativeSchema.onDelete == null ? null : <span style={style.deleteButton}
+                                                          className="microcastle-relation-delete"
+                                                          onClick={this.onDelete.bind(this, value, {id: name})}>
+                                                      x
+                                                    </span>}
         </div>;
       } else {
-        return <currentSchema.display key={name} onChoose={this.onChoose.bind(this, name)} onDelete={()=>{}} name={name} value={value} />;
+        return <relativeSchema.display key={name} onChoose={this.onChoose.bind(this, name)} onDelete={this.onDelete.bind(this, value, {id: name})} name={name} value={value} />;
       }
 
     }).toArray();
@@ -288,6 +291,7 @@ const connectComponent = connect((state, props) => {
   return {
     value: getViewValue(state.microcastle, props.view),
     microcastle: state.microcastle,
+    currentSchema: getSchemaFromView(props.schema, state.microcastle, props.view)
   };
 });
 

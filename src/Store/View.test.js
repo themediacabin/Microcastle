@@ -1,5 +1,5 @@
 import I from 'immutable';
-import { getViewValue, changeViewValue } from './View';
+import { getViewValue, changeViewValue, getSchemaFromView } from './View';
 
 describe('View', () => {
   describe('getViewValue', () => {
@@ -103,6 +103,28 @@ describe('View', () => {
       const newState = getViewValue(microcastleState, view);
       expect(newState).to.equal(12);
     });
+
+    it('can get a part of flex in an array part', () => {
+      const microcastleState = I.fromJS({
+        data: {
+          news: {
+            one: {
+              content: [{text: 'world'}, {text: 'world'}],
+            },
+          },
+        },
+      });
+
+      const view = I.fromJS({
+        type: 'news',
+        state: 'change',
+        entry: 'one',
+        attribute: 'content',
+        part: [1, 'text'],
+      });
+
+      expect(getViewValue(microcastleState, view)).to.equal('world');
+    });
   });
 
   describe('changeViewValue', () => {
@@ -185,6 +207,44 @@ describe('View', () => {
       expect(getViewValue(newState, view)).to.equal('new');
     });
   });
+
+
+  describe('getSchemaFromView', () => {
+    it('can get a part of flex in an array part', () => {
+      const schema = {
+        news: {
+          attributes: {
+            content: {type: 'array', subtype: {type: 'flex', flexes: {
+              someText: {
+                text: {type: 'text'},
+              }
+            }}}
+          }
+        }
+      }
+
+      const microcastle = I.fromJS({
+        data: {
+          news: {
+            one: {
+              content: [{_flex_type: 'someText', text: 'text'},
+                        {_flex_type: 'someText', text: 'text'}]
+            }
+          }
+        }
+      });
+     
+      const view = I.fromJS({
+        type: 'news',
+        state: 'change',
+        entry: 'one',
+        attribute: 'content',
+        part: [1, 'text'],
+      });
+
+      expect(getSchemaFromView(schema, microcastle, view)).to.deep.equal({type: 'text'});
+    });
+  })
 });
 
 
