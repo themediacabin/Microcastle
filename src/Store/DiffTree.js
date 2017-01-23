@@ -92,7 +92,7 @@ export const saveChangeState = async (microcastle, schema) => {
 
   const changed = await mapEachEntry(beforeSaved, async (typeName, entryName, entry) => {
     const saveFn = schema[typeName]["onEdit"];
-    return await saveFn(entry, { id: entryName });
+    return I.fromJS(await saveFn(entry.toJS(), { id: entryName }));
   });
 
   return originalState.mergeDeep(changed);
