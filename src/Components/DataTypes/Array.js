@@ -128,7 +128,7 @@ const ArrayItem = (props) => {
 const WrappedArrayItem = WrapArrayItem(ArrayItem);
 
 const NewItemButton = ({style, onClick, singularName}) => {
-  return <button style={style} onClick={onClick}>Add {singularName}</button>;
+  return <button style={style} onClick={onClick}>Add {singularName || 'Item'}</button>;
 };
 
 class ArrayEditor extends React.Component {

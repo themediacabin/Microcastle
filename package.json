@@ -12,6 +12,10 @@
     "lint": "eslint src/",
     "all": "npm run-script lint && npm run-script build && npm run-script test"
   },
+  "babel": {
+    "presets": ["es2017", "es2015", "react"],
+    "plugins": ["transform-runtime"]
+  },
   "repository": {
     "type": "git",
     "url": "git@bitbucket.org:mediacabin/microcastle.git"
