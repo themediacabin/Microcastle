@@ -1,4 +1,5 @@
 import R from 'ramda';
+import I from 'immutable';
 
 export const getViewValue = (microcastleState, view) => {
 
@@ -57,24 +58,38 @@ export const changeViewValue = (microcastleState, view, value) => {
 
 };
 
-export const getSchemaFromView = (schema, view) => {
-
+export const getSchemaFromView = (schema, microcastle, view) => {
   const type = schema[view.get('type')];
   const attributes = type['attributes'];
   if (!attributes) return type;
   const attribute = attributes[view.get('attribute')]; 
   if (!attribute) return type;
   if (!view.has('part')) return attribute;
+
   return R.reduce((a, l) => {
-    if (a['type'] == 'array') return a['subtype'];
-    if (a['type'] == 'flex') return a['flexes'][l];
-    return l.get(a);
-  }, attribute, view.get('part'));
+    if (a.attr['type'] == 'array') {
+      return {
+        attr: a.attr['subtype'],
+        view: a.view.update('part', p => p.push(0))
+      };
+    }
+
+    if (a.attr['type'] == 'flex') {
+      const flexType = getViewValue(microcastle, a.view).get('_flex_type');
+      return {
+        attr: a.attr['flexes'][flexType][l],
+        view: a.view.update('part', p => p.push(0))
+      };
+    }
+
+    return {attr: l.get(a), view: a.view.push(a)};
+
+  }, {attr: attribute, view: view.set('part', new I.List())}, view.get('part')).attr;
 
 };
 
-export const getAllAttributesForEntry = (schema, view) => {
-  const scheme = getSchemaFromView(schema, view);
+export const getAllAttributesForEntry = (schema, microcastle, view) => {
+  const scheme = getSchemaFromView(schema, microcastle, view);
   return R.pipe(
     R.keys,
     R.map(key => view.set('attribute', key))

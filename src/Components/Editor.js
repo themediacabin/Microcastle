@@ -84,6 +84,7 @@ class Editor extends React.Component {
                              dispatch={this.props.dispatch}
                              schema={this.props.schemas}
                              closeEditor={this.onClose.bind(this)}
+                             microcastle={this.props.microcastle}
                              view={this.props.microcastle.get('editor').get('view')}
                              />
     </EditorFrame>;

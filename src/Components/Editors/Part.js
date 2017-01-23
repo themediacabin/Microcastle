@@ -13,7 +13,7 @@ class PartEditor extends React.Component {
   }
 
   render() {
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const schema = getSchemaFromView(this.props.schema, this.props.microcastle, this.props.view);
     const EditorComponent = DataTypes.stringToComponent(schema.type);
 
     return (

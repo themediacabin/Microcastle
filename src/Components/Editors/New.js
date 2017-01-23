@@ -15,7 +15,7 @@ class NewEditor extends React.Component {
   }
 
   render() {
-    const schema = getSchemaFromView(this.props.schema, this.props.view);
+    const schema = getSchemaFromView(this.props.schema, this.props.microcastle, this.props.view);
 
     const editorComponents = _.values(_.mapValues(schema.attributes, (columnOptions, columnName) => {
       const ColumnComponent = DataTypes.stringToComponent(columnOptions.type);

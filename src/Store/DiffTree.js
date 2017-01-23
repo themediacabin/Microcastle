@@ -73,7 +73,7 @@ export const saveChangeState = async (microcastle, schema) => {
       const allNested = getAllNested(schema, microcastle, view);
 
       const savedMC = R.reduce((mc, nv) => {
-        const type = getSchemaFromView(schema, nv).type;
+        const type = getSchemaFromView(schema, microcastle, nv).type;
         const beforeSave = stringToComponent(type).beforeSave;
         if (!beforeSave) return mc;
         return changeViewValue(mc, nv, beforeSave(mc, nv));
@@ -137,7 +137,7 @@ export const saveNewState = async (newState, changeState, schema) => {
 
 export const getAllNested = (schema, microcastle, view) => {
   const getChildren = stringToComponent(
-    getSchemaFromView(schema, view).type
+    getSchemaFromView(schema, microcastle, view).type
   ).getChildren;
   if (!getChildren)
     return [ view ];
@@ -152,7 +152,7 @@ export const getAllNested = (schema, microcastle, view) => {
 export const removeNested = (dispatch, schema, microcastle, view) => {
   const allChildren = getAllNested(schema, microcastle, view);
   R.map(child => {
-    const dataType = getSchemaFromView(schema, child).type;
+    const dataType = getSchemaFromView(schema, microcastle, child).type;
     const DataComponent = stringToComponent(dataType);
     if (DataComponent.onRemoved)
       DataComponent.onRemoved(dispatch, microcastle, child);
