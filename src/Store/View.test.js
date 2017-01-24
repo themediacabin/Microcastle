@@ -221,7 +221,7 @@ describe('View', () => {
             }}}
           }
         }
-      }
+      };
 
       const microcastle = I.fromJS({
         data: {
@@ -244,7 +244,7 @@ describe('View', () => {
 
       expect(getSchemaFromView(schema, microcastle, view)).to.deep.equal({type: 'text'});
     });
-  })
+  });
 });
 
 

@@ -2,7 +2,7 @@ import I from "immutable";
 import R from "ramda";
 
 import { stringToComponent } from "../Components/DataTypes";
-import { getSchemaFromView, getViewValue, changeViewValue } from "./View";
+import { getSchemaFromView, changeViewValue } from "./View";
 
 function promiseProps(object) {
   let promisedProperties = [];
