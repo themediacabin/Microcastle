@@ -27,12 +27,10 @@ class SelectEditor extends React.Component {
     const value = this.props.value ? this.props.value : '';
 
     return (
-      <div>{JSON.Stingify(value)}
       <select value={value} onChange={this.onChange.bind(this)}>
         <option value=''>Choose One</option>
         {options}
       </select>
-      </div>
     );
   }
 }
