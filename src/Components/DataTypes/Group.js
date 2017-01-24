@@ -33,6 +33,16 @@ class GroupEditor extends React.Component {
   static validate() {
     return [];
   }
+
+  static getChildren(schema, view, microcastle) {
+    const currentSchema = getSchemaFromView(schema, microcastle, view);
+    return R.pipe(
+      R.mapObjIndexed((val, key) =>
+        view.update('part', (part = new I.List()) => part.push(key))
+      ),
+      R.values
+    )(currentSchema.members);
+  }
   
   onChangeIndividual(key, value) {
     this.props.onChange(this.props.value.set(key, value));

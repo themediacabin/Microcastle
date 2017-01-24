@@ -108,5 +108,49 @@ describe('Datatype Group', () => {
       expect(GroupEditor.validate()).to.deep.equal([]);
     });  
   });
+
+  describe('#getChildren', () => {
+    it('should return view of children', () => {
+      const schema = {
+        person: {
+          attributes: {
+            name: {
+              type: 'group',
+              members: {
+                first: {type: 'text'},
+                last: {type: 'text'},
+              }
+            }
+          }
+        } 
+      };
+      const microcastle = new I.Map();
+      const view = I.fromJS({
+        type: 'person',
+        state: 'change',
+        entry: 'one',
+        attribute: 'name'
+      });
+      const expected = I.fromJS([
+        {
+          type: 'person',
+          state: 'change',
+          entry: 'one',
+          attribute: 'name',
+          part: ['first']
+        }, {
+          type: 'person',
+          state: 'change',
+          entry: 'one',
+          attribute: 'name',
+          part: ['last']
+        }
+      ]);
+
+      expect(
+        I.fromJS(GroupEditor.getChildren(schema, view, microcastle))
+      ).to.equal(expected);
+    });  
+  });
 });
 
