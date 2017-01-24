@@ -72,10 +72,12 @@ class FlexEditor extends React.Component {
     const flexTypes = _.map(_.concat(['Select One'], _.keys(schema.flexes)), (title) => {
       return <option key={title} value={title}>{title}</option>;
     });
+
+    const flexType = this.props.value.get('_flex_type') || 'Select One';
     
     return <div>
       <div>
-        <select value={this.props.value.get('_flex_type')} onChange={this.onChangeFlexType.bind(this)}>{flexTypes}</select>
+        <select value={flexType} onChange={this.onChangeFlexType.bind(this)}>{flexTypes}</select>
       </div>
       {this.props.value.get('_flex_type') == undefined ? null : this.renderFields()}
     </div>;

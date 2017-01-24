@@ -24,12 +24,15 @@ class SelectEditor extends React.Component {
     const options = schema.choices.map((name, i) => {
       return <option key={i} value={name}>{name}</option>;
     });
+    const value = this.props.value ? this.props.value : '';
 
     return (
-      <select value={this.props.value} onChange={this.onChange.bind(this)}>
+      <div>{JSON.Stingify(value)}
+      <select value={value} onChange={this.onChange.bind(this)}>
         <option value=''>Choose One</option>
         {options}
       </select>
+      </div>
     );
   }
 }
