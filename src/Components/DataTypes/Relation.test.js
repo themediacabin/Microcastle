@@ -266,18 +266,36 @@ describe('Datatype Relation', () => {
 
     it('should return array of child views attributes when changing state', () => {
       const view = I.fromJS({state: 'change', type: 'person', entry: 'bob', attribute: 'team'});
-      const value = 'bobsteam';
+      const microcastle = I.fromJS({
+        data: {
+          person: {
+            bob: {
+              team: 'bobsteam'
+            }
+          }
+        }
+      });
       const expected = [I.fromJS({state: 'change', type: 'team', entry: 'bobsteam', attribute: 'name'})];
       
-      expect(I.fromJS(RelationEditor.getChildren(schema, view, value))).to.equal(I.fromJS(expected));
+      expect(I.fromJS(RelationEditor.getChildren(schema, view, microcastle))).to.equal(I.fromJS(expected));
     });  
 
     it('should return array of child views attributes when creating state', () => {
       const view = I.fromJS({state: 'change', type: 'person', entry: 'bob', attribute: 'team'});
-      const value = I.fromJS({state: 'new', type: 'team', entry: '1234'});
+      const microcastle = I.fromJS({
+        editor: {
+          tempState: {
+            person: {
+              bob: {
+                team: {state: 'new', type: 'team', entry: '1234'}
+              }
+            }
+          }
+        }
+      });
       const expected = [I.fromJS({state: 'new', type: 'team', entry: '1234', attribute: 'name'})];
       
-      expect(I.fromJS(RelationEditor.getChildren(schema, view, value))).to.equal(I.fromJS(expected));
+      expect(I.fromJS(RelationEditor.getChildren(schema, view, microcastle))).to.equal(I.fromJS(expected));
     });  
   });
 

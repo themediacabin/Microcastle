@@ -142,7 +142,8 @@ class ArrayEditor extends React.Component {
     return [];
   }
 
-  static getChildren(schema, view, value) {
+  static getChildren(schema, view, microcastle) {
+      const value = getViewValue(microcastle, view);
       return R.map(index =>
           view.update('part', (part = new Immutable.List()) => part.push(index))
       )(R.range(0, value.size));
@@ -192,7 +193,7 @@ class ArrayEditor extends React.Component {
 
   render() {
     const schema = this.props.currentSchema;
-    const singularName = schema.singularName || 'Item';
+    const singularName = (schema && schema.singularName) || 'Item';
 
     let val = this.props.value;
     if (this.props.value == null || this.props.value === '') {

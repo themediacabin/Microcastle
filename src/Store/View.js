@@ -70,7 +70,7 @@ export const getSchemaFromView = (schema, microcastle, view) => {
     if (a.attr['type'] == 'array') {
       return {
         attr: a.attr['subtype'],
-        view: a.view.update('part', p => p.push(0))
+        view: a.view.update('part', p => p.push(l))
       };
     }
 
@@ -78,11 +78,18 @@ export const getSchemaFromView = (schema, microcastle, view) => {
       const flexType = getViewValue(microcastle, a.view).get('_flex_type');
       return {
         attr: a.attr['flexes'][flexType][l],
-        view: a.view.update('part', p => p.push(0))
+        view: a.view.update('part', p => p.push(l))
       };
     }
 
-    return {attr: l.get(a), view: a.view.push(a)};
+    if (a.attr['type'] == 'group') {
+      return {
+        attr: a.attr.members[l],
+        view: a.view.update('part', p => p.push(l))
+      };
+    }
+
+    return {attr: a.attr.get(l), view: a.view.push(l)};
 
   }, {attr: attribute, view: view.set('part', new I.List())}, view.get('part')).attr;
 

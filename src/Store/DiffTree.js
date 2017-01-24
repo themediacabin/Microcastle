@@ -141,7 +141,7 @@ export const getAllNested = (schema, microcastle, view) => {
   ).getChildren;
   if (!getChildren)
     return [ view ];
-  const children = getChildren(schema, view, getViewValue(microcastle, view));
+  const children = getChildren(schema, view, microcastle);
   const childrenNested = R.map(
     child => getAllNested(schema, microcastle, child),
     children

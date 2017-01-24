@@ -144,14 +144,21 @@ describe("Datatype Array", () => {
         person: {attributes: {teams: {type: 'array', subtype: {type: 'text'}}}},
       };
       const view = I.fromJS({state: 'change', type: 'person', entry: 'bob', attribute: 'teams'});
-      const value = I.fromJS(['bobsteam', 'fredsteam']);
+      const microcastle = I.fromJS({
+        data: {
+          person: {
+            bob: {teams: ['bobsteam', 'fredsteam']}
+          }
+        }
+      });
+
       const expected = I.fromJS([
         {state: 'change', type: 'person', entry: 'bob', attribute: 'teams', part: [0]},
         {state: 'change', type: 'person', entry: 'bob', attribute: 'teams', part: [1]},
       ]);
       
       expect(
-        I.fromJS(ArrayEditor.getChildren(schema, view, value))
+        I.fromJS(ArrayEditor.getChildren(schema, view, microcastle))
       ).to.equal(I.fromJS(expected));
     });  
 

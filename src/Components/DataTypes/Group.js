@@ -49,7 +49,7 @@ class GroupEditor extends React.Component {
       return <div key={key}>
                 <h3 style={style.title}>{key}</h3>
                 <TypeEditor
-                  schema={schema}
+                  schema={this.props.schema}
                   view={view} />
               </div>;
     });        

@@ -76,8 +76,9 @@ const CHOSEN   = 'CHOSEN';
 const CHOOSING = 'CHOOSING';
 
 
-const getChildView = (schema, view, value) => {
-  const currentSchema = getSchemaFromView(schema, I.fromJS({}), view);
+const getChildView = (schema, view, microcastle) => {
+  const value = getViewValue(microcastle, view);
+  const currentSchema = getSchemaFromView(schema, microcastle, view);
   // pretend microcastle dosent exist, a bad hack because its not neccisery
   
   if (typeof value == 'string') {
@@ -124,10 +125,11 @@ class RelationEditor extends React.Component {
     }
   }
 
-  static getChildren(schema, view, value) {
+  static getChildren(schema, view, microcastle) {
+    const value = getViewValue(microcastle, view);
     if (getDisplayState(value) == CHOOSING) return [];
-    const childView = getChildView(schema, view, value);
-    return getAllAttributesForEntry(schema, I.fromJS({}), childView);
+    const childView = getChildView(schema, view, microcastle);
+    return getAllAttributesForEntry(schema, microcastle, childView);
   }
 
   constructor(props) {
@@ -174,7 +176,7 @@ class RelationEditor extends React.Component {
   }
 
   getEditingView() {
-    const childView = getChildView(this.props.schema, this.props.view, this.props.value);
+    const childView = getChildView(this.props.schema, this.props.view, this.props.microcastle);
     return (
       <div>
         <div style={style.header}>
@@ -191,7 +193,7 @@ class RelationEditor extends React.Component {
   }
 
   getChosenView() {
-    const childView = getChildView(this.props.schema, this.props.view, this.props.value);
+    const childView = getChildView(this.props.schema, this.props.view, this.props.microcastle);
     const childVal = getViewValue(this.props.microcastle, childView);
     const currentSchema = this.props.currentSchema;
     const view = currentSchema.display == null ? null
