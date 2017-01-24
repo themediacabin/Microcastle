@@ -112,7 +112,7 @@ const ArrayItem = (props) => {
   const onDelete = props.onDelete;
 
   return props.connectDragPreview(props.connectDropTarget(
-    <div key={index} style={style.item(props.draggingIndex !== index)}>
+    <div key={props.iteration+''+index} style={style.item(props.draggingIndex !== index)}>
       <div style={style.header}> 
         {props.connectDragSource(<div><BarsIcon style={style.dragIcon} /></div>)}
         <TimesIcon className="microcastle-array-remove" style={style.closeIcon} onClick={onDelete} />
@@ -153,6 +153,7 @@ class ArrayEditor extends React.Component {
     super(props);
     this.state = {
       draggingIndex: null,
+      iteration: 0,
     };
   }
 
@@ -176,6 +177,7 @@ class ArrayEditor extends React.Component {
     );
 
     this.props.dispatch(changeView(this.props.view, newVal));
+    this.setState({iteration: this.state.iteration+1});
   }
 
   onDelete(index) {
@@ -203,6 +205,7 @@ class ArrayEditor extends React.Component {
     const components = val.map((individualValue, index) => {
       return <WrappedArrayItem key={index}
                                index={index}
+                               iteration={this.state.iteration}
                                currentSchema={schema['subtype']}
                                setDraggingIndex={this.setDraggingIndex.bind(this)}
                                draggingIndex={this.state.draggingIndex}
