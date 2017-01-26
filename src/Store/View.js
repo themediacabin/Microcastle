@@ -6,7 +6,10 @@ export const getViewValue = (microcastleState, view) => {
   const parts = view.get('part') || [];
 
   if (view.get('state') == 'change') {
-    const path = [view.get('type'), view.get('entry'), view.get('attribute'), ...parts];
+
+    const path = view.get('attribute') 
+               ? [view.get('type'), view.get('entry'), view.get('attribute'), ...parts]
+               : [view.get('type'), view.get('entry'), ...parts];
 
     const x = Symbol();
     const saved = microcastleState.getIn(['data', ...path]);

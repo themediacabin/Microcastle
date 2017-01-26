@@ -195,9 +195,10 @@ class RelationEditor extends React.Component {
   getChosenView() {
     const childView = getChildView(this.props.schema, this.props.view, this.props.microcastle);
     const childVal = getViewValue(this.props.microcastle, childView);
-    const currentSchema = this.props.currentSchema;
-    const view = currentSchema.display == null ? null
-                                               : <currentSchema.display onClick={() => {}} name={childView.get('entry')} value={childVal} />;
+    const relationName = this.props.currentSchema.relative;
+    const childSchema = getSchemaFromView(this.props.schema, this.props.microcastle, I.fromJS({type: relationName}));
+    const view = childSchema.display == null ? null
+                                             : <childSchema.display onClick={() => {}} name={childView.get('entry')} value={childVal} />;
     
     return (
       <div>
