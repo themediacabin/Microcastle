@@ -7,7 +7,7 @@ import EntryEditor from '../Editors/Entry';
 
 import Store from '../../Store/Store';
 import {changeView, removeNewState} from '../../Store/Store';
-import {getViewValue, getSchemaFromView, getNewViewEntry, getAllAttributesForEntry} from '../../Store/View';
+import {getViewValue, getSchemaFromView, getNewViewEntry, getAllAttributesForEntry, getAllEntries} from '../../Store/View';
 
 const style = {
   base: {
@@ -223,7 +223,7 @@ class RelationEditor extends React.Component {
   getChoosingView() {
     const currentSchema = this.props.currentSchema;
     const relationName = currentSchema.relative;
-    const relation = this.props.microcastle.get('data').get(relationName);
+    const relation = getAllEntries(this.props.microcastle, relationName);
     const relativeSchema = getSchemaFromView(this.props.schema, this.props.microcastle, I.fromJS({type: relationName}));
 
     const pageSize = 15;

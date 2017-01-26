@@ -27,6 +27,15 @@ export const getViewValue = (microcastleState, view) => {
 
 };
 
+export const getAllEntries = (microcastle, type) => {
+  return microcastle.getIn(['data', type]).filter((v, k) => {
+    const deleteList = microcastle.getIn(['editor', 'deleteState'], new I.List());
+    return !deleteList.map((deleted) => {
+      return deleted.get('type') == type && deleted.get('entry') == k;
+    }).includes(true);
+  });
+};
+
 export const getNewViewEntry = (microcastleState, view) => {
   const newState = microcastleState.getIn(['editor', 'newState']);
   const entry = newState.find(v => v.get('id') == view.get('entry'));
