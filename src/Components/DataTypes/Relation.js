@@ -10,9 +10,9 @@ import {changeView, removeNewState} from '../../Store/Store';
 import {getViewValue, getSchemaFromView, getNewViewEntry, getAllAttributesForEntry, getAllEntries} from '../../Store/View';
 
 const style = {
-  base: {
-    border: '1px solid rgb(214, 214, 214)',
-  },
+  base: hideBorder => ({
+    border: hideBorder ? 'none' : '1px solid rgb(214, 214, 214)',
+  }),
   error: {
     padding: 5,
     color: 'red',
@@ -181,7 +181,9 @@ class RelationEditor extends React.Component {
       <div>
         <div style={style.header}>
           <h4 style={style.headerTitle}>{childView.get('entry')}</h4>
-          <button style={style.headerButton} className="microcastle-relation-reselect" onClick={this.onReselect.bind(this)}>Reselect</button>
+          {this.props.currentSchema.cantReselect ? null : 
+            <button style={style.headerButton} className="microcastle-relation-reselect" onClick={this.onReselect.bind(this)}>Reselect</button>
+          }
         </div>
 
         <div style={style.editor}>
@@ -204,7 +206,9 @@ class RelationEditor extends React.Component {
       <div>
         <div style={style.header}>
           <h4 style={style.headerTitle}>{childView.get('entry')}</h4>
-          <button style={style.headerButton} className="microcastle-relation-reselect" onClick={this.onReselect.bind(this)}>Reselect</button>
+          {this.props.currentSchema.cantReselect ? null : 
+            <button style={style.headerButton} className="microcastle-relation-reselect" onClick={this.onReselect.bind(this)}>Reselect</button>
+          }
           {this.props.currentSchema.cantEdit ? null : 
             <button style={style.headerButton} onClick={this.setEditing.bind(this)}>Edit</button>
           }
@@ -288,7 +292,7 @@ class RelationEditor extends React.Component {
   }
 
   render() {
-    return <div style={style.base}>
+    return <div style={style.base(this.props.currentSchema.hideBorder)}>
         {this.getView()}
     </div>;
   }

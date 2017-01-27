@@ -78,7 +78,7 @@ class Editor extends React.Component {
     return <EditorFrame
               onSubmit={self.onSubmit.bind(self)}
               onCancel={self.onCancel.bind(self)}
-              title="M"
+              title=""
               open={true}>
               <CurrentEditor ref={e => this._editor = e}
                              dispatch={this.props.dispatch}
