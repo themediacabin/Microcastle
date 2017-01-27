@@ -205,7 +205,9 @@ class RelationEditor extends React.Component {
         <div style={style.header}>
           <h4 style={style.headerTitle}>{childView.get('entry')}</h4>
           <button style={style.headerButton} className="microcastle-relation-reselect" onClick={this.onReselect.bind(this)}>Reselect</button>
-          <button style={style.headerButton} onClick={this.setEditing.bind(this)}>Edit</button>
+          {this.props.currentSchema.cantEdit ? null : 
+            <button style={style.headerButton} onClick={this.setEditing.bind(this)}>Edit</button>
+          }
         </div>
         <div style={style.selector}>
           <div>
@@ -259,7 +261,9 @@ class RelationEditor extends React.Component {
       <div>
         <div style={style.header}>
           <h4 style={style.headerTitle}>{"Choose One " + relationName}</h4>
-          <button style={style.headerButton} className="microcastle-relation-create" onClick={this.onCreate.bind(this)}>Create New</button>
+          {currentSchema.cantCreate ? null : 
+            <button style={style.headerButton} className="microcastle-relation-create" onClick={this.onCreate.bind(this)}>Create New</button>
+          }
         </div>
         <div style={style.selector}>
           <div>
