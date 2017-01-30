@@ -87,7 +87,7 @@ export const saveChangeState = async (microcastle, schema) => {
           savedMC.getIn(["editor", "tempState", typeName, entryName])
         ).get(k);
     });
-    return changedFixed;
+    return originalState.getIn([typeName, entryName], new I.Map()).merge(changedFixed);
   });
 
   const changed = await mapEachEntry(beforeSaved, async (typeName, entryName, entry) => {
