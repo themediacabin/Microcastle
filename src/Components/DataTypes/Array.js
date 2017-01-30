@@ -6,7 +6,7 @@ import { DragSource, DropTarget } from "react-dnd";
 import { connect } from "react-redux";
 
 import TimesIcon from "react-icons/lib/md/clear";
-import BarsIcon from "react-icons/lib/md/reorder";
+import BarsIcon from "react-icons/lib/fa/sort";
 
 import DataTypes from "../DataTypes";
 import { getViewValue, getSchemaFromView } from "../../Store/View";
@@ -32,14 +32,14 @@ const style = {
     border: "none",
     cursor: "pointer"
   },
-  dragIcon: {
+  dragIcon: small => ({
     display: "block",
     fontSize: "20px",
     marginRight: 5,
-    marginBottom: 10,
+    marginBottom: small ? 0 : 10,
     cursor: "move",
     color: "rgb(204, 204, 204)"
-  },
+  }),
   closeIcon: {
     display: "block",
     fontSize: "20px",
@@ -114,7 +114,7 @@ const ArrayItem = props => {
       <div key={index} style={style.item(props.draggingIndex !== index)}>
         <div style={style.header}>
           {props.connectDragSource(
-            <div><BarsIcon style={style.dragIcon} /></div>
+            <div><BarsIcon style={style.dragIcon(props.arraySchema.deleteMessage)} /></div>
           )}
           {
             props.arraySchema.deleteMessage
