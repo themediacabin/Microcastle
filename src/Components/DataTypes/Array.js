@@ -188,7 +188,7 @@ class ArrayEditor extends React.Component {
 
     const newVal = val.insert(
       0,
-      DataTypes.stringToComponent(schema.subtype.type).defaultValue()
+      DataTypes.stringToComponent(schema.subtype.type).defaultValue(schema)
     );
 
     this.props.dispatch(changeView(this.props.view, newVal));
