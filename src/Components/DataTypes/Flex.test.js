@@ -93,5 +93,67 @@ describe("Datatype Flex", () => {
       ).to.deep.equal([ "required" ]);
     });
   });
+
+  describe("#getChildren", () => {
+    it('should return array of view of children', () => {
+      const schema = {
+        person: {
+          attributes: {
+            name: {
+              type: 'flex',
+              flexes: {
+                simple: {
+                  name: {type: 'text'}
+                }, 
+                two: {
+                  first: { type: 'text' },
+                  last: { type: 'text' }
+                }, 
+              },
+            }
+          }
+        } 
+      };
+      const microcastle = I.fromJS({
+        data: {
+          person: {
+            one: {
+              name: {
+                _flex_type: 'two',
+                first: 'john',
+                last: 'peters',
+              }
+            }
+          }
+        }
+      });
+      const view = I.fromJS({
+        type: 'person',
+        state: 'change',
+        entry: 'one',
+        attribute: 'name'
+      });
+      const expected = I.fromJS([
+        {
+          type: 'person',
+          state: 'change',
+          entry: 'one',
+          attribute: 'name',
+          part: ['first']
+        }, {
+          type: 'person',
+          state: 'change',
+          entry: 'one',
+          attribute: 'name',
+          part: ['last']
+        }
+      ]);
+
+      expect(
+        I.fromJS(FlexEditor.getChildren(schema, view, microcastle))
+      ).to.equal(expected);
+    });  
+  });
+
 });
 

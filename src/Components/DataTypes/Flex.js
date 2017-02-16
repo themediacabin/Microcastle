@@ -1,6 +1,7 @@
 import React from 'react';
 import Immutable from 'immutable';
 import _ from 'lodash';
+import R from 'ramda';
 import DataTypes from '../DataTypes';
 
 import { connect } from 'react-redux';
@@ -35,6 +36,14 @@ class FlexEditor extends React.Component {
     if (scheme.required && (!val || val.get('_flex_type') == undefined))
       return ['required'];
     return [];
+  }
+
+  static getChildren(schema, view, microcastle) {
+    const currentSchema = getSchemaFromView(schema, microcastle, view);
+    const currentValue = getViewValue(microcastle, view);
+    if (!currentValue.get('_flex_type')) return [];
+    const keys = R.keys(currentSchema.flexes[currentValue.get('_flex_type')]);
+    return R.map(key => view.update('part', (p = new Immutable.List()) => p.push(key)), keys);
   }
 
   onChangeFlexType(event) {
