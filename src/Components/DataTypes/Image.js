@@ -20,6 +20,7 @@ class ImageEditor extends React.Component {
   }
 
   onChange(event) {
+    if (event.target.files.length == 0) return;
     if (event.target.files[0].type.match('image.*')) {
       let self = this;
       let reader = new FileReader();
