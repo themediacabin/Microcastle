@@ -67,11 +67,9 @@ const mySchemas = {
     attributes: {
       job: {
         type: 'text',
-        onChange: handleJobChangeFn,
       },
       lastName: {
         type: 'text',
-        onChange: handleLastNameChangeFn,
       },
     },
     onNew: handleNewFn,
@@ -90,18 +88,18 @@ now you need to actually use it in your site
 
 Connect your component to the microcastle schemas it needs
 
-`const connectedComponent = Microcastle.Microcastle(myComponent, ["People"]);`
+`const connectedComponent = Microcastle.MicrocastleConnect(["People"])(component);`
 
 your component will then have a prop called microcastle (the dispatch method too) that can be used to get data
 
-`const bobsJon = this.props.microcastle.get('People', 'Bob', 'job');`
+`const bobsJon = this.props.mcGetAttribute('People', 'Bob', 'job');`
 
 and to open the editor dispatch an event
 
 ```
 const openEditorForBobsJob = () => {
   this.props.dispatch(
-    Microcastle.MicrocastleEditorStore.actions. editSingle(
+    Microcastle.MicrocastleEditorStore.actions.editSingle(
       'People', 'Bob', 'job',
       this.props.microcastle.get('People', 'Bob', 'job')
     )
@@ -130,29 +128,19 @@ Open the editor and edit a single an entire entry.
 
 Open the editor and create a new entry.
 
-## Store Actions
-
-`Microcastle.DataStore.actions.updateData(schemaName, entryID, attributeName, value)`
-
-Update a attribute in the datastore
-
-`Microcastle.DataStore.actions.insertData(schemaName, entryID, entryValue) `
-
-Insert a new entry into the datastore
-
 ## Connector
 
 ### Connector Function
 
-`Microcastle.Microcastle(component, arrayOfSchemasToConnect)`
+`Microcastle.MicrocastleConnect(component, arrayOfSchemasToConnect)`
 
 ### Connected Props
 
-`props.microcastle.get(schemaName, entryID, attributeName)`
+`props.microcastle.mcGetAttribute(schemaName, entryID, attributeName)`
 
 Gets the value of attribute
 
-`props.microcastle.getEntries(schemaName)`
+`props.microcastle.mcGetSchema(schemaName)`
 
 Returns immutable js map of {entryName: {attributeName: attributeValue}}
 
@@ -176,7 +164,6 @@ The Schema needs to be in the layout of:
           subtype?: 'TYPE_NAME',
           suboptions?: { ... },
         },
-        onChange: SOME_FUNCTION,
       },
       OTHER_ATTRIBUTE_NAME: { ... },
     },
@@ -212,20 +199,6 @@ You must specify this function, in it you should sync with your server or edit t
 
 ```
 onNew: (v) => new Promise((resolve, reject) => {
-  resolve(v);
-})
-```
-
-### onChange Function
-
-takes: changedAttribute
-
-must return: Promise that resolves to the attribute value
-
-You must specify this function, in it you should sync with your server or edit the attribute value however you want. Example:
-
-```
-onChange: (v) => new Promise((resolve, reject) => {
   resolve(v);
 })
 ```
