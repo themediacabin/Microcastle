@@ -1,3 +1,7 @@
+/** 
+ * @module Buttons
+ */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import Store from '../Store/Store';
@@ -88,10 +92,51 @@ const connectedEditAttributeButton = connect()(EditAttributeButton);
 const connectedEditPartButton = connect()(EditPartButton);
 
 export default {
+  /** 
+   * Button that opens the editor creating a new entry in a schema
+   * @property {string} text The text to display in the button
+   * @property {boolean} visible Should the button be drawn at all
+   * @property {string} schema The schema to create a new entry in
+   */
   Create: connectedCreateButton,
+
+  /** 
+   * Button that opens the editor editing an entry in a schema
+   * @property {string} text The text to display in the button
+   * @property {boolean} visible Should the button be drawn at all
+   * @property {string} schema The schema of the entry to edit
+   * @property {string} entry The entry to edit
+   */
   EditEntry: connectedEditEntryButton,
+
+  /** 
+   * Button that opens the editor editing an attribute in an entry
+   * @property {string} text The text to display in the button
+   * @property {boolean} visible Should the button be drawn at all
+   * @property {string} schema The schema of the entry to edit
+   * @property {string} entry The entry to edit
+   * @property {string} attribute The attribute to edit
+   */
+
   EditAttribute: connectedEditAttributeButton,
+  /** 
+   * Button that opens the editor editing a part of an attribute in an entry
+   * @property {string} text The text to display in the button
+   * @property {boolean} visible Should the button be drawn at all
+   * @property {string} schema The schema of the entry to edit
+   * @property {string} entry The entry to edit
+   * @property {string} attribute The attribute to edit
+   * @property {string|number|array} part The part of the attribute to edit
+   */
   EditPart: connectedEditPartButton,
+
+
+  /** 
+   * Button that is styled to look like other microcastle buttons but can do anything
+   * @property {string} text The text to display in the button
+   * @property {boolean} visible Should the button be drawn at all
+   * @property {function} onClick function to executre when clicked
+   */
   Base: BaseButton,
 };
 

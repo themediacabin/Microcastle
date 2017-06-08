@@ -1,3 +1,8 @@
+/** 
+ * @module MicrocastleConnect
+ */
+
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -44,4 +49,9 @@ const connectMC = schemaNames => Original => {
   return connect(connectStore, connectDispatch)(MicrocastleConnector);
 };
   
+/** 
+ * @description Function that connects a component with microcastle entries
+ * @param {array} schemaNames the schemas to connect to your component
+ * @returns {function} function you pass your component to be wrapped into
+ */
 export default connectMC;

@@ -1,3 +1,4 @@
+/** @module MicrocastleStore */
 import Immutable from 'immutable';
 import {saveChangeState, deleteState, callOnDelete, validateTree, saveNewState} from './DiffTree';
 import {changeViewValue} from './View';
@@ -128,6 +129,11 @@ const initalState = Immutable.fromJS({
   editor: {},
 });
 
+/** 
+ * @description Function that connects a component with microcastle entries
+ * @param {array} schemaNames the schemas to connect to your component
+ * @returns {function} function you pass your component to be wrapped into
+ */
 export function reducer(state = initalState, action) {
   switch (action.type) {
 

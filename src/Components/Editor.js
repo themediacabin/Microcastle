@@ -1,3 +1,6 @@
+/** 
+ * @module MicrocastleEditor
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -11,9 +14,7 @@ import PartEditor from './Editors/Part';
 
 import HTML5Backend from 'react-dnd-html5-backend';
 import {DragDropContext} from 'react-dnd';
-
 class Editor extends React.Component {
-
   isOpen() {
     return this.props.microcastle.get('editor').get('open');
   }
@@ -97,4 +98,8 @@ const connectReducers = connect((state) => {
   };
 });
 
+/** 
+ * The react editor component.
+ * @property {object} schemas The schema of your microcastle store.
+ */
 export default DragDropContext(HTML5Backend)(connectReducers(Editor));
