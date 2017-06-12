@@ -219,11 +219,21 @@ Simple Text field
 
 Options: None
 
+Example Schema:
+```
+title: { type: "text" },
+```
+
 ### Image
 
 Image
 
 Options: None
+
+Example Schema:
+```
+image: { type: "image" },
+```
 
 ### Array
 
@@ -231,11 +241,30 @@ Array of another type
 
 Options: subtype
 
+Example Schema:
+```
+newsStories: {
+  type: "array",
+  subtype: {
+    type: "group",
+    members: {
+      title: { type: "text" },
+      text: { type: "text" },
+    }
+  }
+}
+```
+
 ### Relation
 
 Lets user pick a field from another Schema
 
 Options: relative
+
+Example Schema:
+```
+image: { type: "relation", relative: "images" },
+```
 
 ### Select
 
@@ -243,8 +272,63 @@ Dropdown field
 
 Options: choices (array)
 
+Example Schema:
+```
+status: {
+  type: "select",
+  choices: [ "Draft", "Published" ]
+},
+```
+
 ### Flex
+
+Choose from one of multiple types
+
+Options: flexes (object)
+
+Example Schema:
+```
+content: {
+  type: "flex",
+  flexes: {
+    "Simple Paragraph": {
+      title: { type: "text" },
+      content: { type: "text" }
+    },
+    "Custom Text": {
+      privateContent: { type: "markdown" },
+      proffesionalContent: { type: "markdown" }
+    },
+  }
+}
+```
 
 ### Group
 
+Group Multiple Types
+
+Options: members (object)
+
+Example Schema:
+```
+page: {
+  type: "group",
+  members: {
+    title: { type: "text" },
+    paragraph: { type: "text" },
+    buttonLink: { type: "text" },
+    buttonText: { type: "text" }
+  }
+}
+```
+
 ### Markdown
+
+Markdown Editor
+
+Options: none,
+
+Example Schema:
+```
+content: { type: "markdown" }
+```
