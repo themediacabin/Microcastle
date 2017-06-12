@@ -36,27 +36,27 @@ connect the editor and the database to your reducers
 
 ```
 const reducer = combineReducers({
-  microcastle: Microcastle.MicrocastleDataStore.reducer,
-  microcastleEditor: Microcastle.MicrocastleEditorStore.reducer,
+  microcastle: Microcastle.MicrocastleStore.reducer,
 });
 ```
 
 setup an initial state for both in your redux store
 
 ```
-const initalState = {
-  microcastleEditor: new Immutable.Map({}),
-  microcastle: Immutable.fromJS({
-    People: {
-      Bob: {
-        job: 'Middle Manager',
-        lastName: 'Bobson',
+const store = createStore(reducer, {
+  microcastle: I.fromJS({
+    data: { // Put defualt data here
+      text: { // Schema
+        default: { // Entry
+          title: 'Hello World', // Attribute with value
+        }
       },
     },
+    editor: {},
   }),
-};
-
-const store = createStore(reducer, initialState);
+}, compose(  
+  applyMiddleware(thunk)
+));
 ```
 
 define the schemas you are going to use
@@ -80,7 +80,14 @@ const mySchemas = {
 
 then include the editor component somewhere at the top of your react app but below your redux provider
 
-`<Microcastle.MicrocastleEditor schemas={mySchemas} />`
+```
+<Provider store={store}>
+  <div>
+    <Microcastle.MicrocastleEditor schemas={schemas} />
+    <SomeComponents />
+  </div>
+</Provider>
+```
 
 now you need to actually use it in your site
 
@@ -88,25 +95,39 @@ now you need to actually use it in your site
 
 Connect your component to the microcastle schemas it needs
 
-`const connectedComponent = Microcastle.MicrocastleConnect(["People"])(component);`
+```
+class UnconnectedComponent extends Component {
+  render() {
+    const title = this.props.mcGetAttribute('People', 'default', 'title');
+    return <div>
+      {title}
+      <Microcastle.Button.Create
+        text="Create A Text"
+        visible={true}
+        schema='title'
+      />
+
+    </div>;
+  }
+}
+
+const connectedComponent = Microcastle.MicrocastleConnect(["People"])(UnconnectedComponent);
+```
 
 your component will then have a prop called microcastle (the dispatch method too) that can be used to get data
 
 `const bobsJon = this.props.mcGetAttribute('People', 'Bob', 'job');`
 
-and to open the editor dispatch an event
+and to open the editor use a button
 
 ```
-const openEditorForBobsJob = () => {
-  this.props.dispatch(
-    Microcastle.MicrocastleEditorStore.actions.editSingle(
-      'People', 'Bob', 'job',
-      this.props.microcastle.get('People', 'Bob', 'job')
-    )
-  )
-};
-
-return <a onClick={openEditorForBobsJob}>Edit</a>;
+<Microcastle.Button.EditAttribute
+  text="Create A Text"
+  visible={true}
+  schema='title'
+  entry='default'
+  attribute='title'
+/>
 ```
 
 it's as simple as that 🌚
@@ -114,31 +135,21 @@ it's as simple as that 🌚
 
 # API
 
-## Editor Actions
-
-`Microcastle.MicrocastleEditorStore.actions.editSingle(schemaName, entryID, attributeName, currentValue)`
-
-Open the editor and edit a single attribute.
-
-`Microcastle.MicrocastleEditorStore.actions.editEntry(schemaName, entryID, currentValue)`
-
-Open the editor and edit a single an entire entry.
-
-`Microcastle.MicrocastleEditorStore.actions.createNew(schemaName) `
-
-Open the editor and create a new entry.
-
 ## Connector
 
 ### Connector Function
 
-`Microcastle.MicrocastleConnect(component, arrayOfSchemasToConnect)`
+`Microcastle.MicrocastleConnect(arrayOfSchemasToConnect)(component)`
 
 ### Connected Props
 
 `props.microcastle.mcGetAttribute(schemaName, entryID, attributeName)`
 
 Gets the value of attribute
+
+`props.microcastle.mcGetEntry(schemaName, entryID)`
+
+Gets the whole entry
 
 `props.microcastle.mcGetSchema(schemaName)`
 
@@ -160,10 +171,7 @@ The Schema needs to be in the layout of:
     attributes: {
       ATTRIBUTE_NAME: {
         type: 'TYPE_NAME',
-        options?: {
-          subtype?: 'TYPE_NAME',
-          suboptions?: { ... },
-        },
+        option?: ???,
       },
       OTHER_ATTRIBUTE_NAME: { ... },
     },
@@ -176,7 +184,7 @@ The Schema needs to be in the layout of:
 
 ### OnNew Function
 
-takes: createdEntry
+takes: createdEntryValues
 
 must return: Promise that resolves to an object of {EntryID: Entry}
 
@@ -191,15 +199,15 @@ onNew: (v) => new Promise((resolve, reject) => {
 
 ### OnEdit Function
 
-takes: editedEntry
+takes: editedEntryValues, info: {id}
 
 must return: Promise that resolves to an Entry
 
 You must specify this function, in it you should sync with your server or edit the entry however you want. Example:
 
 ```
-onNew: (v) => new Promise((resolve, reject) => {
-  resolve(v);
+onNew: (val, {id}) => new Promise((resolve, reject) => {
+  resolve(val);
 })
 ```
 
@@ -219,7 +227,7 @@ Options: None
 
 ### Array
 
- Array of another type
+Array of another type
 
 Options: subtype
 
@@ -234,3 +242,9 @@ Options: relative
 Dropdown field
 
 Options: choices (array)
+
+### Flex
+
+### Group
+
+### Markdown
